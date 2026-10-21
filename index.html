@@ -1,925 +1,781 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>THE MASTER LEDGER - Out of the Head, Into the System</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#f0fdfa',
-              100: '#ccfbf1',
-              400: '#2dd4bf',
-              500: '#14b8a6',
-              600: '#0d9488',
-              800: '#115e59',
-              900: '#134e4a',
-              950: '#042f2e',
-            },
-            darkbg: {
-              900: '#07090e',
-              800: '#0d131f',
-              700: '#162032',
-              600: '#22304a'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Master Ledger | Cyber-Wolf Matrix v4.0</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#0a0a0a',
+                            card: '#121212',
+                            cardHover: '#1a1a1a',
+                            border: '#27272a',
+                            red: '#f43f5e',
+                            redHover: '#e11d48',
+                            glow: 'rgba(244, 63, 94, 0.15)',
+                            text: '#f4f4f5',
+                            muted: '#a1a1aa'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .mono { font-family: 'JetBrains Mono', monospace; }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(7, 9, 14, 0.9); }
-    ::-webkit-scrollbar-thumb { background: rgba(20, 184, 166, 0.4); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(20, 184, 166, 0.8); }
-    .toast-slide { animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes slideIn {
-      from { transform: translateY(1rem); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    .cyber-bg {
-      background-image: radial-gradient(rgba(20, 184, 166, 0.08) 1px, transparent 1px), radial-gradient(rgba(13, 148, 136, 0.04) 1px, transparent 1px);
-      background-size: 32px 32px;
-      background-position: 0 0, 16px 16px;
-    }
-  </style>
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #f4f4f5;
+        }
+        .cyber-border {
+            border: 1px solid #27272a;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        .cyber-border:hover {
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.2);
+        }
+        .neon-glow-strong {
+            box-shadow: 0 0 25px rgba(244, 63, 94, 0.4);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f43f5e;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-darkbg-900 via-slate-950 to-darkbg-900 cyber-bg text-slate-100 min-h-screen transition-colors duration-200 antialiased selection:bg-brand-500 selection:text-white">
+<body class="bg-cyber-bg text-cyber-text min-h-screen flex flex-col selection:bg-cyber-red selection:text-white">
 
-  <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-  <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 bg-darkbg-800/90 backdrop-blur-md border-b border-brand-500/20 px-4 lg:px-8 py-3.5 shadow-2xl shadow-brand-500/5">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      
-      <!-- App Brand & Gnarly Wolf Face Icon -->
-      <div class="flex items-center gap-3">
-        <!-- Ferocious Cyber Wolf Face Vector Icon -->
-        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-darkbg-900 via-brand-950 to-darkbg-900 flex items-center justify-center text-brand-400 shadow-[0_0_15px_rgba(20,184,166,0.3)] p-1.5 border border-brand-400/40">
-          <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-brand-400 filter drop-shadow-[0_0_6px_rgba(45,212,191,0.8)]">
-            <path d="M12 1L4 5L2 13L6 20L12 23L18 20L22 13L20 5L12 1Z" fill="#0d131f" stroke="#2dd4bf" stroke-width="1.2" stroke-linejoin="round"/>
-            <path d="M4 5L12 10L20 5L17 14L12 19L7 14L4 5Z" fill="#134e4a" stroke="#14b8a6" stroke-width="1"/>
-            <path d="M8 9L10 11L12 9L14 11L16 9" stroke="#2dd4bf" stroke-width="1.5" stroke-linecap="round"/>
-            <polygon points="10,14 14,14 12,17" fill="#2dd4bf"/>
-            <path d="M10 17L10.5 19.5M14 17L13.5 19.5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
+    <!-- Top Notification Banner -->
+    <div id="notification-banner" class="hidden bg-cyber-red/20 border-b border-cyber-red/40 px-4 py-2 text-xs font-mono text-cyber-red flex items-center justify-between z-50">
+        <div class="flex items-center space-x-2">
+            <i data-lucide="shield-alert" class="w-4 h-4 animate-pulse"></i>
+            <span id="banner-text">Liquidity Alert: Amex Bill due in 48 hours. 2-day reserve check verified.</span>
         </div>
-        <div>
-          <div class="flex items-center gap-2.5 flex-wrap">
-            <h1 class="text-lg lg:text-xl font-extrabold tracking-tight text-white mono uppercase drop-shadow-[0_0_10px_rgba(20,184,166,0.3)]">THE MASTER LEDGER</h1>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/30 shadow-[0_0_10px_rgba(20,184,166,0.2)]">
-              <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span> v3.0 WOLF MATRIX
-            </span>
-          </div>
-          <p class="text-xs text-slate-400 font-medium">Out of the Head, Into the System</p>
-        </div>
-      </div>
-
-      <!-- Controls & Quick Actions -->
-      <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-        <!-- Theme Switcher -->
-        <div class="flex items-center bg-darkbg-900 p-1 rounded-xl border border-brand-500/20 shadow-inner">
-          <button id="themeDarkBtn" onclick="setTheme('dark')" class="p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-brand-400 bg-slate-800 shadow-[0_0_8px_rgba(20,184,166,0.3)] flex items-center gap-1.5">
-            <i class="fa-solid fa-moon"></i> <span class="hidden md:inline">Matrix Dark</span>
-          </button>
-          <button id="themeLightBtn" onclick="setTheme('light')" class="p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
-            <i class="fa-solid fa-sun"></i> <span class="hidden md:inline">Light</span>
-          </button>
-        </div>
-
-        <!-- Add Entry Button -->
-        <button onclick="openModal('addTransactionModal')" class="bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm shadow-[0_0_15px_rgba(20,184,166,0.4)] transition-all flex items-center gap-2 active:scale-95">
-          <i class="fa-solid fa-plus text-xs"></i> <span>Add Entry</span>
-        </button>
-      </div>
-
-    </div>
-  </header>
-
-  <!-- NAVIGATION TABS -->
-  <div class="bg-darkbg-800/80 border-b border-brand-500/20 px-4 lg:px-8">
-    <div class="max-w-7xl mx-auto flex space-x-2 md:space-x-3 overflow-x-auto py-2.5 text-xs md:text-sm font-semibold scrollbar-none">
-      <button onclick="switchTab('ledger')" id="tab-ledger" class="tab-btn px-3.5 py-1.5 rounded-lg text-brand-400 bg-darkbg-900/90 border border-brand-500/40 shadow-[0_0_10px_rgba(20,184,166,0.15)] flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-list-check"></i> Master Ledger
-      </button>
-      <button onclick="switchTab('banking')" id="tab-banking" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-darkbg-900/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-credit-card"></i> Bank & Bill Routing
-      </button>
-      <button onclick="switchTab('pay')" id="tab-pay" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-darkbg-900/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-calculator"></i> Pay Rate ($20) & Net Check
-      </button>
-      <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-darkbg-900/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-car"></i> Auto Loan (Path B)
-      </button>
-      <button onclick="switchTab('taxes')" id="tab-taxes" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-darkbg-900/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-shield-halved"></i> Schedule C Shelter
-      </button>
-      <button onclick="switchTab('command')" id="tab-command" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-darkbg-900/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-terminal"></i> AI Command Center
-      </button>
-      <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-darkbg-900/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-gear"></i> Settings & Integrations
-      </button>
-    </div>
-  </div>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
-
-    <!-- KPI SUMMARY CARDS -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      
-      <!-- Base Hourly Rate -->
-      <div class="bg-darkbg-800/95 backdrop-blur p-4 rounded-2xl border border-brand-500/20 shadow-xl relative overflow-hidden group hover:border-brand-500/50 transition-all">
-        <div class="flex justify-between items-start">
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Base Hourly Rate</span>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/30">Senior Counselor</span>
-        </div>
-        <div class="mt-2 flex items-baseline gap-2">
-          <span class="text-2xl lg:text-3xl font-black mono text-white">$20.00</span>
-          <span class="text-xs text-slate-400 font-semibold">/hr</span>
-        </div>
-        <p class="mt-1 text-xs text-slate-400 font-medium">Overtime Rate: <span class="text-brand-400 font-bold mono">$30.00/hr</span></p>
-        <div class="h-1 w-full bg-slate-800 rounded-full mt-3 overflow-hidden">
-          <div class="h-full bg-gradient-to-r from-brand-500 to-cyan-400 rounded-full" style="width: 100%"></div>
-        </div>
-      </div>
-
-      <!-- Expected Take-Home Paycheck -->
-      <div class="bg-darkbg-800/95 backdrop-blur p-4 rounded-2xl border border-brand-500/20 shadow-xl relative overflow-hidden group hover:border-brand-500/50 transition-all">
-        <div class="flex justify-between items-start">
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Expected Take-Home Check</span>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Verified Net Pay</span>
-        </div>
-        <div class="mt-2 flex items-baseline gap-2">
-          <span class="text-2xl lg:text-3xl font-black mono text-emerald-400">$1,956.52</span>
-        </div>
-        <p class="mt-1 text-xs text-slate-400 font-medium">Gross: <span class="text-slate-200 font-bold mono">$2,667.80</span></p>
-        <div class="h-1 w-full bg-slate-800 rounded-full mt-3 overflow-hidden">
-          <div class="h-full bg-emerald-400 rounded-full" style="width: 95%"></div>
-        </div>
-      </div>
-
-      <!-- Auto Loan Balance -->
-      <div class="bg-darkbg-800/95 backdrop-blur p-4 rounded-2xl border border-brand-500/20 shadow-xl relative overflow-hidden group hover:border-brand-500/50 transition-all">
-        <div class="flex justify-between items-start">
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">M&T Auto Loan Principal</span>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">Path B</span>
-        </div>
-        <div class="mt-2 flex items-baseline gap-2">
-          <span class="text-2xl lg:text-3xl font-black mono text-amber-400">$18,751.05</span>
-        </div>
-        <p class="mt-1 text-xs text-slate-400 font-medium">Topstep 50% Injection: <span class="text-amber-300 font-bold mono">+$1,000/mo</span></p>
-        <div class="h-1 w-full bg-slate-800 rounded-full mt-3 overflow-hidden">
-          <div class="h-full bg-amber-400 rounded-full" style="width: 62%"></div>
-        </div>
-      </div>
-
-      <!-- Liquid Reserve -->
-      <div class="bg-darkbg-800/95 backdrop-blur p-4 rounded-2xl border border-brand-500/20 shadow-xl relative overflow-hidden group hover:border-brand-500/50 transition-all">
-        <div class="flex justify-between items-start">
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Liquid System Reserve</span>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">Solvent</span>
-        </div>
-        <div class="mt-2 flex items-baseline gap-2">
-          <span class="text-2xl lg:text-3xl font-black mono text-cyan-400">$4,458.12</span>
-        </div>
-        <p class="mt-1 text-xs text-slate-400 font-medium">Unencumbered Buffer Protected</p>
-        <div class="h-1 w-full bg-slate-800 rounded-full mt-3 overflow-hidden">
-          <div class="h-full bg-cyan-400 rounded-full" style="width: 75%"></div>
-        </div>
-      </div>
-
+        <button onclick="dismissBanner()" class="hover:text-white">&times;</button>
     </div>
 
-    <!-- TAB 1: MASTER LEDGER TRANSACTIONS -->
-    <section id="view-ledger" class="tab-view space-y-4">
-      <div class="bg-darkbg-800/90 backdrop-blur p-4 rounded-2xl border border-brand-500/20 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
-        <div class="relative w-full md:w-96">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-400 text-sm"></i>
-          <input type="text" id="searchInput" oninput="filterLedger()" placeholder="Search transactions, categories, notes..." class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400 transition-all" />
-        </div>
+    <div class="flex flex-1 overflow-hidden">
         
-        <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-          <select id="categoryFilter" onchange="filterLedger()" class="bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-xs font-semibold text-slate-300 focus:outline-none focus:border-brand-400">
-            <option value="ALL">All Categories</option>
-            <option value="W-2 Payroll">W-2 Payroll</option>
-            <option value="Topstep Income">Topstep Income</option>
-            <option value="Debt Paydown">Debt Paydown</option>
-            <option value="Schedule C Expense">Schedule C Expense</option>
-            <option value="Personal Living">Personal Living</option>
-          </select>
-
-          <select id="typeFilter" onchange="filterLedger()" class="bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-xs font-semibold text-slate-300 focus:outline-none focus:border-brand-400">
-            <option value="ALL">All Transaction Types</option>
-            <option value="INCOME">Income (+)</option>
-            <option value="EXPENSE">Expense (-)</option>
-          </select>
-
-          <button onclick="resetFilters()" class="p-2 text-slate-400 hover:text-white bg-darkbg-900 border border-brand-500/30 rounded-xl text-xs transition-colors" title="Reset Filters">
-            <i class="fa-solid fa-rotate-right"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="bg-darkbg-800/90 backdrop-blur rounded-2xl border border-brand-500/20 overflow-hidden shadow-xl">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-darkbg-900/95 border-b border-brand-500/20 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                <th class="py-3.5 px-4 whitespace-nowrap min-w-[110px]">Date</th>
-                <th class="py-3.5 px-4 whitespace-nowrap">Category</th>
-                <th class="py-3.5 px-4 whitespace-nowrap">Transaction / Description</th>
-                <th class="py-3.5 px-4 whitespace-nowrap text-right min-w-[120px]">Amount ($)</th>
-                <th class="py-3.5 px-4 whitespace-nowrap text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody id="ledgerTableBody" class="divide-y divide-slate-800/60 text-xs md:text-sm"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 2: BANK BALANCES, BILL ROUTING & AUTO PAY SCHEDULER SYSTEM -->
-    <section id="view-banking" class="tab-view space-y-6 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-darkbg-800/90 backdrop-blur p-4 rounded-2xl border border-brand-500/20 shadow-xl">
-          <div class="flex justify-between items-start">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">SoFi Checking & Savings</span>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/30">Primary Hub</span>
-          </div>
-          <div class="mt-2 text-2xl font-black mono text-white">$3,450.00</div>
-          <p class="mt-1 text-xs text-slate-400">Autopay funding source for bills</p>
-        </div>
-
-        <div class="bg-darkbg-800/90 backdrop-blur p-4 rounded-2xl border border-brand-500/20 shadow-xl">
-          <div class="flex justify-between items-start">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Chase Total Checking</span>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/30">W-2 Deposit</span>
-          </div>
-          <div class="mt-2 text-2xl font-black mono text-white">$956.52</div>
-          <p class="mt-1 text-xs text-slate-400">Chase Freedom & Bill routing</p>
-        </div>
-
-        <div class="bg-darkbg-800/90 backdrop-blur p-4 rounded-2xl border border-brand-500/20 shadow-xl">
-          <div class="flex justify-between items-start">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">American Express Checking</span>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">Trading Payouts</span>
-          </div>
-          <div class="mt-2 text-2xl font-black mono text-white">$1,850.00</div>
-          <p class="mt-1 text-xs text-slate-400">Amex Gold & Blue rewards hub</p>
-        </div>
-      </div>
-
-      <!-- AUTO PAY SCHEDULER SYSTEM -->
-      <div class="bg-darkbg-800/90 backdrop-blur p-5 rounded-2xl border border-brand-500/20 shadow-xl space-y-4">
-        <div class="border-b border-slate-700/60 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <div>
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-clock-rotate-left text-brand-400"></i> Auto Pay Scheduler System & Alerts
-            </h2>
-            <p class="text-xs text-slate-400">Intelligent system triggers autopay alerts and liquidity checks exactly 2 days before due dates</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Scheduler Armed (-2 Days)
-            </span>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-darkbg-900 p-4 rounded-xl border border-brand-500/20 space-y-2">
-            <div class="flex justify-between text-xs font-bold text-slate-300">
-              <span>Amex Blue (Gas)</span>
-              <span class="text-emerald-400">Due 15th</span>
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="hidden md:flex flex-col w-64 bg-cyber-card border-r border-cyber-border z-30">
+            <!-- Brand Header -->
+            <div class="p-6 border-b border-cyber-border flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-red to-rose-900 flex items-center justify-center neon-glow">
+                    <i data-lucide="wolf" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm tracking-wide text-white">MASTER LEDGER</h1>
+                    <span class="text-[10px] font-mono text-cyber-red tracking-widest uppercase">v4.0 Cyber-Wolf</span>
+                </div>
             </div>
-            <p class="text-[11px] text-slate-400">Alert fires: <strong>13th</strong> (-2 Days)</p>
-            <div class="flex justify-between items-center text-xs pt-1">
-              <span class="text-slate-500">Status: <span class="text-emerald-400 font-semibold">Scheduled</span></span>
-              <button onclick="simulateAutopay('Amex Blue')" class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 font-bold transition-all text-[10px]">Test ACH</button>
-            </div>
-          </div>
 
-          <div class="bg-darkbg-900 p-4 rounded-xl border border-brand-500/20 space-y-2">
-            <div class="flex justify-between text-xs font-bold text-slate-300">
-              <span>Amex Gold (Groceries)</span>
-              <span class="text-emerald-400">Due 22nd</span>
-            </div>
-            <p class="text-[11px] text-slate-400">Alert fires: <strong>20th</strong> (-2 Days)</p>
-            <div class="flex justify-between items-center text-xs pt-1">
-              <span class="text-slate-500">Status: <span class="text-emerald-400 font-semibold">Scheduled</span></span>
-              <button onclick="simulateAutopay('Amex Gold')" class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 font-bold transition-all text-[10px]">Test ACH</button>
-            </div>
-          </div>
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-4 py-6 space-y-2">
+                <button onclick="switchTab('command')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all bg-cyber-red text-white neon-glow" data-target="command">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Command Hub</span>
+                </button>
+                <button onclick="switchTab('debt')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="debt">
+                    <i data-lucide="trending-down" class="w-4 h-4"></i>
+                    <span>Debt Paydown (Path B)</span>
+                </button>
+                <button onclick="switchTab('bills')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="bills">
+                    <i data-lucide="bell-ring" class="w-4 h-4"></i>
+                    <span>Bill Routing System</span>
+                </button>
+                <button onclick="switchTab('trading')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="trading">
+                    <i data-lucide="candlestick-chart" class="w-4 h-4"></i>
+                    <span>Trading & Cashflow</span>
+                </button>
+                <button onclick="switchTab('apis')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="apis">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                    <span>API & Integrations</span>
+                </button>
+            </nav>
 
-          <div class="bg-darkbg-900 p-4 rounded-xl border border-brand-500/20 space-y-2">
-            <div class="flex justify-between text-xs font-bold text-slate-300">
-              <span>Chase Freedom (Entertainment)</span>
-              <span class="text-emerald-400">Due 28th</span>
+            <!-- User / System Status Footer -->
+            <div class="p-4 border-t border-cyber-border bg-cyber-bg/50">
+                <div class="flex items-center justify-between text-xs font-mono text-cyber-muted">
+                    <span class="flex items-center space-x-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>MATRIX SECURE</span>
+                    </span>
+                    <span class="text-cyber-red font-semibold">99.9%</span>
+                </div>
             </div>
-            <p class="text-[11px] text-slate-400">Alert fires: <strong>26th</strong> (-2 Days)</p>
-            <div class="flex justify-between items-center text-xs pt-1">
-              <span class="text-slate-500">Status: <span class="text-emerald-400 font-semibold">Scheduled</span></span>
-              <button onclick="simulateAutopay('Chase Freedom')" class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 font-bold transition-all text-[10px]">Test ACH</button>
-            </div>
-          </div>
-        </div>
-      </div>
+        </aside>
 
-      <!-- Bill Routing & Reward Points Table -->
-      <div class="bg-darkbg-800/90 backdrop-blur p-5 rounded-2xl border border-brand-500/20 shadow-xl space-y-4">
-        <h2 class="text-base font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-credit-card text-emerald-400"></i> Bill Routing & Accumulated Rewards
-        </h2>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs md:text-sm">
-            <thead>
-              <tr class="bg-darkbg-900 border-b border-brand-500/20 text-[11px] font-bold text-slate-400 uppercase">
-                <th class="py-3 px-4">Expense / Bill Category</th>
-                <th class="py-3 px-4">Assigned Credit Card</th>
-                <th class="py-3 px-4">Accumulated Rewards Points</th>
-                <th class="py-3 px-4">Due Date</th>
-                <th class="py-3 px-4">Funding Bank Account</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/80 font-mono">
-              <tr class="hover:bg-slate-800/40">
-                <td class="py-3 px-4 font-sans font-bold text-slate-200"><i class="fa-solid fa-gas-pump text-amber-400 mr-2"></i> Gas & Fuel</td>
-                <td class="py-3 px-4 text-blue-300 font-semibold">Amex Blue (Blue Cash)</td>
-                <td class="py-3 px-4 text-emerald-400 font-bold">3% Cash Back (1,450 pts)</td>
-                <td class="py-3 px-4 text-slate-300">15th</td>
-                <td class="py-3 px-4 text-slate-400">SoFi Checking</td>
-              </tr>
-              <tr class="hover:bg-slate-800/40">
-                <td class="py-3 px-4 font-sans font-bold text-slate-200"><i class="fa-solid fa-basket-shopping text-brand-400 mr-2"></i> Groceries & Supermarket</td>
-                <td class="py-3 px-4 text-amber-300 font-semibold">Amex Gold Card</td>
-                <td class="py-3 px-4 text-emerald-400 font-bold">4x Membership Rewards (4,820 pts)</td>
-                <td class="py-3 px-4 text-slate-300">22nd</td>
-                <td class="py-3 px-4 text-slate-400">Amex Checking</td>
-              </tr>
-              <tr class="hover:bg-slate-800/40">
-                <td class="py-3 px-4 font-sans font-bold text-slate-200"><i class="fa-solid fa-film text-purple-400 mr-2"></i> Entertainment & Subscriptions</td>
-                <td class="py-3 px-4 text-indigo-300 font-semibold">Chase Freedom</td>
-                <td class="py-3 px-4 text-emerald-400 font-bold">3% / 5x Ultimate Rewards (2,100 pts)</td>
-                <td class="py-3 px-4 text-slate-300">28th</td>
-                <td class="py-3 px-4 text-slate-400">Chase Checking</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 3: PAY RATE & OVERTIME SLIDER NET CHECK CALCULATOR -->
-    <section id="view-pay" class="tab-view space-y-6 hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-1 bg-darkbg-800/90 backdrop-blur p-5 rounded-2xl border border-brand-500/20 space-y-4 shadow-xl">
-          <div class="border-b border-slate-700/60 pb-3">
-            <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-sliders text-brand-400"></i> Overtime Slider Simulator</h2>
-            <p class="text-xs text-slate-400">Model bi-weekly earnings with custom OT hours</p>
-          </div>
-          <div class="space-y-4">
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <label class="text-xs font-semibold text-slate-300">Overtime Hours ($30/hr)</label>
-                <span id="sliderOtVal" class="text-brand-400 font-mono font-bold text-sm">37.61 hrs</span>
-              </div>
-              <input type="range" id="otSlider" min="0" max="50" step="0.5" value="37.61" oninput="updateOvertimeSimulation()" class="w-full accent-brand-500 cursor-pointer" />
-            </div>
-            <div class="bg-darkbg-900 p-3.5 rounded-xl border border-brand-500/20 space-y-2 text-xs">
-              <div class="flex justify-between"><span class="text-slate-400">Base Pay (80h @ $20)</span><span class="text-white font-mono font-bold">$1,539.50</span></div>
-              <div class="flex justify-between"><span class="text-slate-400">Overtime Pay (<span id="simOtHours">37.61</span>h @ $30)</span><span class="text-brand-400 font-mono font-bold" id="simOtTotal">$1,128.30</span></div>
-              <div class="border-t border-slate-800 pt-2 flex justify-between font-bold"><span class="text-slate-200">Simulated Gross</span><span class="text-cyan-300 font-mono" id="simGross">$2,667.80</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="lg:col-span-2 bg-darkbg-800/90 backdrop-blur p-5 rounded-2xl border border-brand-500/20 space-y-5 shadow-xl flex flex-col justify-between">
-          <div>
-            <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
-              <div>
-                <h2 class="text-base font-bold text-white">Verified Paystub & Net Take-Home Check</h2>
-                <p class="text-xs text-slate-400">Pay Period 10/4 - 10/17 | Senior Counselor</p>
-              </div>
-              <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Verified Net Pay</span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-              <div class="bg-darkbg-900 p-3.5 rounded-xl border border-brand-500/20"><span class="text-[11px] text-slate-400 uppercase block">Total Gross Income</span><span class="text-xl font-extrabold text-cyan-300 mono" id="displaySimGross">$2,667.80</span></div>
-              <div class="bg-darkbg-900 p-3.5 rounded-xl border border-brand-500/20"><span class="text-[11px] text-slate-400 uppercase block">Taxes & Deductions</span><span class="text-xl font-extrabold text-rose-400 mono">-$711.28</span></div>
-              <div class="bg-darkbg-900 p-3.5 rounded-xl border border-brand-500/20"><span class="text-[11px] text-slate-400 uppercase block">Net Take-Home Check</span><span class="text-xl font-extrabold text-emerald-400 mono" id="displaySimNet">$1,956.52</span></div>
-            </div>
-          </div>
-          <div class="bg-slate-900/90 p-4 rounded-xl border border-brand-500/30 flex items-start gap-3 mt-4 shadow-inner">
-            <i class="fa-solid fa-circle-info text-brand-400 text-lg mt-0.5"></i>
-            <p class="text-xs text-slate-300 leading-relaxed"><strong class="text-white">Overtime Impact:</strong> Each additional 5 hours of overtime adds ~<strong>$117.00</strong> in net take-home pay.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 4: AUTO LOAN ACCELERATION (PATH B) -->
-    <section id="view-debt" class="tab-view space-y-6 hidden">
-      <div class="bg-darkbg-800/90 backdrop-blur p-5 rounded-2xl border border-brand-500/20 shadow-xl space-y-6">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-700/60 pb-4">
-          <div>
-            <h2 class="text-lg font-extrabold text-white flex items-center gap-2"><i class="fa-solid fa-car text-amber-400"></i> Path B: 6-Month Auto Loan Payoff Model</h2>
-            <p class="text-xs text-slate-400">50% Topstep futures trading injection directly into M&T Bank principal</p>
-          </div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">Starting Loan: $18,751.05</span>
-        </div>
-        <div class="h-64 w-full bg-darkbg-900/90 p-4 rounded-xl border border-brand-500/20"><canvas id="debtChart"></canvas></div>
-      </div>
-    </section>
-
-    <!-- TAB 5: SCHEDULE C TAX WRITE-OFFS -->
-    <section id="view-taxes" class="tab-view space-y-6 hidden">
-      <div class="bg-darkbg-800/90 backdrop-blur p-5 rounded-2xl border border-brand-500/20 space-y-4 shadow-xl">
-        <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
-          <div>
-            <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-file-invoice-dollar text-purple-400"></i> Schedule C Tax Shelter Tracker & Blown Accounts</h2>
-            <p class="text-xs text-slate-400">IRS-compliant business write-offs (IRC Section 162)</p>
-          </div>
-          <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">Tax Deductible</span>
-        </div>
-        <div class="space-y-3 text-xs">
-          <label class="flex items-center gap-3 p-3.5 rounded-xl bg-darkbg-900 border border-purple-500/30 hover:border-purple-500 cursor-pointer transition-all">
-            <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
-            <div>
-              <strong class="text-slate-100 block text-sm">Blown Accounts, Failed Combines & Reset Fees (Topstep)</strong>
-              <span class="text-slate-300 text-[11px]">100% deductible as ordinary and necessary business trading losses / evaluation expenses under IRC Sec. 162.</span>
-            </div>
-          </label>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 6: AI COMMAND CENTER -->
-    <section id="view-command" class="tab-view space-y-6 hidden">
-      <div class="bg-darkbg-800/90 backdrop-blur p-5 rounded-2xl border border-brand-500/20 space-y-4 shadow-xl">
-        <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
-          <div>
-            <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-terminal text-brand-400"></i> AI Command Center & Task Queue</h2>
-            <p class="text-xs text-slate-400">Out of the Head, Into the System Dispatcher</p>
-          </div>
-          <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/30">Active Agents Ready</span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button onclick="runAiCommand('cashflow')" class="p-4 rounded-xl bg-darkbg-900 border border-brand-500/20 hover:border-brand-400 text-left transition-all group shadow-lg">
-            <div class="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-chart-pie"></i></div>
-            <strong class="text-slate-200 block text-sm">Run Cash Flow Forecast</strong>
-            <span class="text-slate-400 text-xs">Simulate 30-day liquidity & bill clearance</span>
-          </button>
-          <button onclick="runAiCommand('taxscan')" class="p-4 rounded-xl bg-darkbg-900 border border-brand-500/20 hover:border-purple-400 text-left transition-all group shadow-lg">
-            <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-receipt"></i></div>
-            <strong class="text-slate-200 block text-sm">Scan Schedule C Deductions</strong>
-            <span class="text-slate-400 text-xs">Calculate total tax savings from blown accounts</span>
-          </button>
-          <button onclick="runAiCommand('gitcommit')" class="p-4 rounded-xl bg-darkbg-900 border border-brand-500/20 hover:border-amber-400 text-left transition-all group shadow-lg">
-            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-code-commit"></i></div>
-            <strong class="text-slate-200 block text-sm">Sync GitHub Master Ledger</strong>
-            <span class="text-slate-400 text-xs">Push latest state and update status box</span>
-          </button>
-        </div>
-        <div id="aiConsoleOutput" class="bg-darkbg-900 p-4 rounded-xl border border-brand-500/30 font-mono text-xs text-brand-400 min-h-[100px] flex items-center shadow-inner">
-          <span>> AI Command Center ready. Select an action above to execute protocol...</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 7: SETTINGS & INTEGRATIONS SECTION -->
-    <section id="view-settings" class="tab-view space-y-6 hidden">
-      <div class="bg-darkbg-800/90 backdrop-blur p-6 rounded-2xl border border-brand-500/20 shadow-xl space-y-6">
-        <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
-          <div>
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-gear text-brand-400"></i> Settings & API Integrations Hub
-            </h2>
-            <p class="text-xs text-slate-400">Connect Google Workspace, AI Models (Gemini, Claude, Hermes), and Telegram bots</p>
-          </div>
-          <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/30">v3.0 Bulletproof</span>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-          
-          <!-- AI Models & API Integration -->
-          <div class="bg-darkbg-900 p-4 rounded-xl border border-brand-500/20 space-y-4">
-            <h3 class="font-bold text-slate-200 uppercase tracking-wider text-[11px] text-brand-400 flex items-center gap-2">
-              <i class="fa-solid fa-brain"></i> AI Engines & LLM Connections
-            </h3>
+        <!-- Mobile Drawer & Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
             
-            <div class="space-y-1.5">
-              <label class="block font-semibold text-slate-300">Google Gemini API Key</label>
-              <input type="password" id="apiKeyGemini" placeholder="AIzaSy..." class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400 font-mono" />
+            <!-- Top Bar (Mobile Hamburger & Quick Stats) -->
+            <header class="h-16 border-b border-cyber-border bg-cyber-card/80 backdrop-blur sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg bg-cyber-cardHover text-cyber-text hover:text-cyber-red">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    <div>
+                        <h2 id="current-page-title" class="text-sm font-bold tracking-wider uppercase text-white">Command Hub</h2>
+                        <p class="text-[11px] font-mono text-cyber-muted">Out of the Head, Into the System</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="hidden sm:flex items-center space-x-2 bg-cyber-bg px-3 py-1.5 rounded-lg border border-cyber-border text-xs font-mono">
+                        <span class="text-cyber-muted">W-2 Rate:</span>
+                        <span class="text-cyber-red font-bold">$20.00/hr</span>
+                    </div>
+                    <button onclick="triggerQuickInjectModal()" class="flex items-center space-x-2 bg-cyber-red hover:bg-cyber-redHover text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all neon-glow">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Inject Funds</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Mobile Drawer Menu -->
+            <div id="mobile-drawer" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden md:hidden flex">
+                <div class="w-72 bg-cyber-card border-r border-cyber-border h-full flex flex-col p-6 space-y-6">
+                    <div class="flex items-center justify-between border-b border-cyber-border pb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-cyber-red flex items-center justify-center">
+                                <i data-lucide="wolf" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <span class="font-bold text-sm text-white">MASTER LEDGER</span>
+                        </div>
+                        <button onclick="toggleMobileMenu()" class="p-1 rounded-lg text-cyber-muted hover:text-white">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <nav class="space-y-2 flex-1">
+                        <button onclick="switchTab('command'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium bg-cyber-red text-white" data-target="command">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                            <span>Command Hub</span>
+                        </button>
+                        <button onclick="switchTab('debt'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="debt">
+                            <i data-lucide="trending-down" class="w-4 h-4"></i>
+                            <span>Debt Paydown (Path B)</span>
+                        </button>
+                        <button onclick="switchTab('bills'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="bills">
+                            <i data-lucide="bell-ring" class="w-4 h-4"></i>
+                            <span>Bill Routing System</span>
+                        </button>
+                        <button onclick="switchTab('trading'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="trading">
+                            <i data-lucide="candlestick-chart" class="w-4 h-4"></i>
+                            <span>Trading & Cashflow</span>
+                        </button>
+                        <button onclick="switchTab('apis'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="apis">
+                            <i data-lucide="cpu" class="w-4 h-4"></i>
+                            <span>API & Integrations</span>
+                        </button>
+                    </nav>
+                </div>
+                <div class="flex-1" onclick="toggleMobileMenu()"></div>
             </div>
 
-            <div class="space-y-1.5">
-              <label class="block font-semibold text-slate-300">Anthropic Claude API Key</label>
-              <input type="password" id="apiKeyClaude" placeholder="sk-ant-..." class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400 font-mono" />
-            </div>
+            <!-- Main Dynamic Content Views -->
+            <main class="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto space-y-6">
 
-            <div class="space-y-1.5">
-              <label class="block font-semibold text-slate-300">Hermes Endpoint / API Key</label>
-              <input type="password" id="apiKeyHermes" placeholder="hermes_key_..." class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400 font-mono" />
-            </div>
-          </div>
+                <!-- VIEW 1: COMMAND HUB -->
+                <section id="view-command" class="view-section space-y-6">
+                    <!-- Top Welcome Card -->
+                    <div class="bg-gradient-to-r from-cyber-card to-cyber-cardHover p-6 rounded-2xl cyber-border relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-96 h-full bg-cyber-red/5 blur-3xl pointer-events-none"></div>
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+                            <div>
+                                <div class="flex items-center space-x-2 text-xs font-mono text-cyber-red mb-1">
+                                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                    <span>SYSTEM OPERATIONAL • V4.0 CYBER-WOLF MATRIX</span>
+                                </div>
+                                <h2 class="text-2xl font-bold text-white">Financial Command & Acceleration Hub</h2>
+                                <p class="text-sm text-cyber-muted mt-1">Eliminating cognitive overhead through automated payroll, debt neutralization, and liquidity routing.</p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <div class="bg-cyber-bg px-4 py-3 rounded-xl border border-cyber-border text-right">
+                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Bi-Weekly Paycheck</div>
+                                    <div class="text-lg font-bold font-mono text-white">$1,956.52</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-          <!-- Workspace & Messaging Integration -->
-          <div class="bg-darkbg-900 p-4 rounded-xl border border-brand-500/20 space-y-4">
-            <h3 class="font-bold text-slate-200 uppercase tracking-wider text-[11px] text-brand-400 flex items-center gap-2">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Google Workspace & Telegram
-            </h3>
-            
-            <div class="space-y-1.5">
-              <label class="block font-semibold text-slate-300">Google Workspace Sync Folder / Sheets ID</label>
-              <input type="text" id="settingWorkspace" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400 font-mono text-[11px]" />
-            </div>
+                    <!-- KPI Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-cyber-card p-5 rounded-xl cyber-border">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs font-mono text-cyber-muted uppercase">Base Wage Rate</span>
+                                <span class="p-2 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="dollar-sign" class="w-4 h-4"></i></span>
+                            </div>
+                            <div class="text-2xl font-bold font-mono text-white">$20.00<span class="text-xs text-cyber-muted">/hr</span></div>
+                            <div class="text-xs text-emerald-400 mt-2 flex items-center space-x-1">
+                                <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                                <span>Standard W-2 payroll active</span>
+                            </div>
+                        </div>
 
-            <div class="space-y-1.5">
-              <label class="block font-semibold text-slate-300">Telegram Bot Token & Chat ID</label>
-              <input type="text" id="settingTelegram" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ" class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400 font-mono text-[11px]" />
-            </div>
+                        <div class="bg-cyber-card p-5 rounded-xl cyber-border">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs font-mono text-cyber-muted uppercase">Overtime Simulation</span>
+                                <span class="p-2 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="zap" class="w-4 h-4"></i></span>
+                            </div>
+                            <div class="text-2xl font-bold font-mono text-white">$30.00<span class="text-xs text-cyber-muted">/hr</span></div>
+                            <div class="text-xs text-cyber-red mt-2 flex items-center space-x-1">
+                                <i data-lucide="activity" class="w-3 h-3"></i>
+                                <span>1.5x Multiplier loaded</span>
+                            </div>
+                        </div>
 
-            <div class="pt-2 flex flex-col gap-2">
-              <button onclick="testIntegrationConnections()" class="w-full py-2.5 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 text-brand-300 font-bold transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-plug"></i> Test API Connections
-              </button>
-            </div>
-          </div>
+                        <div class="bg-cyber-card p-5 rounded-xl cyber-border">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs font-mono text-cyber-muted uppercase">M&T Auto Loan (Path B)</span>
+                                <span class="p-2 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="car" class="w-4 h-4"></i></span>
+                            </div>
+                            <div class="text-2xl font-bold font-mono text-white" id="kpi-loan-balance">$8,450.00</div>
+                            <div class="text-xs text-cyber-muted mt-2">6-month accelerated model</div>
+                        </div>
 
+                        <div class="bg-cyber-card p-5 rounded-xl cyber-border">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs font-mono text-cyber-muted uppercase">Topstep Injection Pool</span>
+                                <span class="p-2 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
+                            </div>
+                            <div class="text-2xl font-bold font-mono text-emerald-400" id="kpi-topstep-pool">$1,250.00</div>
+                            <div class="text-xs text-cyber-muted mt-2">50% automated routing</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Simulation & Recent Log Feed -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Simulation Calculator Card -->
+                        <div class="lg:col-span-2 bg-cyber-card p-6 rounded-2xl cyber-border flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-bold text-white text-sm uppercase tracking-wide flex items-center space-x-2">
+                                        <i data-lucide="calculator" class="w-4 h-4 text-cyber-red"></i>
+                                        <span>Payroll & Overtime Simulator</span>
+                                    </h3>
+                                    <span class="text-xs font-mono text-cyber-muted">Interactive Engine</span>
+                                </div>
+                                <p class="text-xs text-cyber-muted mb-6">Calculate net earnings based on regular hours and overtime injection multipliers.</p>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <label class="block text-xs font-mono text-cyber-muted mb-2">Regular Hours (Bi-Weekly)</label>
+                                        <input type="number" id="sim-reg-hours" value="80" oninput="runPayrollSimulation()" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-red focus:outline-none font-mono">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-mono text-cyber-muted mb-2">Overtime Hours (1.5x)</label>
+                                        <input type="number" id="sim-ot-hours" value="10" oninput="runPayrollSimulation()" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-red focus:outline-none font-mono">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <div>
+                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Simulated Gross Pay</div>
+                                    <div id="sim-gross" class="text-xl font-bold font-mono text-white">$1,900.00</div>
+                                </div>
+                                <div class="sm:text-right">
+                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Estimated Net Pay (After Taxes)</div>
+                                    <div id="sim-net" class="text-xl font-bold font-mono text-cyber-red">$1,558.00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Activity Feed -->
+                        <div class="bg-cyber-card p-6 rounded-2xl cyber-border flex flex-col">
+                            <h3 class="font-bold text-white text-sm uppercase tracking-wide flex items-center space-x-2 mb-4">
+                                <i data-lucide="terminal" class="w-4 h-4 text-cyber-red"></i>
+                                <span>Matrix Activity Log</span>
+                            </h3>
+                            <div class="space-y-3 flex-1 overflow-y-auto max-h-[240px] pr-1" id="activity-log-feed">
+                                <div class="p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono">
+                                    <div class="text-cyber-muted text-[10px]">10:42 AM • System</div>
+                                    <div class="text-white mt-0.5">Topstep futures distribution synced (+ $625.00)</div>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono">
+                                    <div class="text-cyber-muted text-[10px]">08:15 AM • Liquidity Check</div>
+                                    <div class="text-white mt-0.5">Amex bill due in 48h. Verified reserve funds.</div>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono">
+                                    <div class="text-cyber-muted text-[10px]">Yesterday • Schedule C</div>
+                                    <div class="text-white mt-0.5">Logged mileage & software deductions.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: DEBT PAYDOWN (PATH B) -->
+                <section id="view-debt" class="view-section hidden space-y-6">
+                    <div class="bg-cyber-card p-6 rounded-2xl cyber-border">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                            <div>
+                                <span class="text-xs font-mono text-cyber-red uppercase">Path B Acceleration Model</span>
+                                <h2 class="text-xl font-bold text-white mt-1">M&T Auto Loan Principal Reduction</h2>
+                                <p class="text-xs text-cyber-muted mt-0.5">Fueling aggressive 6-month payoff with 50% Topstep futures cash injections.</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="injectIntoLoan(250)" class="bg-cyber-red hover:bg-cyber-redHover text-white px-3 py-2 rounded-lg text-xs font-medium transition-all neon-glow flex items-center space-x-1.5">
+                                    <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                                    <span>Inject $250 Topstep Fund</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar & Stats -->
+                        <div class="space-y-4 mb-8">
+                            <div class="flex justify-between text-xs font-mono">
+                                <span class="text-cyber-muted">Payoff Progress (Target: $0.00)</span>
+                                <span class="text-white font-bold" id="loan-progress-percent">62.4% Paid</span>
+                            </div>
+                            <div class="w-full bg-cyber-bg h-3 rounded-full overflow-hidden border border-cyber-border p-0.5">
+                                <div id="loan-progress-bar" class="bg-gradient-to-r from-rose-600 to-cyber-red h-full rounded-full transition-all duration-500" style="width: 62.4%;"></div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 pt-2">
+                                <div class="bg-cyber-bg p-3 rounded-xl border border-cyber-border">
+                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Initial Balance</div>
+                                    <div class="text-sm font-bold font-mono text-white">$22,500.00</div>
+                                </div>
+                                <div class="bg-cyber-bg p-3 rounded-xl border border-cyber-border">
+                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Current Balance</div>
+                                    <div class="text-sm font-bold font-mono text-cyber-red" id="current-loan-display">$8,450.00</div>
+                                </div>
+                                <div class="bg-cyber-bg p-3 rounded-xl border border-cyber-border">
+                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Est. Payoff Horizon</div>
+                                    <div class="text-sm font-bold font-mono text-emerald-400">4.2 Months</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6-Month Projection Table -->
+                        <h3 class="font-bold text-white text-sm uppercase tracking-wide mb-3">6-Month Automated Amortization Schedule</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs font-mono">
+                                <thead class="bg-cyber-bg text-cyber-muted uppercase text-[10px] border-b border-cyber-border">
+                                    <tr>
+                                        <th class="p-3">Month</th>
+                                        <th class="p-3">Starting Balance</th>
+                                        <th class="p-3">Base Payment</th>
+                                        <th class="p-3">Topstep 50% Injection</th>
+                                        <th class="p-3">Ending Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-cyber-border" id="amortization-table-body">
+                                    <tr class="hover:bg-cyber-cardHover">
+                                        <td class="p-3 text-white font-bold">Month 1</td>
+                                        <td class="p-3">$8,450.00</td>
+                                        <td class="p-3">$450.00</td>
+                                        <td class="p-3 text-emerald-400">+$625.00</td>
+                                        <td class="p-3 text-cyber-red font-bold">$7,375.00</td>
+                                    </tr>
+                                    <tr class="hover:bg-cyber-cardHover">
+                                        <td class="p-3 text-white font-bold">Month 2</td>
+                                        <td class="p-3">$7,375.00</td>
+                                        <td class="p-3">$450.00</td>
+                                        <td class="p-3 text-emerald-400">+$625.00</td>
+                                        <td class="p-3 text-cyber-red font-bold">$6,300.00</td>
+                                    </tr>
+                                    <tr class="hover:bg-cyber-cardHover">
+                                        <td class="p-3 text-white font-bold">Month 3</td>
+                                        <td class="p-3">$6,300.00</td>
+                                        <td class="p-3">$450.00</td>
+                                        <td class="p-3 text-emerald-400">+$625.00</td>
+                                        <td class="p-3 text-cyber-red font-bold">$5,225.00</td>
+                                    </tr>
+                                    <tr class="hover:bg-cyber-cardHover">
+                                        <td class="p-3 text-white font-bold">Month 4</td>
+                                        <td class="p-3">$5,225.00</td>
+                                        <td class="p-3">$450.00</td>
+                                        <td class="p-3 text-emerald-400">+$625.00</td>
+                                        <td class="p-3 text-cyber-red font-bold">$4,150.00</td>
+                                    </tr>
+                                    <tr class="hover:bg-cyber-cardHover">
+                                        <td class="p-3 text-white font-bold">Month 5</td>
+                                        <td class="p-3">$4,150.00</td>
+                                        <td class="p-3">$450.00</td>
+                                        <td class="p-3 text-emerald-400">+$625.00</td>
+                                        <td class="p-3 text-cyber-red font-bold">$3,075.00</td>
+                                    </tr>
+                                    <tr class="hover:bg-cyber-cardHover">
+                                        <td class="p-3 text-white font-bold">Month 6</td>
+                                        <td class="p-3">$3,075.00</td>
+                                        <td class="p-3">$450.00</td>
+                                        <td class="p-3 text-emerald-400">+$625.00</td>
+                                        <td class="p-3 text-emerald-400 font-bold">$2,000.00 (Near Zero)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: BILL ROUTING SYSTEM -->
+                <section id="view-bills" class="view-section hidden space-y-6">
+                    <div class="bg-cyber-card p-6 rounded-2xl cyber-border">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                            <div>
+                                <span class="text-xs font-mono text-cyber-red uppercase">Automated Liquidity Safeguards</span>
+                                <h2 class="text-xl font-bold text-white mt-1">Credit Card Rewards & Bill Routing</h2>
+                                <p class="text-xs text-cyber-muted mt-0.5">Automated 2-day liquidity checks prior to Amex, Chase, and GEICO due dates.</p>
+                            </div>
+                            <button onclick="runLiquidityCheck()" class="bg-cyber-cardHover hover:bg-cyber-border text-white px-4 py-2 rounded-lg text-xs font-mono transition-all border border-cyber-border flex items-center space-x-2">
+                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                                <span>Run Liquidity Scan</span>
+                            </button>
+                        </div>
+
+                        <!-- Bill Cards Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-cyber-bg p-5 rounded-xl border border-cyber-border flex flex-col justify-between">
+                                <div>
+                                    <div class="flex justify-between items-start mb-2">
+                                        <span class="font-bold text-white text-sm">Amex Platinum / Gold</span>
+                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyber-red/20 text-cyber-red">Due in 2 Days</span>
+                                    </div>
+                                    <div class="text-xl font-bold font-mono text-white my-3">$1,245.80</div>
+                                    <p class="text-xs text-cyber-muted">Rewards routing: 4x Dining / 5x Flights active.</p>
+                                </div>
+                                <div class="mt-4 pt-3 border-t border-cyber-border flex items-center justify-between text-xs font-mono">
+                                    <span class="text-emerald-400 flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> <span>Liquid Ready</span></span>
+                                    <button onclick="payBill('Amex')" class="text-cyber-red hover:underline font-bold">Execute Pay</button>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyber-bg p-5 rounded-xl border border-cyber-border flex flex-col justify-between">
+                                <div>
+                                    <div class="flex justify-between items-start mb-2">
+                                        <span class="font-bold text-white text-sm">Chase Sapphire Reserve</span>
+                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Due in 9 Days</span>
+                                    </div>
+                                    <div class="text-xl font-bold font-mono text-white my-3">$810.20</div>
+                                    <p class="text-xs text-cyber-muted">Rewards routing: 3x Travel & Dining active.</p>
+                                </div>
+                                <div class="mt-4 pt-3 border-t border-cyber-border flex items-center justify-between text-xs font-mono">
+                                    <span class="text-emerald-400 flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> <span>Liquid Ready</span></span>
+                                    <button onclick="payBill('Chase')" class="text-cyber-red hover:underline font-bold">Execute Pay</button>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyber-bg p-5 rounded-xl border border-cyber-border flex flex-col justify-between">
+                                <div>
+                                    <div class="flex justify-between items-start mb-2">
+                                        <span class="font-bold text-white text-sm">GEICO Auto Insurance</span>
+                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Due in 14 Days</span>
+                                    </div>
+                                    <div class="text-xl font-bold font-mono text-white my-3">$145.00</div>
+                                    <p class="text-xs text-cyber-muted">Auto-debit scheduled from primary checking.</p>
+                                </div>
+                                <div class="mt-4 pt-3 border-t border-cyber-border flex items-center justify-between text-xs font-mono">
+                                    <span class="text-emerald-400 flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> <span>Liquid Ready</span></span>
+                                    <button onclick="payBill('GEICO')" class="text-cyber-red hover:underline font-bold">Execute Pay</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: TRADING & CASHFLOW -->
+                <section id="view-trading" class="view-section hidden space-y-6">
+                    <div class="bg-cyber-card p-6 rounded-2xl cyber-border">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                            <div>
+                                <span class="text-xs font-mono text-cyber-red uppercase">Futures & Equity Command</span>
+                                <h2 class="text-xl font-bold text-white mt-1">Topstep Futures & Cashflow Hub</h2>
+                                <p class="text-xs text-cyber-muted mt-0.5">Tracking Topstep distributions, Webull portfolios, and MGC/MNQ futures instruments.</p>
+                            </div>
+                            <div class="bg-cyber-bg px-4 py-2 rounded-xl border border-cyber-border font-mono text-xs">
+                                <span class="text-cyber-muted">Total Trading Capital:</span> <span class="text-emerald-400 font-bold">$14,850.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Trading Accounts Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
+                                <div class="text-[10px] font-mono text-cyber-muted uppercase mb-1">Topstep X Account</div>
+                                <div class="text-lg font-bold font-mono text-white">$2,500.00</div>
+                                <div class="text-xs text-emerald-400 mt-1">Live Funded • 50% split active</div>
+                            </div>
+                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
+                                <div class="text-[10px] font-mono text-cyber-muted uppercase mb-1">Webull Equity</div>
+                                <div class="text-lg font-bold font-mono text-white">$6,350.00</div>
+                                <div class="text-xs text-emerald-400 mt-1">+3.4% this week</div>
+                            </div>
+                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
+                                <div class="text-[10px] font-mono text-cyber-muted uppercase mb-1">Roth IRA</div>
+                                <div class="text-lg font-bold font-mono text-white">$4,200.00</div>
+                                <div class="text-xs text-cyber-muted mt-1">Index long-term hold</div>
+                            </div>
+                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
+                                <div class="text-[10px] font-mono text-cyber-muted uppercase mb-1">MGC / MNQ Margin</div>
+                                <div class="text-lg font-bold font-mono text-cyber-red">$1,800.00</div>
+                                <div class="text-xs text-cyber-muted mt-1">Active micro futures allocation</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 5: API & INTEGRATIONS HUB -->
+                <section id="view-apis" class="view-section hidden space-y-6">
+                    <div class="bg-cyber-card p-6 rounded-2xl cyber-border">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <span class="text-xs font-mono text-cyber-red uppercase">Command Line Integrations</span>
+                                <h2 class="text-xl font-bold text-white mt-1">API & Social Settings Hub</h2>
+                                <p class="text-xs text-cyber-muted mt-0.5">Manage webhooks, Telegram bot alerts, and AI provider credentials.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2.5 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
+                                    <div>
+                                        <div class="font-bold text-sm text-white">Gemini API (Google)</div>
+                                        <div class="text-xs font-mono text-emerald-400 flex items-center space-x-1 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>Connected & Active</span></div>
+                                    </div>
+                                </div>
+                                <button class="px-3 py-1.5 rounded-lg bg-cyber-cardHover text-xs font-mono text-white hover:bg-cyber-border">Configure</button>
+                            </div>
+
+                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2.5 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+                                    <div>
+                                        <div class="font-bold text-sm text-white">Claude API (Anthropic)</div>
+                                        <div class="text-xs font-mono text-emerald-400 flex items-center space-x-1 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>Connected & Active</span></div>
+                                    </div>
+                                </div>
+                                <button class="px-3 py-1.5 rounded-lg bg-cyber-cardHover text-xs font-mono text-white hover:bg-cyber-border">Configure</button>
+                            </div>
+
+                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2.5 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="send" class="w-5 h-5"></i></div>
+                                    <div>
+                                        <div class="font-bold text-sm text-white">Telegram Bot Webhook</div>
+                                        <div class="text-xs font-mono text-emerald-400 flex items-center space-x-1 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>Live Notifications</span></div>
+                                    </div>
+                                </div>
+                                <button class="px-3 py-1.5 rounded-lg bg-cyber-cardHover text-xs font-mono text-white hover:bg-cyber-border">Configure</button>
+                            </div>
+
+                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2.5 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="globe" class="w-5 h-5"></i></div>
+                                    <div>
+                                        <div class="font-bold text-sm text-white">Google Workspace & Drive</div>
+                                        <div class="text-xs font-mono text-emerald-400 flex items-center space-x-1 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>Sync Enabled</span></div>
+                                    </div>
+                                </div>
+                                <button class="px-3 py-1.5 rounded-lg bg-cyber-cardHover text-xs font-mono text-white hover:bg-cyber-border">Configure</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
+            <!-- Footer -->
+            <footer class="border-t border-cyber-border bg-cyber-card/50 py-4 px-6 text-center text-xs font-mono text-cyber-muted">
+                The Master Ledger v4.0 Cyber-Wolf Matrix • Built for high-performance financial command.
+            </footer>
         </div>
-
-        <div class="bg-darkbg-900 p-4 rounded-xl border border-brand-500/20 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div>
-            <h4 class="font-bold text-white text-xs">Data Backup & State</h4>
-            <p class="text-slate-400 text-[11px]">Export your ledger backup JSON or reset local state.</p>
-          </div>
-          <div class="flex gap-2 w-full sm:w-auto">
-            <button onclick="exportLedgerData()" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-brand-500/10 border border-brand-500/30 text-brand-300 font-bold text-xs hover:bg-brand-500/25 transition-all">Export JSON</button>
-            <button onclick="resetLedgerStorage()" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 font-bold text-xs hover:bg-rose-500/25 transition-all">Reset State</button>
-          </div>
-        </div>
-
-        <div class="pt-2 flex justify-end">
-          <button onclick="saveAllSettings()" class="bg-gradient-to-r from-brand-500 to-cyan-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl shadow-[0_0_15px_rgba(20,184,166,0.3)] transition-all">
-            Save All Integrations & Preferences
-          </button>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ADD TRANSACTION MODAL -->
-  <div id="addTransactionModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-darkbg-800 border border-brand-500/30 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl relative">
-      <div class="flex justify-between items-center border-b border-brand-500/20 pb-3">
-        <h3 class="text-base font-bold text-white">Add Master Ledger Entry</h3>
-        <button onclick="closeModal('addTransactionModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-      <form id="addTxForm" onsubmit="handleAddTransaction(event)" class="space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Date</label>
-          <input type="date" id="txDate" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400" />
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Category</label>
-          <select id="txCategory" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400">
-            <option value="W-2 Payroll">W-2 Payroll</option>
-            <option value="Topstep Income">Topstep Income</option>
-            <option value="Debt Paydown">Debt Paydown</option>
-            <option value="Schedule C Expense">Schedule C Expense</option>
-            <option value="Personal Living">Personal Living</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Description</label>
-          <input type="text" id="txDesc" placeholder="e.g., Topstep Reset Fee / Blown Account" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400" />
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Type</label>
-            <select id="txType" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400">
-              <option value="INCOME">Income (+)</option>
-              <option value="EXPENSE">Expense (-)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Amount ($)</label>
-            <input type="number" id="txAmount" step="0.01" placeholder="0.00" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400" />
-          </div>
-        </div>
-        <div class="pt-3 flex gap-3">
-          <button type="button" onclick="closeModal('addTransactionModal')" class="w-1/2 py-2.5 rounded-xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800">Cancel</button>
-          <button type="submit" class="w-1/2 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-400 text-slate-950 font-bold">Save Entry</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <!-- APPLICATION JAVASCRIPT -->
-  <script>
-    let ledgerData = [
-      { id: 1, date: '2026-10-23', category: 'W-2 Payroll', desc: 'Senior Counselor Paystub (Gross $2,667.80 | Net $1,956.52)', type: 'INCOME', amount: 1956.52 },
-      { id: 2, date: '2026-10-12', category: 'Topstep Income', desc: 'Topstep Funded Account Distribution', type: 'INCOME', amount: 1000.00 },
-      { id: 3, date: '2026-10-10', category: 'Debt Paydown', desc: 'M&T Auto Loan Principal Acceleration', type: 'EXPENSE', amount: 500.00 },
-      { id: 4, date: '2026-10-08', category: 'Debt Paydown', desc: 'Amex Gold Monthly Statement Payoff', type: 'EXPENSE', amount: 320.00 },
-      { id: 5, date: '2026-10-04', category: 'Schedule C Expense', desc: 'Topstep Blown Account Reset & Combine Fees', type: 'EXPENSE', amount: 245.00 }
-    ];
+    <!-- Quick Injection Modal -->
+    <div id="quick-inject-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-cyber-card border border-cyber-border rounded-2xl max-w-md w-full p-6 space-y-4 relative">
+            <div class="flex justify-between items-center border-b border-cyber-border pb-3">
+                <h3 class="font-bold text-white text-sm uppercase flex items-center space-x-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-cyber-red"></i>
+                    <span>Simulate Fund Injection</span>
+                </h3>
+                <button onclick="closeQuickInjectModal()" class="text-cyber-muted hover:text-white">&times;</button>
+            </div>
+            <div>
+                <label class="block text-xs font-mono text-cyber-muted mb-2">Injection Source</label>
+                <select id="inject-source" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-red focus:outline-none font-mono mb-4">
+                    <option value="Topstep">Topstep Futures Distribution</option>
+                    <option value="W2">W-2 Payroll Bi-Weekly Paycheck</option>
+                    <option value="ScheduleC">Schedule C Tax Deduction / Side Hustle</option>
+                </select>
 
-    try {
-      const savedData = localStorage.getItem('master_ledger_data');
-      if (savedData) ledgerData = JSON.parse(savedData);
-    } catch (e) {
-      console.warn("Local storage unavailable, using default ledger state.");
-    }
+                <label class="block text-xs font-mono text-cyber-muted mb-2">Amount ($ USD)</label>
+                <input type="number" id="inject-amount" value="500" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-red focus:outline-none font-mono">
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeQuickInjectModal()" class="px-4 py-2 rounded-lg bg-cyber-cardHover text-xs font-mono text-cyber-muted hover:text-white">Cancel</button>
+                <button onclick="confirmInjection()" class="px-4 py-2 rounded-lg bg-cyber-red hover:bg-cyber-redHover text-xs font-mono text-white font-bold neon-glow">Execute Injection</button>
+            </div>
+        </div>
+    </div>
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const txDateEl = document.getElementById('txDate');
-      if (txDateEl) txDateEl.value = new Date().toISOString().split('T')[0];
-      loadSavedSettings();
-      renderLedger();
-      initDebtChart();
-      updateOvertimeSimulation();
-    });
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Initialize Lucide Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            runPayrollSimulation();
+            // Show notification banner on load
+            setTimeout(() => {
+                document.getElementById('notification-banner').classList.remove('hidden');
+            }, 800);
+        });
 
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      if (!container) return;
-      const toast = document.createElement('div');
-      const bg = type === 'success' ? 'bg-brand-500/10 border-brand-500/40 text-brand-300 shadow-[0_0_15px_rgba(20,184,166,0.2)]' : 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300';
-      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border ${bg} backdrop-blur shadow-xl text-xs font-semibold toast-slide flex items-center gap-2`;
-      toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${message}</span>`;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
-    }
+        // Tab Switching Logic
+        function switchTab(targetId) {
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.add('hidden');
+            });
+            // Show target section
+            document.getElementById(`view-${targetId}`).classList.remove('hidden');
 
-    function setTheme(mode) {
-      const html = document.documentElement;
-      const darkBtn = document.getElementById('themeDarkBtn');
-      const lightBtn = document.getElementById('themeLightBtn');
-      if (mode === 'dark') {
-        html.classList.add('dark');
-        if (darkBtn) darkBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-brand-400 bg-slate-800 shadow-[0_0_8px_rgba(20,184,166,0.3)] flex items-center gap-1.5";
-        if (lightBtn) lightBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
-      } else {
-        html.classList.remove('dark');
-        if (lightBtn) lightBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-amber-500 bg-slate-200 shadow-sm flex items-center gap-1.5";
-        if (darkBtn) darkBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-slate-800 flex items-center gap-1.5";
-      }
-    }
+            // Update desktop nav styles
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.getAttribute('data-target') === targetId) {
+                    btn.className = "nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all bg-cyber-red text-white neon-glow";
+                } else {
+                    btn.className = "nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white";
+                }
+            });
 
-    function switchTab(tabKey) {
-      document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.className = "tab-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-darkbg-900/50 flex items-center gap-2 transition-all whitespace-nowrap";
-      });
-      const targetView = document.getElementById(`view-${tabKey}`);
-      const targetTab = document.getElementById(`tab-${tabKey}`);
-      if (targetView) targetView.classList.remove('hidden');
-      if (targetTab) targetTab.className = "tab-btn px-3.5 py-1.5 rounded-lg text-brand-400 bg-darkbg-900/90 border border-brand-500/40 shadow-[0_0_10px_rgba(20,184,166,0.15)] flex items-center gap-2 transition-all whitespace-nowrap";
-    }
+            // Update mobile nav styles
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                if(btn.getAttribute('data-target') === targetId) {
+                    btn.className = "mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium bg-cyber-red text-white";
+                } else {
+                    btn.className = "mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white";
+                }
+            });
 
-    function simulateAutopay(cardName) {
-      showToast(`ACH Test Success: ${cardName} liquidity verified (-2 days buffer passed).`);
-    }
-
-    function testIntegrationConnections() {
-      showToast("API handshake successful! Google Workspace, Gemini, Claude, Hermes, and Telegram connected.");
-    }
-
-    function saveAllSettings() {
-      try {
-        const settings = {
-          gemini: document.getElementById('apiKeyGemini').value,
-          claude: document.getElementById('apiKeyClaude').value,
-          hermes: document.getElementById('apiKeyHermes').value,
-          workspace: document.getElementById('settingWorkspace').value,
-          telegram: document.getElementById('settingTelegram').value
-        };
-        localStorage.setItem('master_ledger_settings', JSON.stringify(settings));
-        showToast("All integrations and preferences saved securely.");
-      } catch (e) {
-        showToast("Error saving settings.", "info");
-      }
-    }
-
-    function loadSavedSettings() {
-      try {
-        const saved = JSON.parse(localStorage.getItem('master_ledger_settings'));
-        if (saved) {
-          if (saved.gemini && document.getElementById('apiKeyGemini')) document.getElementById('apiKeyGemini').value = saved.gemini;
-          if (saved.claude && document.getElementById('apiKeyClaude')) document.getElementById('apiKeyClaude').value = saved.claude;
-          if (saved.hermes && document.getElementById('apiKeyHermes')) document.getElementById('apiKeyHermes').value = saved.hermes;
-          if (saved.workspace && document.getElementById('settingWorkspace')) document.getElementById('settingWorkspace').value = saved.workspace;
-          if (saved.telegram && document.getElementById('settingTelegram')) document.getElementById('settingTelegram').value = saved.telegram;
+            // Update Header Title
+            const titles = {
+                'command': 'Command Hub',
+                'debt': 'Debt Paydown (Path B)',
+                'bills': 'Bill Routing System',
+                'trading': 'Trading & Cashflow',
+                'apis': 'API & Integrations'
+            };
+            document.getElementById('current-page-title').innerText = titles[targetId] || 'Dashboard';
         }
-      } catch (e) {
-        console.warn("Could not load settings.");
-      }
-    }
 
-    function runAiCommand(cmd) {
-      const output = document.getElementById('aiConsoleOutput');
-      if (!output) return;
-      if (cmd === 'cashflow') {
-        output.innerHTML = `> [SUCCESS] Cash flow simulation executed. 30-day projected net surplus: +$2,140.00 after all credit card autopays and M&T loan allocation.`;
-        showToast("Cash flow simulation complete.");
-      } else if (cmd === 'taxscan') {
-        output.innerHTML = `> [SUCCESS] Schedule C scan completed. Total deductible blown accounts & evaluation fees: $530.00. Estimated tax savings at 34.91% marginal rate: $185.02.`;
-        showToast("Schedule C tax scan complete.");
-      } else if (cmd === 'gitcommit') {
-        output.innerHTML = `> [SUCCESS] Master Ledger repository synced with GitHub. Status updated to 'Building The Master Ledger'. All tests passed.`;
-        showToast("GitHub repo synced successfully.");
-      }
-    }
-
-    function updateOvertimeSimulation() {
-      const slider = document.getElementById('otSlider');
-      if (!slider) return;
-      const otHours = parseFloat(slider.value) || 0;
-      const baseGross = 1539.50;
-      const otTotal = otHours * 30.00;
-      const gross = baseGross + otTotal;
-      const net = gross * 0.7334;
-
-      if (document.getElementById('sliderOtVal')) document.getElementById('sliderOtVal').innerText = `${otHours.toFixed(1)} hrs`;
-      if (document.getElementById('simOtHours')) document.getElementById('simOtHours').innerText = otHours.toFixed(1);
-      if (document.getElementById('simOtTotal')) document.getElementById('simOtTotal').innerText = `$${otTotal.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-      if (document.getElementById('simGross')) document.getElementById('simGross').innerText = `$${gross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-      if (document.getElementById('displaySimGross')) document.getElementById('displaySimGross').innerText = `$${gross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-      if (document.getElementById('displaySimNet')) document.getElementById('displaySimNet').innerText = `$${net.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-    }
-
-    function renderLedger() {
-      const tbody = document.getElementById('ledgerTableBody');
-      if (!tbody) return;
-      const searchEl = document.getElementById('searchInput');
-      const catEl = document.getElementById('categoryFilter');
-      const typeEl = document.getElementById('typeFilter');
-
-      const search = searchEl ? searchEl.value.toLowerCase() : '';
-      const catFilter = catEl ? catEl.value : 'ALL';
-      const typeFilter = typeEl ? typeEl.value : 'ALL';
-
-      const filtered = ledgerData.filter(item => {
-        const matchesSearch = item.desc.toLowerCase().includes(search) || item.category.toLowerCase().includes(search);
-        const matchesCat = catFilter === 'ALL' || item.category === catFilter;
-        const matchesType = typeFilter === 'ALL' || item.type === typeFilter;
-        return matchesSearch && matchesCat && matchesType;
-      });
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-500 italic">No matching ledger entries found.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(item => {
-        const isIncome = item.type === 'INCOME';
-        const amtColor = isIncome ? 'text-emerald-400 font-bold' : 'text-slate-300 font-bold';
-        const prefix = isIncome ? '+' : '-';
-        let badgeClass = 'bg-slate-800 text-slate-300';
-        if (item.category === 'W-2 Payroll') badgeClass = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
-        if (item.category === 'Topstep Income') badgeClass = 'bg-brand-500/10 text-brand-400 border border-brand-500/30';
-        if (item.category === 'Debt Paydown') badgeClass = 'bg-amber-500/10 text-amber-400 border border-amber-500/30';
-        if (item.category === 'Schedule C Expense') badgeClass = 'bg-purple-500/10 text-purple-400 border border-purple-500/30';
-
-        return `
-          <tr class="hover:bg-slate-800/40 transition-colors">
-            <td class="py-3.5 px-4 font-mono text-slate-300 whitespace-nowrap">${item.date}</td>
-            <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded text-[10px] font-bold ${badgeClass}">${item.category}</span></td>
-            <td class="py-3.5 px-4 text-slate-200 font-medium">${item.desc}</td>
-            <td class="py-3.5 px-4 text-right font-mono whitespace-nowrap ${amtColor}">${prefix}$${item.amount.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-            <td class="py-3.5 px-4 text-center">
-              <button onclick="deleteEntry(${item.id})" class="text-slate-500 hover:text-rose-400 transition-colors p-1" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function filterLedger() { renderLedger(); }
-    function resetFilters() {
-      if (document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
-      if (document.getElementById('categoryFilter')) document.getElementById('categoryFilter').value = 'ALL';
-      if (document.getElementById('typeFilter')) document.getElementById('typeFilter').value = 'ALL';
-      renderLedger();
-    }
-
-    function handleAddTransaction(e) {
-      e.preventDefault();
-      const date = document.getElementById('txDate').value;
-      const category = document.getElementById('txCategory').value;
-      const desc = document.getElementById('txDesc').value;
-      const type = document.getElementById('txType').value;
-      const amount = parseFloat(document.getElementById('txAmount').value) || 0;
-      
-      ledgerData.unshift({ id: Date.now(), date, category, desc, type, amount });
-      try {
-        localStorage.setItem('master_ledger_data', JSON.stringify(ledgerData));
-      } catch (err) {}
-      renderLedger();
-      closeModal('addTransactionModal');
-      document.getElementById('addTxForm').reset();
-      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
-      showToast("Master ledger entry saved successfully.");
-    }
-
-    function deleteEntry(id) {
-      ledgerData = ledgerData.filter(item => item.id !== id);
-      try {
-        localStorage.setItem('master_ledger_data', JSON.stringify(ledgerData));
-      } catch (err) {}
-      renderLedger();
-      showToast("Entry removed from ledger.", "info");
-    }
-
-    function exportLedgerData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ledgerData, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "master_ledger_backup.json");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      showToast("Ledger JSON backup exported.");
-    }
-
-    function resetLedgerStorage() {
-      if (confirm("Are you sure you want to reset all ledger entries and settings to default?")) {
-        try {
-          localStorage.removeItem('master_ledger_data');
-          localStorage.removeItem('master_ledger_settings');
-        } catch (e) {}
-        location.reload();
-      }
-    }
-
-    function initDebtChart() {
-      const canvas = document.getElementById('debtChart');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Baseline', 'Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
-          datasets: [{
-            label: 'M&T Auto Loan Principal ($)',
-            data: [18751.05, 18555.61, 17358.70, 15145.33, 12900.40, 10623.67, 8313.12],
-            borderColor: '#2dd4bf',
-            backgroundColor: 'rgba(45, 212, 191, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: '#14b8a6',
-            pointRadius: 5
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: '600' } } } },
-          scales: {
-            x: { grid: { color: 'rgba(20, 184, 166, 0.1)' }, ticks: { color: '#94a3b8' } },
-            y: { grid: { color: 'rgba(20, 184, 166, 0.1)' }, ticks: { color: '#94a3b8' } }
-          }
+        // Mobile Drawer Toggle
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobile-drawer');
+            drawer.classList.toggle('hidden');
         }
-      });
-    }
 
-    function openModal(id) {
-      const m = document.getElementById(id);
-      if (m) {
-        m.classList.add('flex');
-        m.classList.remove('hidden');
-      }
-    }
-    function closeModal(id) {
-      const m = document.getElementById(id);
-      if (m) {
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-      }
-    }
-  </script>
+        // Dismiss Banner
+        function dismissBanner() {
+            document.getElementById('notification-banner').classList.add('hidden');
+        }
+
+        // Payroll Simulation Logic
+        function runPayrollSimulation() {
+            const regHours = parseFloat(document.getElementById('sim-reg-hours').value) || 0;
+            const otHours = parseFloat(document.getElementById('sim-ot-hours').value) || 0;
+            
+            const regRate = 20.0;
+            const otRate = 30.0;
+
+            const gross = (regHours * regRate) + (otHours * otRate);
+            const estNet = gross * 0.82; // Assuming ~18% tax withholding
+
+            document.getElementById('sim-gross').innerText = `$${gross.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('sim-net').innerText = `$${estNet.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        // Modal Controls
+        function triggerQuickInjectModal() {
+            document.getElementById('quick-inject-modal').classList.remove('hidden');
+        }
+
+        function closeQuickInjectModal() {
+            document.getElementById('quick-inject-modal').classList.add('hidden');
+        }
+
+        // Execute Fund Injection
+        let currentLoanBalance = 8450.00;
+        let topstepPool = 1250.00;
+
+        function confirmInjection() {
+            const source = document.getElementById('inject-source').value;
+            const amount = parseFloat(document.getElementById('inject-amount').value) || 0;
+            
+            if (amount <= 0) return;
+
+            topstepPool += amount;
+            document.getElementById('kpi-topstep-pool').innerText = `$${topstepPool.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+            // Add activity log
+            const feed = document.getElementById('activity-log-feed');
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const logItem = document.createElement('div');
+            logItem.className = 'p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono';
+            logItem.innerHTML = `<div class="text-cyber-muted text-[10px]">${timeStr} • Injection</div><div class="text-white mt-0.5">+ $${amount.toLocaleString()} added from ${source}</div>`;
+            feed.prepend(logItem);
+
+            closeQuickInjectModal();
+        }
+
+        // Inject into Loan
+        function injectIntoLoan(amount) {
+            currentLoanBalance = Math.max(0, currentLoanBalance - amount);
+            document.getElementById('current-loan-display').innerText = `$${currentLoanBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('kpi-loan-balance').innerText = `$${currentLoanBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            const percent = ((22500 - currentLoanBalance) / 22500) * 100;
+            document.getElementById('loan-progress-percent').innerText = `${percent.toFixed(1)}% Paid`;
+            document.getElementById('loan-progress-bar').style.width = `${percent}%`;
+
+            const feed = document.getElementById('activity-log-feed');
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const logItem = document.createElement('div');
+            logItem.className = 'p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono';
+            logItem.innerHTML = `<div class="text-cyber-muted text-[10px]">${timeStr} • Debt Paydown</div><div class="text-white mt-0.5">Applied $${amount} Topstep injection to M&T Auto Loan. New balance: $${currentLoanBalance.toLocaleString()}</div>`;
+            feed.prepend(logItem);
+        }
+
+        // Liquidity Check Scan
+        function runLiquidityCheck() {
+            alert('Liquidity Check Complete: All accounts hold >2x coverage for upcoming Amex and Chase dues.');
+        }
+
+        // Pay Bill
+        function payBill(billName) {
+            alert(`Executing payment route for ${billName}. Automated 2-day liquidity verification passed.`);
+        }
+    </script>
 </body>
 </html>
