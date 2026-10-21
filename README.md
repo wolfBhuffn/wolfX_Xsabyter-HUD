@@ -109,8 +109,3 @@ Developed for wolfX_Xsabyter / NEXUS Operations.
 
 ---
 
-### What's Next?
-* Would you like to wire this up to real WebSockets for your **PineScript / TradingView webhooks**?
-* Should we expand the **TikTok Shop product tracker** with automated inventory alerting?
-* Do you want to add a direct download button for the generated carousel images?
-
