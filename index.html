@@ -240,29 +240,23 @@
                         <!-- Glowing Grid Backdrop -->
                         <div class="absolute inset-0 bg-[radial-gradient(#C51F30_1px,transparent_1px)] [background-size:16px_16px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
                         
-                        <!-- DYNAMIC SVG AVATAR -->
-                        <svg id="avatarSvg" class="w-64 h-64 transition-all duration-700 transform" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Background Aura -->
-                            <circle cx="150" cy="150" r="110" fill="#090909" stroke="#77736D" stroke-width="1" stroke-dasharray="4 4" />
-                            <circle id="svgTargetRing" cx="150" cy="150" r="125" stroke="#D69A42" stroke-width="1" opacity="0.4" />
+    <!-- INTERACTIVE 3D AVATAR WITH BIONIC CRIMSON EYE -->
+    <div class="avatar-3d-wrapper" id="avatar3D">
+      <div class="avatar-3d-card">
+        <!-- Front Face -->
+        <div class="avatar-face avatar-front">
+          <img src="3dfrontal.png" alt="Black Cyber Wolf Avatar Front" />
+          <div class="bionic-eye-glow"></div>
+          <div class="laser-beam"></div>
+        </div>
+        <!-- Back Face -->
+        <div class="avatar-face avatar-back">
+          <img src="1E9F0964-8AF5-40C4-B71F-B94C3C2DCE06.png" alt="Black Cyber Wolf Avatar Angle" />
+          <div class="bionic-eye-glow"></div>
+        </div>
+      </div>
+    </div>
 
-                            <!-- GROUP: SHEEP DISGUISE HOODIE (Visible in Disguise Mode) -->
-                            <g id="svgSheepDisguise" class="transition-all duration-700 opacity-100 scale-100 origin-center">
-                                <!-- Plush Fleece Hood Outline -->
-                                <path d="M70,160 C60,110 90,60 150,60 C210,60 240,110 230,160 C220,200 210,230 150,240 C90,230 80,200 70,160 Z" fill="#E8DFC9" stroke="#77736D" stroke-width="3"/>
-                                <!-- Fleece Puffs / Texture -->
-                                <circle cx="90" cy="90" r="18" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
-                                <circle cx="120" cy="70" r="20" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
-                                <circle cx="150" cy="65" r="22" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
-                                <circle cx="180" cy="70" r="20" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
-                                <circle cx="210" cy="90" r="18" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
-                                <circle cx="75" cy="120" r="16" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
-                                <circle cx="225" cy="120" r="16" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
-                                <!-- Zipper Track -->
-                                <path d="M150,130 L150,235" stroke="#090909" stroke-width="4" stroke-dasharray="3 3"/>
-                                <!-- Zipper Pull -->
-                                <rect x="145" y="150" width="10" height="15" rx="2" fill="#D69A42"/>
-                            </g>
 
                             <!-- GROUP: BLACK WOLF HEAD (Embedded inside hood or unveiled) -->
                             <g id="svgWolfHead" class="transition-all duration-700">
