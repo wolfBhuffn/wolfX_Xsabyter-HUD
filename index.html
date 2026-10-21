@@ -45,8 +45,8 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-    ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.8); }
+    ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.9); border-radius: 4px; }
   </style>
 </head>
 <body class="bg-darkbg-900 text-slate-100 min-h-screen transition-colors duration-200 antialiased selection:bg-brand-500 selection:text-white">
@@ -93,13 +93,13 @@
   </header>
 
   <!-- NAVIGATION TABS -->
-  <div class="bg-darkbg-800/50 border-b border-slate-800/80 px-4 lg:px-8">
+  <div class="bg-darkbg-800/80 border-b border-slate-800 px-4 lg:px-8">
     <div class="max-w-7xl mx-auto flex space-x-2 md:space-x-6 overflow-x-auto py-2.5 text-xs md:text-sm font-semibold">
       <button onclick="switchTab('ledger')" id="tab-ledger" class="tab-btn px-3 py-1.5 rounded-lg text-brand-400 bg-slate-800/90 border border-brand-500/30 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-list-check"></i> Master Ledger
+        <i class="fa-solid fa-list-check"></i> Master Ledger Tab
       </button>
       <button onclick="switchTab('pay')" id="tab-pay" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-calculator"></i> Pay Rate ($20/hr) & Paystub
+        <i class="fa-solid fa-calculator"></i> Pay Rate ($20/hr) & Net Paycheck
       </button>
       <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
         <i class="fa-solid fa-chart-line"></i> Auto Loan Acceleration (Path B)
@@ -117,44 +117,44 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       
       <!-- Base Hourly Rate -->
-      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden group hover:border-slate-700 transition-all">
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden group hover:border-slate-700 transition-all">
         <div class="flex justify-between items-start">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Base Hourly Rate</span>
           <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">Senior Counselor</span>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-          <span class="text-2xl lg:text-3xl font-black mono text-white" id="displayBaseRate">$20.00</span>
+          <span class="text-2xl lg:text-3xl font-black mono text-white">$20.00</span>
           <span class="text-xs text-slate-400 font-semibold">/hr</span>
         </div>
-        <p class="mt-1 text-xs text-slate-400 font-medium">Blended Gross: <span class="text-slate-200 font-bold mono">$2,667.80</span></p>
+        <p class="mt-1 text-xs text-slate-400 font-medium">Overtime Rate: <span class="text-slate-200 font-bold mono">$30.00/hr</span></p>
         <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
           <div class="h-full bg-brand-400 rounded-full" style="width: 100%"></div>
         </div>
       </div>
 
-      <!-- Verified Net Take-Home Check -->
-      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden group hover:border-slate-700 transition-all">
+      <!-- Expected Take-Home Paycheck -->
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden group hover:border-slate-700 transition-all">
         <div class="flex justify-between items-start">
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Verified Paystub Net</span>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">10/23/2026 Pay Date</span>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Expected Take-Home Check</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Verified Net Pay</span>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-          <span class="text-2xl lg:text-3xl font-black mono text-emerald-400" id="displayNetTakehome">$1,956.52</span>
+          <span class="text-2xl lg:text-3xl font-black mono text-emerald-400">$1,956.52</span>
         </div>
-        <p class="mt-1 text-xs text-slate-400 font-medium">Chase ($956.52) | Amex ($1,000.00)</p>
+        <p class="mt-1 text-xs text-slate-400 font-medium">Gross: <span class="text-slate-200 font-bold mono">$2,667.80</span></p>
         <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
           <div class="h-full bg-emerald-400 rounded-full" style="width: 95%"></div>
         </div>
       </div>
 
       <!-- Auto Loan Balance -->
-      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden group hover:border-slate-700 transition-all">
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden group hover:border-slate-700 transition-all">
         <div class="flex justify-between items-start">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">M&T Auto Loan Principal</span>
           <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Path B</span>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-          <span class="text-2xl lg:text-3xl font-black mono text-amber-400" id="displayAutoLoan">$18,751.05</span>
+          <span class="text-2xl lg:text-3xl font-black mono text-amber-400">$18,751.05</span>
         </div>
         <p class="mt-1 text-xs text-slate-400 font-medium">Topstep 50% Injection: <span class="text-amber-300 font-bold mono">+$1,000/mo</span></p>
         <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
@@ -163,13 +163,13 @@
       </div>
 
       <!-- Liquid Reserve -->
-      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden group hover:border-slate-700 transition-all">
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden group hover:border-slate-700 transition-all">
         <div class="flex justify-between items-start">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Liquid System Reserve</span>
           <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Solvent</span>
         </div>
         <div class="mt-2 flex items-baseline gap-2">
-          <span class="text-2xl lg:text-3xl font-black mono text-cyan-400" id="displayLiquidReserve">$4,458.12</span>
+          <span class="text-2xl lg:text-3xl font-black mono text-cyan-400">$4,458.12</span>
         </div>
         <p class="mt-1 text-xs text-slate-400 font-medium">Unencumbered Buffer Protected</p>
         <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
@@ -182,7 +182,7 @@
     <!-- TAB 1: MASTER LEDGER TRANSACTIONS -->
     <section id="view-ledger" class="tab-view space-y-4">
       <!-- Search & Filters -->
-      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
         <div class="relative w-full md:w-96">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
           <input type="text" id="searchInput" oninput="filterLedger()" placeholder="Search transactions, categories, notes..." class="w-full bg-darkbg-900 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors" />
@@ -215,7 +215,7 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-darkbg-900/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <tr class="bg-darkbg-900/90 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 <th class="py-3.5 px-4 whitespace-nowrap min-w-[110px]">Date</th>
                 <th class="py-3.5 px-4 whitespace-nowrap">Category</th>
                 <th class="py-3.5 px-4 whitespace-nowrap">Transaction / Description</th>
@@ -231,26 +231,26 @@
       </div>
     </section>
 
-    <!-- TAB 2: PAY RATE & PAYSTUB BREAKDOWN -->
+    <!-- TAB 2: PAY RATE & PAYSTUB NET PAYCHECK -->
     <section id="view-pay" class="tab-view space-y-6 hidden">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- Paystub Summary Breakdown -->
+        <!-- Paystub Breakdown Card -->
         <div class="lg:col-span-1 bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
           <div class="border-b border-slate-700/60 pb-3">
             <h2 class="text-base font-bold text-white flex items-center gap-2">
               <i class="fa-solid fa-file-invoice-dollar text-brand-400"></i> Verified Paystub (10/23)
             </h2>
-            <p class="text-xs text-slate-400">Pay Period: 10/4 - 10/17 | Senior Counselor</p>
+            <p class="text-xs text-slate-400">Pay Rate: $20.00/hr | Senior Counselor</p>
           </div>
 
           <div class="space-y-3 font-mono text-xs">
             <div class="flex justify-between p-2.5 rounded-xl bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-400">Regular Pay (80h)</span>
+              <span class="text-slate-400">Regular Pay (80h @ $20)</span>
               <span class="text-white font-bold">$1,539.50</span>
             </div>
             <div class="flex justify-between p-2.5 rounded-xl bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-400">Overtime (37.61h)</span>
+              <span class="text-slate-400">Overtime (37.61h @ $30)</span>
               <span class="text-brand-400 font-bold">$1,128.30</span>
             </div>
             <div class="flex justify-between p-2.5 rounded-xl bg-darkbg-900 border border-slate-800">
@@ -266,22 +266,22 @@
               <span class="text-amber-400 font-bold">-$310.75</span>
             </div>
             <div class="flex justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm">
-              <span class="text-emerald-300 font-bold font-sans">Net Take-Home</span>
+              <span class="text-emerald-300 font-bold font-sans">Net Take-Home Paycheck</span>
               <span class="text-emerald-400 font-black">$1,956.52</span>
             </div>
           </div>
         </div>
 
-        <!-- Direct Deposit Allocation & Detailed Tax Breakdown -->
+        <!-- Direct Deposit & Tax Split Details -->
         <div class="lg:col-span-2 bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-5 shadow-xl flex flex-col justify-between">
           <div>
             <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
               <div>
-                <h2 class="text-base font-bold text-white">Direct Deposit & Tax Distribution</h2>
-                <p class="text-xs text-slate-400">Verified Paycom check disbursement details</p>
+                <h2 class="text-base font-bold text-white">Direct Deposit & Tax Itemization</h2>
+                <p class="text-xs text-slate-400">Paycom Check Disbursement Details</p>
               </div>
               <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                Approved
+                Verified
               </span>
             </div>
 
@@ -289,18 +289,18 @@
               <div class="bg-darkbg-900 p-4 rounded-xl border border-slate-800 space-y-1">
                 <span class="text-[11px] text-slate-400 font-medium uppercase block">Chase Net Check (2156)</span>
                 <span class="text-xl font-extrabold text-white mono">$956.52</span>
-                <p class="text-[11px] text-slate-400">Standard checking deposit</p>
+                <p class="text-[11px] text-slate-400">Standard direct deposit checking</p>
               </div>
               <div class="bg-darkbg-900 p-4 rounded-xl border border-slate-800 space-y-1">
                 <span class="text-[11px] text-slate-400 font-medium uppercase block">American Express (2982)</span>
                 <span class="text-xl font-extrabold text-brand-400 mono">$1,000.00</span>
-                <p class="text-[11px] text-slate-400">One-time direct deposit</p>
+                <p class="text-[11px] text-slate-400">One-time direct deposit distribution</p>
               </div>
             </div>
 
-            <!-- Tax Items Grid -->
+            <!-- Tax Breakdown -->
             <div class="mt-5 space-y-2">
-              <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Tax Itemization ($400.53 Total)</h3>
+              <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Tax Withholdings ($400.53 Total)</h3>
               <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
                 <div class="bg-darkbg-900 p-2.5 rounded-lg border border-slate-800">
                   <span class="text-slate-400 block text-[10px]">Federal W/H (FWT)</span>
@@ -329,7 +329,7 @@
           <div class="bg-slate-900/80 p-4 rounded-xl border border-brand-500/20 flex items-start gap-3 mt-4">
             <i class="fa-solid fa-circle-info text-brand-400 text-lg mt-0.5"></i>
             <p class="text-xs text-slate-300 leading-relaxed">
-              <strong class="text-white">Pay Rate Update Confirmed:</strong> Your promotion to <strong>Senior Day Services Counselor</strong> at <strong>$20.00/hr</strong> (with 37.61 hours of overtime at $30/hr) resulted in a robust net take-home of <strong>$1,956.52</strong>—providing ample liquidity to accelerate your M&T auto loan and fund maintenance.
+              <strong class="text-white">Pay Rate Update Active:</strong> Your <strong>$20.00/hr</strong> pay rate and expected take-home paycheck of <strong>$1,956.52</strong> are locked into the system, perfectly funding your monthly vehicle acceleration and system operations.
             </p>
           </div>
         </div>
@@ -355,7 +355,7 @@
         </div>
 
         <!-- Payoff Chart -->
-        <div class="h-64 w-full bg-darkbg-900/60 p-4 rounded-xl border border-slate-800">
+        <div class="h-64 w-full bg-darkbg-900/80 p-4 rounded-xl border border-slate-800">
           <canvas id="debtChart"></canvas>
         </div>
 
@@ -365,7 +365,7 @@
             <thead>
               <tr class="bg-darkbg-900 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase">
                 <th class="py-3 px-4">Timeline</th>
-                <th class="py-3 px-4">Est. W-2 Net Check</th>
+                <th class="py-3 px-4">Net Check (Take-Home)</th>
                 <th class="py-3 px-4 text-emerald-400">Topstep Principal Injection</th>
                 <th class="py-3 px-4 text-amber-400">M&T Principal Balance</th>
                 <th class="py-3 px-4 text-cyan-400">Ending Liquid Cash</th>
@@ -581,9 +581,8 @@
 
   <!-- APPLICATION JAVASCRIPT -->
   <script>
-    // INITIAL LEDGER DATA WITH VERIFIED PAYSTUB
     let ledgerData = [
-      { id: 1, date: '2026-10-23', category: 'W-2 Payroll', desc: 'Senior Counselor Paystub (Gross $2,667.80 | Net $1,956.52)', type: 'INCOME', amount: 1956.52 },
+      { id: 1, date: '2026-10-23', category: 'W-2 Payroll', desc: 'Senior Counselor Paystub ($20/hr | Net $1,956.52)', type: 'INCOME', amount: 1956.52 },
       { id: 2, date: '2026-10-12', category: 'Topstep Income', desc: 'Topstep Funded Account Distribution', type: 'INCOME', amount: 1000.00 },
       { id: 3, date: '2026-10-10', category: 'Debt Paydown', desc: 'M&T Auto Loan Principal Acceleration', type: 'EXPENSE', amount: 500.00 },
       { id: 4, date: '2026-10-08', category: 'Debt Paydown', desc: 'Amex Gold Monthly Statement Payoff', type: 'EXPENSE', amount: 320.00 },
