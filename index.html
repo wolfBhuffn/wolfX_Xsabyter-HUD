@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#070a10] text-slate-200">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>wolfX_Xsabyter HUD | 2026-2027 Life & Command OS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        hud: {
+                            bg: '#070a10',
+                            panel: '#0d1322',
+                            border: '#1e293b',
+                            cyan: '#00f0ff',
+                            gold: '#ffb700',
+                            red: '#ff0055',
+                            green: '#00ff66',
+                            purple: '#a855f7'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'Courier New', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Custom HUD Visual FX */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #070a10;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .hud-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .hud-card {
+            background: rgba(13, 19, 34, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+        }
+
+        .hud-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.6), transparent);
+        }
+
+        .hud-card-amber {
+            border-color: rgba(255, 183, 0, 0.25);
+        }
+        .hud-card-amber::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 183, 0, 0.6), transparent);
+        }
+
+        .glow-cyan { text-shadow: 0 0 10px rgba(0, 240, 255, 0.6); }
+        .glow-gold { text-shadow: 0 0 10px rgba(255, 183, 0, 0.6); }
+        .glow-red { text-shadow: 0 0 10px rgba(255, 0, 85, 0.6); }
+
+        .box-glow-cyan { box-shadow: 0 0 15px rgba(0, 240, 255, 0.25); }
+        .box-glow-gold { box-shadow: 0 0 15px rgba(255, 183, 0, 0.25); }
+
+        /* Scanline Overlay */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 99;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Pulse radar animation */
+        @keyframes radar-sweep {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .radar-sweep {
+            animation: radar-sweep 4s linear infinite;
+        }
+
+        /* Terminal Cursor Blink */
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .animate-blink { animation: blink 1s infinite; }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(7, 10, 16, 0.8); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.3); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.6); }
+    </style>
+</head>
+<body class="min-h-full flex flex-col pb-16 md:pb-6 select-none">
+    <div class="scanline"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="max-w-[1600px] w-full mx-auto px-2 sm:px-4 py-3 flex-1 flex flex-col gap-4">
+
+        <!-- ================= 1. SYSTEM STATUS HEADER & HUD BANNER ================= -->
+        <header class="hud-card rounded-lg p-3 sm:p-4 flex flex-col md:flex-row justify-between items-center gap-3">
+            <!-- Left: Identity & Core Status -->
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="relative flex items-center justify-center w-12 h-12 rounded-lg bg-slate-900 border border-hud-cyan/40">
+                    <i class="fa-solid fa-wolf-pack-battalion text-2xl text-hud-cyan glow-cyan"></i>
+                    <span class="absolute -bottom-1 -right-1 flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-hud-cyan opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-hud-cyan"></span>
+                    </span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-extrabold tracking-wider text-lg sm:text-xl text-white hud-mono">
+                            wolfX_Xsabyter<span class="text-hud-cyan">.HUD</span>
+                        </h1>
+                        <span class="text-[10px] bg-hud-cyan/10 border border-hud-cyan/30 text-hud-cyan px-2 py-0.5 rounded hud-mono font-bold">
+                            v2026.4
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs text-slate-400 hud-mono mt-0.5">
+                        <span class="flex items-center gap-1">
+                            <i class="fa-solid fa-shield-halved text-hud-green"></i> GHOST PROTOCOL ONLINE
+                        </span>
+                        <span class="hidden sm:inline text-slate-600">|</span>
+                        <span class="hidden sm:inline text-slate-400">ID: wolfBhuffn-91</span>
+                    </div>
+                </div>
+
+                <!-- Mute & FX Toggle (Mobile View Top-Right) -->
+                <div class="flex md:hidden items-center gap-2">
+                    <button id="audioToggleBtnMobile" onclick="toggleAudio()" class="p-2 rounded bg-slate-900 border border-slate-700 text-slate-300 hover:text-hud-cyan">
+                        <i class="fa-solid fa-volume-xmark" id="audioIconMobile"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Center: CPU & Telemetry Counters -->
+            <div class="grid grid-cols-3 gap-2 w-full md:w-auto max-w-xs sm:max-w-md text-center hud-mono">
+                <div class="p-1.5 rounded bg-slate-900/60 border border-slate-800">
+                    <div class="text-[10px] text-slate-400">CORE LOAD</div>
+                    <div class="text-sm font-bold text-hud-cyan flex items-center justify-center gap-1">
+                        <span id="cpuVal">24</span>%
+                    </div>
+                    <svg class="w-full h-3 mt-1 stroke-hud-cyan fill-none" viewBox="0 0 50 10">
+                        <path id="cpuPath" d="M0 5 Q 12.5 0, 25 5 T 50 5" stroke-width="1.5" />
+                    </svg>
+                </div>
+                <div class="p-1.5 rounded bg-slate-900/60 border border-slate-800">
+                    <div class="text-[10px] text-slate-400">RAM MEMORY</div>
+                    <div class="text-sm font-bold text-hud-gold flex items-center justify-center gap-1">
+                        <span id="ramVal">4.2</span> GB
+                    </div>
+                    <svg class="w-full h-3 mt-1 stroke-hud-gold fill-none" viewBox="0 0 50 10">
+                        <path id="ramPath" d="M0 5 Q 12.5 10, 25 5 T 50 5" stroke-width="1.5" />
+                    </svg>
+                </div>
+                <div class="p-1.5 rounded bg-slate-900/60 border border-slate-800">
+                    <div class="text-[10px] text-slate-400">LATENCY</div>
+                    <div class="text-sm font-bold text-hud-green flex items-center justify-center gap-1">
+                        <span id="pingVal">18</span> ms
+                    </div>
+                    <div class="w-full bg-slate-800 h-1.5 mt-2 rounded-full overflow-hidden">
+                        <div class="bg-hud-green h-full w-3/4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Clock & Audio Toggle -->
+            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-slate-800/80 pt-2 md:pt-0">
+                <div class="text-left md:text-right hud-mono">
+                    <div id="liveClock" class="text-lg font-black text-white glow-cyan tracking-wider">
+                        00:00:00 EST
+                    </div>
+                    <div id="liveDate" class="text-xs text-slate-400">
+                        2026-10-20
+                    </div>
+                </div>
+
+                <button id="audioToggleBtn" onclick="toggleAudio()" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-hud-cyan/30 text-hud-cyan hover:bg-hud-cyan/10 transition text-xs hud-mono">
+                    <i class="fa-solid fa-volume-xmark" id="audioIcon"></i>
+                    <span id="audioStatusText">AUDIO: OFF</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- NAVIGATION TABS (Mobile / Desktop View Switcher) -->
+        <nav class="flex items-center gap-1 overflow-x-auto pb-1 border-b border-slate-800/80 hud-mono text-xs">
+            <button onclick="switchTab('all')" id="tab-all" class="tab-btn px-4 py-2 rounded-t-lg bg-hud-cyan/20 border-t-2 border-hud-cyan text-white font-bold flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-border-all"></i> ALL PANELS
+            </button>
+            <button onclick="switchTab('nexus')" id="tab-nexus" class="tab-btn px-4 py-2 rounded-t-lg bg-slate-900/50 border-t-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-microchip text-hud-cyan"></i> NEXUS AGENTS
+            </button>
+            <button onclick="switchTab('trading')" id="tab-trading" class="tab-btn px-4 py-2 rounded-t-lg bg-slate-900/50 border-t-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-chart-line text-hud-green"></i> TRADING MATRIX
+            </button>
+            <button onclick="switchTab('content')" id="tab-content" class="tab-btn px-4 py-2 rounded-t-lg bg-slate-900/50 border-t-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-photo-film text-hud-gold"></i> WOLF SABYTER CAROUSEL
+            </button>
+            <button onclick="switchTab('ledger')" id="tab-ledger" class="tab-btn px-4 py-2 rounded-t-lg bg-slate-900/50 border-t-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-database text-hud-purple"></i> MASTER LEDGER
+            </button>
+        </nav>
+
+        <!-- DASHBOARD GRID CONTENT -->
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1">
+
+            <!-- ================= 2. NEXUS MULTI-AGENT COMMAND CORE (LG: 6 cols) ================= -->
+            <section id="pane-nexus" class="hud-card rounded-lg p-4 lg:col-span-6 flex flex-col gap-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <h2 class="font-bold text-sm text-hud-cyan hud-mono flex items-center gap-2">
+                        <i class="fa-solid fa-network-wired"></i> NEXUS MULTI-AGENT COMMAND CORE
+                    </h2>
+                    <span class="text-[10px] text-slate-400 hud-mono flex items-center gap-1">
+                        <span class="inline-block w-2 h-2 rounded-full bg-hud-green animate-pulse"></span>
+                        OLLAMA / CLAUDE ACTIVE
+                    </span>
+                </div>
+
+                <!-- Agent Status Cards Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs hud-mono">
+                    <div class="p-2 rounded bg-slate-900/80 border border-slate-800 hover:border-hud-cyan/40 transition">
+                        <div class="flex justify-between items-center text-slate-400 mb-1">
+                            <span>EXECUTION</span>
+                            <i class="fa-solid fa-bolt text-hud-cyan"></i>
+                        </div>
+                        <div class="font-bold text-white">READY</div>
+                        <div class="text-[9px] text-slate-500 mt-1">Trading & Hooks</div>
+                    </div>
+
+                    <div class="p-2 rounded bg-slate-900/80 border border-slate-800 hover:border-hud-gold/40 transition">
+                        <div class="flex justify-between items-center text-slate-400 mb-1">
+                            <span>RISK SKEPTIC</span>
+                            <i class="fa-solid fa-shield-cat text-hud-gold"></i>
+                        </div>
+                        <div class="font-bold text-hud-gold">STRICT</div>
+                        <div class="text-[9px] text-slate-500 mt-1">Max Loss Guard</div>
+                    </div>
+
+                    <div class="p-2 rounded bg-slate-900/80 border border-slate-800 hover:border-hud-purple/40 transition">
+                        <div class="flex justify-between items-center text-slate-400 mb-1">
+                            <span>VISIONARY</span>
+                            <i class="fa-solid fa-eye text-hud-purple"></i>
+                        </div>
+                        <div class="font-bold text-hud-purple">STRAT 2027</div>
+                        <div class="text-[9px] text-slate-500 mt-1">Real Estate & Life</div>
+                    </div>
+
+                    <div class="p-2 rounded bg-slate-900/80 border border-slate-800 hover:border-hud-green/40 transition">
+                        <div class="flex justify-between items-center text-slate-400 mb-1">
+                            <span>CONTENT GEN</span>
+                            <i class="fa-solid fa-feather text-hud-green"></i>
+                        </div>
+                        <div class="font-bold text-white">QUEUED</div>
+                        <div class="text-[9px] text-slate-500 mt-1">Faceless TikTok</div>
+                    </div>
+                </div>
+
+                <!-- Interactive Terminal Window -->
+                <div class="flex-1 bg-black/80 rounded border border-slate-800 p-3 flex flex-col font-mono text-xs overflow-hidden min-h-[220px]">
+                    <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-[10px] text-slate-500">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+                            <span class="ml-2 text-slate-400">nexus-agent-cli --session=0x91F</span>
+                        </span>
+                        <button onclick="clearTerminal()" class="hover:text-slate-300"><i class="fa-solid fa-trash-can"></i> CLEAR</button>
+                    </div>
+
+                    <div id="terminalStream" class="flex-1 overflow-y-auto space-y-2 pr-1 text-slate-300 scroll-smooth">
+                        <p class="text-slate-500">[SYSTEM INIT] NEXUS Agents connected via Local Ollama Bridge...</p>
+                        <p class="text-hud-cyan">[EXECUTION AGENT] Monitoring PineScript v6 webhook receiver at endpoint /api/tradingview/v6</p>
+                        <p class="text-hud-gold">[RISK SKEPTIC] Topstep $50K account daily loss limit locked at -$1,000. Current risk buffer: SAFE.</p>
+                        <p class="text-slate-400">[SYSTEM] Type <span class="text-hud-cyan">'help'</span>, <span class="text-hud-cyan">'trade status'</span>, or <span class="text-hud-cyan">'generate quote'</span> to issue agent directives.</p>
+                    </div>
+
+                    <div class="mt-2 pt-2 border-t border-slate-800/80 flex items-center gap-2">
+                        <span class="text-hud-cyan font-bold">&gt;</span>
+                        <input type="text" id="terminalInput" placeholder="Issue NEXUS command..." 
+                               class="flex-1 bg-transparent border-none outline-none text-white font-mono text-xs placeholder:text-slate-600 focus:ring-0"
+                               onkeydown="if(event.key === 'Enter') handleTerminalSubmit()">
+                        <button onclick="handleTerminalSubmit()" class="text-xs px-2.5 py-1 bg-hud-cyan/20 border border-hud-cyan/40 text-hud-cyan hover:bg-hud-cyan/30 rounded">
+                            SEND
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Terminal Action Pills -->
+                <div class="flex items-center gap-2 overflow-x-auto text-[11px] hud-mono pt-1">
+                    <span class="text-slate-500 text-[10px]">QUICK PROMPTS:</span>
+                    <button onclick="runCommand('risk audit')" class="px-2 py-1 rounded bg-slate-900 border border-slate-700 hover:border-hud-cyan text-slate-300 whitespace-nowrap">
+                        /risk-audit
+                    </button>
+                    <button onclick="runCommand('sync workspace')" class="px-2 py-1 rounded bg-slate-900 border border-slate-700 hover:border-hud-cyan text-slate-300 whitespace-nowrap">
+                        /sync-gsuite
+                    </button>
+                    <button onclick="runCommand('topstep status')" class="px-2 py-1 rounded bg-slate-900 border border-slate-700 hover:border-hud-cyan text-slate-300 whitespace-nowrap">
+                        /topstep-check
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================= 3. FUTURES TRADING MONITOR & SIGNAL MATRIX (LG: 6 cols) ================= -->
+            <section id="pane-trading" class="hud-card rounded-lg p-4 lg:col-span-6 flex flex-col gap-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <h2 class="font-bold text-sm text-hud-green hud-mono flex items-center gap-2">
+                        <i class="fa-solid fa-chart-candlestick"></i> FUTURES TRADING & SIGNAL MATRIX
+                    </h2>
+                    <div class="flex items-center gap-2 text-xs hud-mono">
+                        <span class="px-2 py-0.5 rounded bg-hud-green/10 border border-hud-green/30 text-hud-green font-bold">
+                            PINE V6 ACTIVE
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Asset Selector & Price Ticker Row -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs hud-mono">
+                    <div onclick="selectSymbol('NQ')" id="card-NQ" class="p-2 rounded bg-hud-cyan/10 border border-hud-cyan cursor-pointer transition">
+                        <div class="flex justify-between text-[10px] text-slate-400"><span>NQ</span><span>NQ1!</span></div>
+                        <div class="font-bold text-sm text-white" id="price-NQ">20,412.50</div>
+                        <div class="text-[10px] text-hud-green" id="change-NQ">+124.25 (+0.6%)</div>
+                    </div>
+                    <div onclick="selectSymbol('ES')" id="card-ES" class="p-2 rounded bg-slate-900/80 border border-slate-800 cursor-pointer transition hover:border-slate-600">
+                        <div class="flex justify-between text-[10px] text-slate-400"><span>ES</span><span>ES1!</span></div>
+                        <div class="font-bold text-sm text-white" id="price-ES">5,842.25</div>
+                        <div class="text-[10px] text-hud-green" id="change-ES">+18.50 (+0.3%)</div>
+                    </div>
+                    <div onclick="selectSymbol('MNQ')" id="card-MNQ" class="p-2 rounded bg-slate-900/80 border border-slate-800 cursor-pointer transition hover:border-slate-600">
+                        <div class="flex justify-between text-[10px] text-slate-400"><span>MNQ</span><span>MICRO</span></div>
+                        <div class="font-bold text-sm text-white" id="price-MNQ">20,413.00</div>
+                        <div class="text-[10px] text-hud-green" id="change-MNQ">+124.50</div>
+                    </div>
+                    <div onclick="selectSymbol('MES')" id="card-MES" class="p-2 rounded bg-slate-900/80 border border-slate-800 cursor-pointer transition hover:border-slate-600">
+                        <div class="flex justify-between text-[10px] text-slate-400"><span>MES</span><span>MICRO</span></div>
+                        <div class="font-bold text-sm text-white" id="price-MES">5,842.50</div>
+                        <div class="text-[10px] text-hud-green" id="change-MES">+18.75</div>
+                    </div>
+                    <div onclick="selectSymbol('MGC')" id="card-MGC" class="p-2 rounded bg-slate-900/80 border border-slate-800 cursor-pointer transition hover:border-slate-600 col-span-2 sm:col-span-1">
+                        <div class="flex justify-between text-[10px] text-slate-400"><span>MGC</span><span>GOLD</span></div>
+                        <div class="font-bold text-sm text-white" id="price-MGC">2,748.10</div>
+                        <div class="text-[10px] text-hud-gold" id="change-MGC">+12.40 (+0.4%)</div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Chart Canvas Window -->
+                <div class="relative bg-slate-950 rounded border border-slate-800 p-2 flex flex-col h-[200px]">
+                    <div class="flex justify-between items-center text-[11px] hud-mono text-slate-400 px-2 py-1">
+                        <div class="flex items-center gap-2">
+                            <span id="activeChartSymbol" class="font-bold text-hud-cyan text-sm">NQ1! (5M)</span>
+                            <span class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">TS_MTF_MACD</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-hud-green flex items-center gap-1"><i class="fa-solid fa-circle text-[8px]"></i> MTF MACD: BULLISH</span>
+                            <span class="text-slate-500">SPREAD: 0.25</span>
+                        </div>
+                    </div>
+                    <canvas id="tradingCanvas" class="w-full flex-1 block"></canvas>
+                </div>
+
+                <!-- Account & Risk Matrix -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs hud-mono">
+                    <!-- Topstep $50K Card -->
+                    <div class="p-3 rounded bg-slate-900/90 border border-slate-800 flex flex-col justify-between gap-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-400">TOPSTEP FUNDED ACCOUNT</span>
+                            <span class="text-hud-gold font-bold">$50,000 BASE</span>
+                        </div>
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <div class="text-[10px] text-slate-500">DAILY P&amp;L</div>
+                                <div class="text-lg font-extrabold text-hud-green glow-green" id="dailyPnL">+$640.00</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] text-slate-500">ACTIVE POSITIONS</div>
+                                <div class="font-bold text-white">2 Contracts MNQ</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[10px] text-slate-400 mb-1">
+                                <span>Max Loss Buffer (-$1,000)</span>
+                                <span>64% Safe</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-hud-green h-full w-[64%]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Signal Radar Window -->
+                    <div class="p-3 rounded bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1">
+                            <span>MTF MACD RADAR</span>
+                            <span class="text-hud-cyan"> pine_v6_engine</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1 text-center text-[10px]">
+                            <div class="p-1 rounded bg-slate-950 border border-hud-green/30">
+                                <div class="text-slate-500">1M</div>
+                                <div class="font-bold text-hud-green">BUY</div>
+                            </div>
+                            <div class="p-1 rounded bg-slate-950 border border-hud-green/30">
+                                <div class="text-slate-500">5M</div>
+                                <div class="font-bold text-hud-green">BUY</div>
+                            </div>
+                            <div class="p-1 rounded bg-slate-950 border border-hud-gold/30">
+                                <div class="text-slate-500">15M</div>
+                                <div class="font-bold text-hud-gold">HOLD</div>
+                            </div>
+                        </div>
+                        <div class="mt-2 flex items-center justify-between">
+                            <button onclick="triggerWebhookMock()" class="w-full py-1.5 px-2 bg-hud-cyan/10 border border-hud-cyan/40 hover:bg-hud-cyan/20 text-hud-cyan font-bold rounded text-center transition">
+                                <i class="fa-solid fa-satellite-dish"></i> TEST PINE TV WEBHOOK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 4. WOLF SABYTER CONTENT ENGINE (LG: 7 cols) ================= -->
+            <section id="pane-content" class="hud-card hud-card-amber rounded-lg p-4 lg:col-span-7 flex flex-col gap-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <h2 class="font-bold text-sm text-hud-gold hud-mono flex items-center gap-2">
+                        <i class="fa-solid fa-compact-disc"></i> WOLF SABYTER CONTENT ENGINE
+                    </h2>
+                    <span class="text-[10px] text-slate-400 hud-mono">
+                        FACELESS TIKTOK &amp; SHOP PIPELINE
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Dynamic Quote Builder & Interactive Preview Canvas -->
+                    <div class="flex flex-col gap-3">
+                        <div class="text-xs hud-mono text-slate-300 font-semibold flex justify-between items-center">
+                            <span>QUOTE GRAPHIC BUILDER</span>
+                            <button onclick="generateRandomQuote()" class="text-hud-gold hover:underline text-[11px]">
+                                <i class="fa-solid fa-shuffle"></i> Randomize Quote
+                            </button>
+                        </div>
+
+                        <!-- Quote Canvas Container -->
+                        <div class="relative bg-slate-950 rounded border border-slate-800 p-2 flex items-center justify-center">
+                            <canvas id="quoteCanvas" width="300" height="300" class="w-full max-w-[280px] h-auto rounded border border-slate-800 shadow-2xl"></canvas>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="flex flex-col gap-2">
+                            <input type="text" id="quoteTextInput" value="Silence in motion speaks louder than reactive noise." 
+                                   class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-white hud-mono focus:border-hud-gold outline-none"
+                                   placeholder="Enter quote text..." oninput="updateQuoteCanvas()">
+                            
+                            <div class="flex gap-2">
+                                <button onclick="downloadQuote()" class="flex-1 py-1.5 rounded bg-hud-gold/20 border border-hud-gold/50 text-hud-gold text-xs hud-mono font-bold hover:bg-hud-gold/30 transition">
+                                    <i class="fa-solid fa-download"></i> RENDER &amp; COPY
+                                </button>
+                                <button onclick="pushToTikTokQueue()" class="flex-1 py-1.5 rounded bg-slate-900 border border-slate-700 text-slate-300 text-xs hud-mono hover:border-hud-cyan transition">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> QUEUE POST
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TikTok Shop & Inventory Radar -->
+                    <div class="flex flex-col gap-3 hud-mono text-xs">
+                        <div class="text-slate-300 font-semibold flex justify-between items-center">
+                            <span>TIKTOK SHOP SELLER MATRIX</span>
+                            <span class="text-hud-green text-[10px]">CONNECTED</span>
+                        </div>
+
+                        <!-- Shop Stats Summary -->
+                        <div class="grid grid-cols-2 gap-2 text-center">
+                            <div class="p-2 rounded bg-slate-900/80 border border-slate-800">
+                                <div class="text-[10px] text-slate-500">WEEKLY SALES</div>
+                                <div class="text-base font-bold text-hud-gold">$1,480.00</div>
+                                <div class="text-[9px] text-hud-green">+14% vs last week</div>
+                            </div>
+                            <div class="p-2 rounded bg-slate-900/80 border border-slate-800">
+                                <div class="text-[10px] text-slate-500">CAROUSEL VIEWS</div>
+                                <div class="text-base font-bold text-hud-cyan">42.8K</div>
+                                <div class="text-[9px] text-hud-cyan">88% organic fit</div>
+                            </div>
+                        </div>
+
+                        <!-- Inventory Table -->
+                        <div class="bg-slate-950 rounded border border-slate-800 p-2 flex-1 flex flex-col justify-between gap-2">
+                            <div class="text-[11px] font-bold text-slate-400 border-b border-slate-800 pb-1">FEATURED MERCH &amp; DIGITAL PRODUCTS</div>
+                            <div class="space-y-2 text-[11px]">
+                                <div class="flex justify-between items-center border-b border-slate-900 pb-1">
+                                    <span class="text-white">Minimalist Mindset Journal</span>
+                                    <span class="text-slate-400">38 in stock</span>
+                                    <span class="text-hud-gold font-bold">$24.99</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-slate-900 pb-1">
+                                    <span class="text-white">wolfX_Xsabyter Oversized Hoodie</span>
+                                    <span class="text-slate-400">12 in stock</span>
+                                    <span class="text-hud-gold font-bold">$58.00</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-slate-900 pb-1">
+                                    <span class="text-white">Trading Discipline E-Guide</span>
+                                    <span class="text-hud-green">Digital Sync</span>
+                                    <span class="text-hud-gold font-bold">$14.99</span>
+                                </div>
+                            </div>
+                            <div class="p-2 bg-slate-900/60 rounded text-[10px] text-slate-400 flex items-center justify-between">
+                                <span><i class="fa-solid fa-arrows-rotate text-hud-cyan"></i> Auto-Affiliate Tagging</span>
+                                <span class="text-hud-green font-bold">ACTIVE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 5. MASTER LEDGER & LIFE OS DOCK (LG: 5 cols) ================= -->
+            <section id="pane-ledger" class="hud-card rounded-lg p-4 lg:col-span-5 flex flex-col gap-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <h2 class="font-bold text-sm text-hud-purple hud-mono flex items-center gap-2">
+                        <i class="fa-solid fa-vault"></i> MASTER LEDGER &amp; LIFE OS
+                    </h2>
+                    <span class="text-[10px] text-slate-400 hud-mono">
+                        kwamelockley.91@gmail.com
+                    </span>
+                </div>
+
+                <!-- Google Workspace Pipeline Status -->
+                <div class="grid grid-cols-3 gap-2 text-xs hud-mono text-center">
+                    <div class="p-2 rounded bg-slate-900/80 border border-slate-800">
+                        <i class="fa-solid fa-envelope text-hud-cyan mb-1 text-sm"></i>
+                        <div class="text-[10px] text-slate-400">GMAIL ALIASES</div>
+                        <div class="text-xs font-bold text-white">4 Pending</div>
+                    </div>
+                    <div class="p-2 rounded bg-slate-900/80 border border-slate-800">
+                        <i class="fa-solid fa-table-cells text-hud-green mb-1 text-sm"></i>
+                        <div class="text-[10px] text-slate-400">SHEETS API</div>
+                        <div class="text-xs font-bold text-hud-green">Synced</div>
+                    </div>
+                    <div class="p-2 rounded bg-slate-900/80 border border-slate-800">
+                        <i class="fa-solid fa-calendar-days text-hud-purple mb-1 text-sm"></i>
+                        <div class="text-[10px] text-slate-400">CALENDAR</div>
+                        <div class="text-xs font-bold text-white">Shift Active</div>
+                    </div>
+                </div>
+
+                <!-- Career & Goals Overview Card -->
+                <div class="p-3 rounded bg-slate-900/90 border border-slate-800 text-xs hud-mono flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-slate-400">
+                        <span class="font-bold text-white"><i class="fa-solid fa-user-tie text-hud-cyan"></i> CAREER &amp; REAL ESTATE 2026</span>
+                        <span class="text-hud-cyan">NYC Tri-State</span>
+                    </div>
+                    <div class="text-[11px] text-slate-300">
+                        Role: <span class="text-white font-semibold">Senior Day Services Counselor @ Special Citizens</span>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] text-slate-400 mb-1">
+                            <span>NY Real Estate Purchase Reserve</span>
+                            <span class="text-hud-gold font-bold">$34,500 / $50,000 Target</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="bg-hud-gold h-full w-[69%]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Automated System Action Buttons -->
+                <div class="flex flex-col gap-2 hud-mono text-xs">
+                    <div class="text-slate-400 font-semibold text-[11px]">QUICK SYSTEM OPERATIONAL TRIGGERS</div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="runSystemTask('PineScript Sync')" class="p-2 rounded bg-slate-900 border border-slate-800 hover:border-hud-cyan text-slate-200 text-left flex items-center gap-2 transition">
+                            <i class="fa-solid fa-code text-hud-cyan"></i>
+                            <div>
+                                <div class="font-bold text-[11px]">PINE V6 SYNC</div>
+                                <div class="text-[9px] text-slate-500">Update TV Indicators</div>
+                            </div>
+                        </button>
+                        <button onclick="runSystemTask('Energy Scan')" class="p-2 rounded bg-slate-900 border border-slate-800 hover:border-hud-gold text-slate-200 text-left flex items-center gap-2 transition">
+                            <i class="fa-solid fa-battery-three-quarters text-hud-gold"></i>
+                            <div>
+                                <div class="font-bold text-[11px]">ENERGY SCAN</div>
+                                <div class="text-[9px] text-slate-500">Focus &amp; Work Shift</div>
+                            </div>
+                        </button>
+                        <button onclick="runSystemTask('Roth IRA Dividend')" class="p-2 rounded bg-slate-900 border border-slate-800 hover:border-hud-green text-slate-200 text-left flex items-center gap-2 transition">
+                            <i class="fa-solid fa-piggy-bank text-hud-green"></i>
+                            <div>
+                                <div class="font-bold text-[11px]">ROTH IRA AUDIT</div>
+                                <div class="text-[9px] text-slate-500">Long Term Portfolio</div>
+                            </div>
+                        </button>
+                        <button onclick="runSystemTask('System Backup')" class="p-2 rounded bg-slate-900 border border-slate-800 hover:border-hud-purple text-slate-200 text-left flex items-center gap-2 transition">
+                            <i class="fa-solid fa-box-archive text-hud-purple"></i>
+                            <div>
+                                <div class="font-bold text-[11px]">BACKUP SYSTEM</div>
+                                <div class="text-[9px] text-slate-500">GitHub Snapshot</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER BAR -->
+        <footer class="hud-card rounded-lg p-2.5 flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px] hud-mono text-slate-400">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-terminal text-hud-cyan"></i>
+                <span>REPOSITORY: <a href="https://github.com/wolfBhuffn" target="_blank" class="text-hud-cyan hover:underline">wolfBhuffn/wolfX_Xsabyter-HUD</a></span>
+            </div>
+            <div>
+                SYSTEM TIME: <span id="footerTime" class="text-white">2026-10-20 EST</span> | ALL SYSTEMS FUNCTIONAL
+            </div>
+        </footer>
+    </div>
+
+    <!-- AUDIO SOUND EFFECTS & CLIENT SCRIPT LOGIC -->
+    <script>
+        /* ================= AUDIO ENGINE (Web Audio API Synthesizer) ================= */
+        let audioCtx = null;
+        let soundEnabled = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleAudio() {
+            initAudio();
+            soundEnabled = !soundEnabled;
+            const btnText = document.getElementById('audioStatusText');
+            const icon = document.getElementById('audioIcon');
+            const iconMobile = document.getElementById('audioIconMobile');
+
+            if (soundEnabled) {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                if (btnText) btnText.innerText = "AUDIO: ON";
+                if (icon) icon.className = "fa-solid fa-volume-high text-hud-cyan";
+                if (iconMobile) iconMobile.className = "fa-solid fa-volume-high text-hud-cyan";
+                playCyberBeep(880, 'sine', 0.1);
+            } else {
+                if (btnText) btnText.innerText = "AUDIO: OFF";
+                if (icon) icon.className = "fa-solid fa-volume-xmark";
+                if (iconMobile) iconMobile.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        function playCyberBeep(freq = 600, type = 'sine', duration = 0.08) {
+            if (!soundEnabled || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        /* ================= REAL-TIME CLOCK & TELEMETRY MOCK DATA ================= */
+        function updateClock() {
+            const now = new Date();
+            const options = { timeZone: 'America/New_York', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const timeStr = now.toLocaleTimeString('en-US', options) + " EST";
+            const dateStr = now.toISOString().split('T')[0];
+
+            document.getElementById('liveClock').innerText = timeStr;
+            document.getElementById('liveDate').innerText = dateStr;
+            document.getElementById('footerTime').innerText = dateStr + " " + timeStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Dynamic System Load Animation
+        setInterval(() => {
+            const cpu = Math.floor(18 + Math.random() * 20);
+            const ram = (4.1 + Math.random() * 0.3).toFixed(1);
+            const ping = Math.floor(14 + Math.random() * 8);
+
+            document.getElementById('cpuVal').innerText = cpu;
+            document.getElementById('ramVal').innerText = ram;
+            document.getElementById('pingVal').innerText = ping;
+
+            // Animate SVG path curves
+            const cpuY = 5 + (Math.random() * 6 - 3);
+            document.getElementById('cpuPath').setAttribute('d', `M0 5 Q 12.5 ${cpuY}, 25 5 T 50 5`);
+        }, 2000);
+
+        /* ================= TAB NAVIGATION LOGIC ================= */
+        function switchTab(tab) {
+            playCyberBeep(700, 'sine', 0.05);
+            const panes = ['nexus', 'trading', 'content', 'ledger'];
+            const buttons = ['all', 'nexus', 'trading', 'content', 'ledger'];
+
+            // Update Tab Button Styles
+            buttons.forEach(b => {
+                const btn = document.getElementById(`tab-${b}`);
+                if (!btn) return;
+                if (b === tab) {
+                    btn.className = "tab-btn px-4 py-2 rounded-t-lg bg-hud-cyan/20 border-t-2 border-hud-cyan text-white font-bold flex items-center gap-2 whitespace-nowrap";
+                } else {
+                    btn.className = "tab-btn px-4 py-2 rounded-t-lg bg-slate-900/50 border-t-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap";
+                }
+            });
+
+            // Show/Hide Grid Panes
+            panes.forEach(p => {
+                const paneEl = document.getElementById(`pane-${p}`);
+                if (!paneEl) return;
+                if (tab === 'all' || tab === p) {
+                    paneEl.classList.remove('hidden');
+                } else {
+                    paneEl.classList.add('hidden');
+                }
+            });
+        }
+
+        /* ================= TERMINAL COMMAND STREAM ================= */
+        function appendTerminalLog(msg, colorClass = "text-slate-300") {
+            const stream = document.getElementById('terminalStream');
+            const p = document.createElement('p');
+            p.className = colorClass;
+            p.innerHTML = msg;
+            stream.appendChild(p);
+            stream.scrollTop = stream.scrollHeight;
+        }
+
+        function clearTerminal() {
+            playCyberBeep(400, 'sine', 0.05);
+            document.getElementById('terminalStream').innerHTML = `<p class="text-slate-500">[TERMINAL CLEARED] Ready for NEXUS input...</p>`;
+        }
+
+        function handleTerminalSubmit() {
+            const input = document.getElementById('terminalInput');
+            const cmd = input.value.trim();
+            if (!cmd) return;
+
+            playCyberBeep(900, 'triangle', 0.06);
+            appendTerminalLog(`<span class="text-hud-cyan">&gt; ${cmd}</span>`);
+            input.value = '';
+
+            processCommand(cmd);
+        }
+
+        function runCommand(cmd) {
+            document.getElementById('terminalInput').value = cmd;
+            handleTerminalSubmit();
+        }
+
+        function processCommand(cmd) {
+            const lower = cmd.toLowerCase();
+            setTimeout(() => {
+                if (lower.includes('help')) {
+                    appendTerminalLog(`[NEXUS HELP] Available directives: 'risk audit', 'trade status', 'generate quote', 'sync workspace', 'topstep status'`);
+                } else if (lower.includes('risk') || lower.includes('topstep')) {
+                    appendTerminalLog(`[RISK SKEPTIC] Topstep $50K Account Check:<br>&nbsp;- Daily Limit: -$1,000.00<br>&nbsp;- Current P&amp;L: +$640.00<br>&nbsp;- Rule Violation Risk: 0.0%`, "text-hud-gold");
+                } else if (lower.includes('trade') || lower.includes('status')) {
+                    appendTerminalLog(`[EXECUTION AGENT] Market State:<br>&nbsp;- NQ1!: 20,412.50 (BULLISH)<br>&nbsp;- ES1!: 5,842.25 (BULLISH)<br>&nbsp;- Pine Script v6 Indicators firing normally.`, "text-hud-green");
+                } else if (lower.includes('quote') || lower.includes('content')) {
+                    appendTerminalLog(`[CONTENT GEN] Triggering Wolf SaByter quote generator...`, "text-hud-purple");
+                    generateRandomQuote();
+                } else if (lower.includes('sync')) {
+                    appendTerminalLog(`[GSPACE AGENT] Workspace aliases checked. Gmail &amp; Google Drive APIs synchronized.`, "text-hud-cyan");
+                } else {
+                    appendTerminalLog(`[NEXUS EXEC] Processing standard command: '${cmd}'... Executed successfully.`, "text-slate-400");
+                }
+            }, 300);
+        }
+
+        /* ================= FUTURES TRADING CANVAS & MOCK DATA ================= */
+        let currentSymbol = 'NQ';
+        const priceData = {
+            'NQ': { price: 20412.50, change: '+124.25 (+0.6%)', color: '#00ff66' },
+            'ES': { price: 5842.25, change: '+18.50 (+0.3%)', color: '#00ff66' },
+            'MNQ': { price: 20413.00, change: '+124.50', color: '#00ff66' },
+            'MES': { price: 5842.50, change: '+18.75', color: '#00ff66' },
+            'MGC': { price: 2748.10, change: '+12.40 (+0.4%)', color: '#ffb700' }
+        };
+
+        function selectSymbol(sym) {
+            playCyberBeep(650, 'sine', 0.05);
+            currentSymbol = sym;
+            document.getElementById('activeChartSymbol').innerText = `${sym}1! (5M)`;
+            
+            // Highlight selected card
+            ['NQ', 'ES', 'MNQ', 'MES', 'MGC'].forEach(s => {
+                const card = document.getElementById(`card-${s}`);
+                if (s === sym) {
+                    card.className = "p-2 rounded bg-hud-cyan/10 border border-hud-cyan cursor-pointer transition";
+                } else {
+                    card.className = "p-2 rounded bg-slate-900/80 border border-slate-800 cursor-pointer transition hover:border-slate-600";
+                }
+            });
+
+            drawTradingChart();
+        }
+
+        function drawTradingChart() {
+            const canvas = document.getElementById('tradingCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // Resize canvas resolution
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight - 30;
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Grid Lines
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+            ctx.lineWidth = 1;
+            for (let x = 0; x < w; x += 40) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = 0; y < h; y += 25) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+
+            // Draw Mock Candlesticks
+            const candleCount = 28;
+            const candleWidth = w / candleCount - 4;
+            let currentY = h * 0.6;
+
+            for (let i = 0; i < candleCount; i++) {
+                const x = i * (candleWidth + 4) + 6;
+                const change = (Math.random() - 0.46) * 20;
+                const open = currentY;
+                const close = currentY - change;
+                const high = Math.min(open, close) - Math.random() * 10;
+                const low = Math.max(open, close) + Math.random() * 10;
+
+                const isGreen = close < open;
+                const color = isGreen ? '#00ff66' : '#ff0055';
+
+                // Wick
+                ctx.strokeStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(x + candleWidth / 2, high);
+                ctx.lineTo(x + candleWidth / 2, low);
+                ctx.stroke();
+
+                // Body
+                ctx.fillStyle = color;
+                ctx.fillRect(x, Math.min(open, close), candleWidth, Math.max(Math.abs(close - open), 2));
+
+                currentY = close;
+            }
+
+            // MACD Line Overlay
+            ctx.strokeStyle = '#00f0ff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let i = 0; i < w; i += 20) {
+                const y = h / 2 + Math.sin(i * 0.03) * 18;
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+        }
+
+        function triggerWebhookMock() {
+            playCyberBeep(1200, 'square', 0.1);
+            appendTerminalLog(`[PINE V6 WEBHOOK] Incoming BUY signal for NQ1! (MTF MACD Cross)... Executing 2 Micro Contracts.`, "text-hud-green");
+            
+            // Visual feedback update
+            const pnl = document.getElementById('dailyPnL');
+            if (pnl) pnl.innerText = "+$710.00";
+        }
+
+        /* ================= WOLF SABYTER QUOTE GENERATOR ================= */
+        const quotes = [
+            "Silence in motion speaks louder than reactive noise.",
+            "Execution requires no justification. Only discipline.",
+            "Build the system in the dark so it holds in the light.",
+            "Risk skepticism is not fear; it is strategic survival.",
+            "Master the ledger, master the mind."
+        ];
+
+        function generateRandomQuote() {
+            playCyberBeep(800, 'sine', 0.05);
+            const q = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('quoteTextInput').value = q;
+            updateQuoteCanvas();
+        }
+
+        function updateQuoteCanvas() {
+            const canvas = document.getElementById('quoteCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const text = document.getElementById('quoteTextInput').value;
+
+            // Dark Cyber Background
+            ctx.fillStyle = "#0d1322";
+            ctx.fillRect(0, 0, 300, 300);
+
+            // Subtle Gold Border
+            ctx.strokeStyle = "rgba(255, 183, 0, 0.4)";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(8, 8, 284, 284);
+
+            // Brand Header
+            ctx.fillStyle = "#ffb700";
+            ctx.font = "bold 10px 'JetBrains Mono', monospace";
+            ctx.fillText("WOLF SABYTER | QUOTE ENGINE", 24, 32);
+
+            // Quote Text Wrapping Logic
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "14px 'Inter', sans-serif";
+            
+            const words = text.split(' ');
+            let line = '';
+            let y = 120;
+
+            for (let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = ctx.measureText(testLine);
+                if (metrics.width > 240 && n > 0) {
+                    ctx.fillText(line, 24, y);
+                    line = words[n] + ' ';
+                    y += 24;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, 24, y);
+
+            // Signature
+            ctx.fillStyle = "#00f0ff";
+            ctx.font = "10px 'JetBrains Mono', monospace";
+            ctx.fillText("— @wolfX_Xsabyter | 2026", 24, 260);
+        }
+
+        function downloadQuote() {
+            playCyberBeep(1000, 'sine', 0.08);
+            appendTerminalLog(`[CONTENT ENGINE] Quote graphic rendered & copied to system memory.`, "text-hud-gold");
+        }
+
+        function pushToTikTokQueue() {
+            playCyberBeep(1100, 'sine', 0.08);
+            appendTerminalLog(`[TIKTOK PIPELINE] Carousel post added to faceless queue (Scheduled for 18:00 EST).`, "text-hud-cyan");
+        }
+
+        /* ================= MASTER LEDGER ACTIONS ================= */
+        function runSystemTask(taskName) {
+            playCyberBeep(750, 'triangle', 0.07);
+            appendTerminalLog(`[SYSTEM OPERATIONAL TASK] Running '${taskName}' pipeline... Completed [200 OK].`, "text-hud-purple");
+        }
+
+        /* ================= INIT ON WINDOW LOAD ================= */
+        window.onload = function() {
+            drawTradingChart();
+            updateQuoteCanvas();
+
+            // Resize Canvas listener
+            window.addEventListener('resize', () => {
+                drawTradingChart();
+            });
+        };
+    </script>
+</body>
+</html>
