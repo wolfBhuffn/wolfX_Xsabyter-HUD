@@ -74,14 +74,10 @@
         <!-- Ferocious Cyber Wolf Face Vector Icon -->
         <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-darkbg-900 via-brand-950 to-darkbg-900 flex items-center justify-center text-brand-400 shadow-[0_0_15px_rgba(20,184,166,0.3)] p-1.5 border border-brand-400/40">
           <svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-brand-400 filter drop-shadow-[0_0_6px_rgba(45,212,191,0.8)]">
-            <!-- Wolf Head Silhouette with Sharp Ears & Snout -->
             <path d="M12 1L4 5L2 13L6 20L12 23L18 20L22 13L20 5L12 1Z" fill="#0d131f" stroke="#2dd4bf" stroke-width="1.2" stroke-linejoin="round"/>
-            <!-- Fierce Brow & Angular Ears -->
             <path d="M4 5L12 10L20 5L17 14L12 19L7 14L4 5Z" fill="#134e4a" stroke="#14b8a6" stroke-width="1"/>
-            <!-- Gnarly Piercing Eyes & Nose Muzzle -->
             <path d="M8 9L10 11L12 9L14 11L16 9" stroke="#2dd4bf" stroke-width="1.5" stroke-linecap="round"/>
             <polygon points="10,14 14,14 12,17" fill="#2dd4bf"/>
-            <!-- Fangs -->
             <path d="M10 17L10.5 19.5M14 17L13.5 19.5" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round"/>
           </svg>
         </div>
@@ -89,7 +85,7 @@
           <div class="flex items-center gap-2.5 flex-wrap">
             <h1 class="text-lg lg:text-xl font-extrabold tracking-tight text-white mono uppercase drop-shadow-[0_0_10px_rgba(20,184,166,0.3)]">THE MASTER LEDGER</h1>
             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/30 shadow-[0_0_10px_rgba(20,184,166,0.2)]">
-              <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span> v2.8 WOLF MATRIX
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span> v2.9 WOLF MATRIX
             </span>
           </div>
           <p class="text-xs text-slate-400 font-medium">Out of the Head, Into the System</p>
@@ -139,7 +135,7 @@
         <i class="fa-solid fa-terminal"></i> AI Command Center
       </button>
       <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-darkbg-900/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-gear"></i> Settings
+        <i class="fa-solid fa-gear"></i> Settings & Integrations
       </button>
     </div>
   </div>
@@ -507,330 +503,49 @@
       </div>
     </section>
 
-    <!-- TAB 7: SETTINGS SECTION -->
+    <!-- TAB 7: SETTINGS & INTEGRATIONS SECTION -->
     <section id="view-settings" class="tab-view space-y-6 hidden">
       <div class="bg-darkbg-800/90 backdrop-blur p-6 rounded-2xl border border-brand-500/20 shadow-xl space-y-6">
         <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
           <div>
             <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-gear text-brand-400"></i> System Settings & Preferences
+              <i class="fa-solid fa-gear text-brand-400"></i> Settings & API Integrations Hub
             </h2>
-            <p class="text-xs text-slate-400">Manage local configuration, currency formatting, and data backups</p>
+            <p class="text-xs text-slate-400">Connect Google Workspace, AI Models (Gemini, Claude, Hermes), and Telegram bots</p>
           </div>
-          <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/30">v2.8 Core Config</span>
+          <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/30">v2.9 Integrations</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-          <!-- General Settings -->
+          
+          <!-- AI Models & API Integration -->
           <div class="bg-darkbg-900 p-4 rounded-xl border border-brand-500/20 space-y-4">
-            <h3 class="font-bold text-slate-200 uppercase tracking-wider text-[11px] text-brand-400">Display & Currency</h3>
+            <h3 class="font-bold text-slate-200 uppercase tracking-wider text-[11px] text-brand-400 flex items-center gap-2">
+              <i class="fa-solid fa-brain"></i> AI Engines & LLM Connections
+            </h3>
             
             <div class="space-y-1.5">
-              <label class="block font-semibold text-slate-300">Currency Symbol</label>
-              <select id="settingCurrency" class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400">
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-              </select>
+              <label class="block font-semibold text-slate-300">Google Gemini API Key</label>
+              <input type="password" id="apiKeyGemini" placeholder="AIzaSy..." class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400 font-mono" />
             </div>
 
             <div class="space-y-1.5">
-              <label class="block font-semibold text-slate-300">Default Autopay Alert Buffer</label>
-              <select id="settingBuffer" class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400">
-                <option value="2">2 Days Prior (Recommended)</option>
-                <option value="1">1 Day Prior</option>
-                <option value="3">3 Days Prior</option>
-              </select>
+              <label class="block font-semibold text-slate-300">Anthropic Claude API Key</label>
+              <input type="password" id="apiKeyClaude" placeholder="sk-ant-..." class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400 font-mono" />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="block font-semibold text-slate-300">Hermes Endpoint / API Key</label>
+              <input type="password" id="apiKeyHermes" placeholder="hermes_key_..." class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400 font-mono" />
             </div>
           </div>
 
-          <!-- Data & Backup Management -->
+          <!-- Workspace & Messaging Integration -->
           <div class="bg-darkbg-900 p-4 rounded-xl border border-brand-500/20 space-y-4">
-            <h3 class="font-bold text-slate-200 uppercase tracking-wider text-[11px] text-brand-400">Data & Storage Management</h3>
+            <h3 class="font-bold text-slate-200 uppercase tracking-wider text-[11px] text-brand-400 flex items-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Google Workspace & Telegram
+            </h3>
             
-            <p class="text-slate-400 leading-relaxed text-[11px]">
-              Your master ledger state is safely persisted in browser local storage. You can export or clear your transaction logs anytime.
-            </p>
-
-            <div class="pt-2 flex flex-col gap-2.5">
-              <button onclick="exportLedgerData()" class="w-full py-2.5 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 text-brand-300 font-bold transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-download"></i> Export JSON Backup
-              </button>
-              <button onclick="resetLedgerStorage()" class="w-full py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-triangle-exclamation"></i> Reset to Default State
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="pt-2 flex justify-end">
-          <button onclick="showToast('Settings saved successfully.')" class="bg-gradient-to-r from-brand-500 to-cyan-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(20,184,166,0.3)] transition-all">
-            Save Preferences
-          </button>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ADD TRANSACTION MODAL -->
-  <div id="addTransactionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-darkbg-800 border border-brand-500/30 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl relative">
-      <div class="flex justify-between items-center border-b border-brand-500/20 pb-3">
-        <h3 class="text-base font-bold text-white">Add Master Ledger Entry</h3>
-        <button onclick="closeModal('addTransactionModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-      <form id="addTxForm" onsubmit="handleAddTransaction(event)" class="space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Date</label>
-          <input type="date" id="txDate" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400" />
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Category</label>
-          <select id="txCategory" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400">
-            <option value="W-2 Payroll">W-2 Payroll</option>
-            <option value="Topstep Income">Topstep Income</option>
-            <option value="Debt Paydown">Debt Paydown</option>
-            <option value="Schedule C Expense">Schedule C Expense</option>
-            <option value="Personal Living">Personal Living</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Description</label>
-          <input type="text" id="txDesc" placeholder="e.g., Topstep Reset Fee / Blown Account" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400" />
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Type</label>
-            <select id="txType" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400">
-              <option value="INCOME">Income (+)</option>
-              <option value="EXPENSE">Expense (-)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Amount ($)</label>
-            <input type="number" id="txAmount" step="0.01" placeholder="0.00" required class="w-full bg-darkbg-900 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400" />
-          </div>
-        </div>
-        <div class="pt-3 flex gap-3">
-          <button type="button" onclick="closeModal('addTransactionModal')" class="w-1/2 py-2.5 rounded-xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800">Cancel</button>
-          <button type="submit" class="w-1/2 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-cyan-400 text-slate-950 font-bold">Save Entry</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- APPLICATION JAVASCRIPT -->
-  <script>
-    let ledgerData = JSON.parse(localStorage.getItem('master_ledger_data')) || [
-      { id: 1, date: '2026-10-23', category: 'W-2 Payroll', desc: 'Senior Counselor Paystub (Gross $2,667.80 | Net $1,956.52)', type: 'INCOME', amount: 1956.52 },
-      { id: 2, date: '2026-10-12', category: 'Topstep Income', desc: 'Topstep Funded Account Distribution', type: 'INCOME', amount: 1000.00 },
-      { id: 3, date: '2026-10-10', category: 'Debt Paydown', desc: 'M&T Auto Loan Principal Acceleration', type: 'EXPENSE', amount: 500.00 },
-      { id: 4, date: '2026-10-08', category: 'Debt Paydown', desc: 'Amex Gold Monthly Statement Payoff', type: 'EXPENSE', amount: 320.00 },
-      { id: 5, date: '2026-10-04', category: 'Schedule C Expense', desc: 'Topstep Blown Account Reset & Combine Fees', type: 'EXPENSE', amount: 245.00 }
-    ];
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
-      renderLedger();
-      initDebtChart();
-      updateOvertimeSimulation();
-    });
-
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      const bg = type === 'success' ? 'bg-brand-500/10 border-brand-500/40 text-brand-300 shadow-[0_0_15px_rgba(20,184,166,0.2)]' : 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300';
-      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border ${bg} backdrop-blur shadow-xl text-xs font-semibold toast-slide flex items-center gap-2`;
-      toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${message}</span>`;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
-    }
-
-    function setTheme(mode) {
-      const html = document.documentElement;
-      const darkBtn = document.getElementById('themeDarkBtn');
-      const lightBtn = document.getElementById('themeLightBtn');
-      if (mode === 'dark') {
-        html.classList.add('dark');
-        darkBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-brand-400 bg-slate-800 shadow-[0_0_8px_rgba(20,184,166,0.3)] flex items-center gap-1.5";
-        lightBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
-      } else {
-        html.classList.remove('dark');
-        lightBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-amber-500 bg-slate-200 shadow-sm flex items-center gap-1.5";
-        darkBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-slate-800 flex items-center gap-1.5";
-      }
-    }
-
-    function switchTab(tabKey) {
-      document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.className = "tab-btn px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-darkbg-900/50 flex items-center gap-2 transition-all whitespace-nowrap";
-      });
-      document.getElementById(`view-${tabKey}`).classList.remove('hidden');
-      document.getElementById(`tab-${tabKey}`).className = "tab-btn px-3.5 py-1.5 rounded-lg text-brand-400 bg-darkbg-900/90 border border-brand-500/40 shadow-[0_0_10px_rgba(20,184,166,0.15)] flex items-center gap-2 transition-all whitespace-nowrap";
-    }
-
-    function simulateAutopay(cardName) {
-      showToast(`ACH Test Success: ${cardName} liquidity verified (-2 days buffer passed).`);
-    }
-
-    function runAiCommand(cmd) {
-      const output = document.getElementById('aiConsoleOutput');
-      if (cmd === 'cashflow') {
-        output.innerHTML = `> [SUCCESS] Cash flow simulation executed. 30-day projected net surplus: +$2,140.00 after all credit card autopays and M&T loan allocation.`;
-        showToast("Cash flow simulation complete.");
-      } else if (cmd === 'taxscan') {
-        output.innerHTML = `> [SUCCESS] Schedule C scan completed. Total deductible blown accounts & evaluation fees: $530.00. Estimated tax savings at 34.91% marginal rate: $185.02.`;
-        showToast("Schedule C tax scan complete.");
-      } else if (cmd === 'gitcommit') {
-        output.innerHTML = `> [SUCCESS] Master Ledger repository synced with GitHub. Status updated to 'Building The Master Ledger'. All tests passed.`;
-        showToast("GitHub repo synced successfully.");
-      }
-    }
-
-    function updateOvertimeSimulation() {
-      const otHours = parseFloat(document.getElementById('otSlider').value) || 0;
-      const baseGross = 1539.50;
-      const otTotal = otHours * 30.00;
-      const gross = baseGross + otTotal;
-      const net = gross * 0.7334;
-
-      document.getElementById('sliderOtVal').innerText = `${otHours.toFixed(1)} hrs`;
-      document.getElementById('simOtHours').innerText = otHours.toFixed(1);
-      document.getElementById('simOtTotal').innerText = `$${otTotal.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-      document.getElementById('simGross').innerText = `$${gross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-      document.getElementById('displaySimGross').innerText = `$${gross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-      document.getElementById('displaySimNet').innerText = `$${net.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-    }
-
-    function renderLedger() {
-      const tbody = document.getElementById('ledgerTableBody');
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      const catFilter = document.getElementById('categoryFilter').value;
-      const typeFilter = document.getElementById('typeFilter').value;
-
-      const filtered = ledgerData.filter(item => {
-        const matchesSearch = item.desc.toLowerCase().includes(search) || item.category.toLowerCase().includes(search);
-        const matchesCat = catFilter === 'ALL' || item.category === catFilter;
-        const matchesType = typeFilter === 'ALL' || item.type === typeFilter;
-        return matchesSearch && matchesCat && matchesType;
-      });
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-500 italic">No matching ledger entries found.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(item => {
-        const isIncome = item.type === 'INCOME';
-        const amtColor = isIncome ? 'text-emerald-400 font-bold' : 'text-slate-300 font-bold';
-        const prefix = isIncome ? '+' : '-';
-        let badgeClass = 'bg-slate-800 text-slate-300';
-        if (item.category === 'W-2 Payroll') badgeClass = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
-        if (item.category === 'Topstep Income') badgeClass = 'bg-brand-500/10 text-brand-400 border border-brand-500/30';
-        if (item.category === 'Debt Paydown') badgeClass = 'bg-amber-500/10 text-amber-400 border border-amber-500/30';
-        if (item.category === 'Schedule C Expense') badgeClass = 'bg-purple-500/10 text-purple-400 border border-purple-500/30';
-
-        return `
-          <tr class="hover:bg-slate-800/40 transition-colors">
-            <td class="py-3.5 px-4 font-mono text-slate-300 whitespace-nowrap">${item.date}</td>
-            <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded text-[10px] font-bold ${badgeClass}">${item.category}</span></td>
-            <td class="py-3.5 px-4 text-slate-200 font-medium">${item.desc}</td>
-            <td class="py-3.5 px-4 text-right font-mono whitespace-nowrap ${amtColor}">${prefix}$${item.amount.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-            <td class="py-3.5 px-4 text-center">
-              <button onclick="deleteEntry(${item.id})" class="text-slate-500 hover:text-rose-400 transition-colors p-1" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function filterLedger() { renderLedger(); }
-    function resetFilters() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('categoryFilter').value = 'ALL';
-      document.getElementById('typeFilter').value = 'ALL';
-      renderLedger();
-    }
-
-    function handleAddTransaction(e) {
-      e.preventDefault();
-      const date = document.getElementById('txDate').value;
-      const category = document.getElementById('txCategory').value;
-      const desc = document.getElementById('txDesc').value;
-      const type = document.getElementById('txType').value;
-      const amount = parseFloat(document.getElementById('txAmount').value) || 0;
-      
-      ledgerData.unshift({ id: Date.now(), date, category, desc, type, amount });
-      localStorage.setItem('master_ledger_data', JSON.stringify(ledgerData));
-      renderLedger();
-      closeModal('addTransactionModal');
-      document.getElementById('addTxForm').reset();
-      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
-      showToast("Master ledger entry saved successfully.");
-    }
-
-    function deleteEntry(id) {
-      ledgerData = ledgerData.filter(item => item.id !== id);
-      localStorage.setItem('master_ledger_data', JSON.stringify(ledgerData));
-      renderLedger();
-      showToast("Entry removed from ledger.", "info");
-    }
-
-    function exportLedgerData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ledgerData, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "master_ledger_backup.json");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      showToast("Ledger JSON backup exported.");
-    }
-
-    function resetLedgerStorage() {
-      if (confirm("Are you sure you want to reset all ledger entries to default?")) {
-        localStorage.removeItem('master_ledger_data');
-        location.reload();
-      }
-    }
-
-    function initDebtChart() {
-      const ctx = document.getElementById('debtChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Baseline', 'Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
-          datasets: [{
-            label: 'M&T Auto Loan Principal ($)',
-            data: [18751.05, 18555.61, 17358.70, 15145.33, 12900.40, 10623.67, 8313.12],
-            borderColor: '#2dd4bf',
-            backgroundColor: 'rgba(45, 212, 191, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: '#14b8a6',
-            pointRadius: 5
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: '600' } } } },
-          scales: {
-            x: { grid: { color: 'rgba(20, 184, 166, 0.1)' }, ticks: { color: '#94a3b8' } },
-            y: { grid: { color: 'rgba(20, 184, 166, 0.1)' }, ticks: { color: '#94a3b8' } }
-          }
-        }
-      });
-    }
-
-    function openModal(id) { document.getElementById(id).classList.add('flex'); document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
-  </script>
-</body>
-</html>
+            <div class="space-y-1.5">
+              <label class="block font-semibold text-slate-300">Google Workspace Sync Folder / Sheets ID</label>
+              <input type="text" id="settingWorkspace" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms" class="w-full bg-darkbg-800 border border-brand-500/30 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-400 font-mono text-[11px]" />
