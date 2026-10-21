@@ -47,9 +47,17 @@
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.8); }
     ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.9); border-radius: 4px; }
+    .toast-slide { animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes slideIn {
+      from { transform: translateY(1rem); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
   </style>
 </head>
 <body class="bg-darkbg-900 text-slate-100 min-h-screen transition-colors duration-200 antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- TOP HEADER -->
   <header class="sticky top-0 z-40 bg-darkbg-800/95 backdrop-blur border-b border-slate-800 px-4 lg:px-8 py-3.5 shadow-lg">
@@ -64,7 +72,7 @@
           <div class="flex items-center gap-2.5 flex-wrap">
             <h1 class="text-lg lg:text-xl font-extrabold tracking-tight text-white mono uppercase">THE MASTER LEDGER</h1>
             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> v2.4 ONLINE
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> v2.5 ONLINE
             </span>
           </div>
           <p class="text-xs text-slate-400 font-medium">Out of the Head, Into the System</p>
@@ -94,7 +102,7 @@
 
   <!-- NAVIGATION TABS -->
   <div class="bg-darkbg-800/80 border-b border-slate-800 px-4 lg:px-8">
-    <div class="max-w-7xl mx-auto flex space-x-2 md:space-x-3 overflow-x-auto py-2.5 text-xs md:text-sm font-semibold">
+    <div class="max-w-7xl mx-auto flex space-x-2 md:space-x-3 overflow-x-auto py-2.5 text-xs md:text-sm font-semibold scrollbar-none">
       <button onclick="switchTab('ledger')" id="tab-ledger" class="tab-btn px-3 py-1.5 rounded-lg text-brand-400 bg-slate-800/90 border border-brand-500/30 flex items-center gap-2 transition-all whitespace-nowrap">
         <i class="fa-solid fa-list-check"></i> Master Ledger
       </button>
@@ -147,7 +155,7 @@
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl lg:text-3xl font-black mono text-emerald-400">$1,956.52</span>
         </div>
-        <p class="mt-1 text-xs text-slate-400 font-medium">Gross: <span class="text-slate-200 font-bold mono">$2,667.80</span>[span_0](start_span)[span_0](end_span)</p>
+        <p class="mt-1 text-xs text-slate-400 font-medium">Gross: <span class="text-slate-200 font-bold mono">$2,667.80</span></p>
         <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
           <div class="h-full bg-emerald-400 rounded-full" style="width: 95%"></div>
         </div>
@@ -316,10 +324,6 @@
               <button onclick="simulateAutopay('Chase Freedom')" class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 font-bold transition-all text-[10px]">Test ACH</button>
             </div>
           </div>
-        </div>
-
-        <div id="schedulerLog" class="bg-darkbg-900 p-3 rounded-xl border border-slate-800 font-mono text-xs text-slate-400">
-          <span>> Auto Pay Scheduler online. All 3 credit card autopays armed for T-2 day liquidity check.</span>
         </div>
       </div>
 
@@ -534,7 +538,7 @@
 
   <!-- APPLICATION JAVASCRIPT -->
   <script>
-    let ledgerData = [
+    let ledgerData = JSON.parse(localStorage.getItem('master_ledger_data')) || [
       { id: 1, date: '2026-10-23', category: 'W-2 Payroll', desc: 'Senior Counselor Paystub (Gross $2,667.80 | Net $1,956.52)', type: 'INCOME', amount: 1956.52 },
       { id: 2, date: '2026-10-12', category: 'Topstep Income', desc: 'Topstep Funded Account Distribution', type: 'INCOME', amount: 1000.00 },
       { id: 3, date: '2026-10-10', category: 'Debt Paydown', desc: 'M&T Auto Loan Principal Acceleration', type: 'EXPENSE', amount: 500.00 },
@@ -548,6 +552,19 @@
       initDebtChart();
       updateOvertimeSimulation();
     });
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const bg = type === 'success' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' : 'bg-brand-500/10 border-brand-500/30 text-brand-300';
+      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border ${bg} backdrop-blur shadow-xl text-xs font-semibold toast-slide flex items-center gap-2`;
+      toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
 
     function setTheme(mode) {
       const html = document.documentElement;
@@ -574,18 +591,20 @@
     }
 
     function simulateAutopay(cardName) {
-      const log = document.getElementById('schedulerLog');
-      log.innerHTML = `> [ACH TEST SUCCESS] Autopay ping sent for <strong class="text-white">${cardName}</strong>. Liquidity verified across linked checking accounts (-2 days buffer check passed).`;
+      showToast(`ACH Test Success: ${cardName} liquidity verified (-2 days buffer passed).`);
     }
 
     function runAiCommand(cmd) {
       const output = document.getElementById('aiConsoleOutput');
       if (cmd === 'cashflow') {
         output.innerHTML = `> [SUCCESS] Cash flow simulation executed. 30-day projected net surplus: +$2,140.00 after all credit card autopays and M&T loan allocation.`;
+        showToast("Cash flow simulation complete.");
       } else if (cmd === 'taxscan') {
         output.innerHTML = `> [SUCCESS] Schedule C scan completed. Total deductible blown accounts & evaluation fees: $530.00. Estimated tax savings at 34.91% marginal rate: $185.02.`;
+        showToast("Schedule C tax scan complete.");
       } else if (cmd === 'gitcommit') {
         output.innerHTML = `> [SUCCESS] Master Ledger repository synced with GitHub. Status updated to 'Building The Master Ledger'. All tests passed.`;
+        showToast("GitHub repo synced successfully.");
       }
     }
 
@@ -661,16 +680,21 @@
       const desc = document.getElementById('txDesc').value;
       const type = document.getElementById('txType').value;
       const amount = parseFloat(document.getElementById('txAmount').value) || 0;
+      
       ledgerData.unshift({ id: Date.now(), date, category, desc, type, amount });
+      localStorage.setItem('master_ledger_data', JSON.stringify(ledgerData));
       renderLedger();
       closeModal('addTransactionModal');
       document.getElementById('addTxForm').reset();
       document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+      showToast("Master ledger entry saved successfully.");
     }
 
     function deleteEntry(id) {
       ledgerData = ledgerData.filter(item => item.id !== id);
+      localStorage.setItem('master_ledger_data', JSON.stringify(ledgerData));
       renderLedger();
+      showToast("Entry removed from ledger.", "info");
     }
 
     function initDebtChart() {
@@ -703,8 +727,8 @@
       });
     }
 
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function openModal(id) { document.getElementById(id).classList.add('flex'); document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
   </script>
 </body>
 </html>
