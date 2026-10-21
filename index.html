@@ -1,886 +1,815 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE MASTER LEDGER | Out of the Head, Into the System</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        slate: {
-                            850: '#131c2e',
-                            950: '#070a12',
-                        },
-                        cyan: {
-                            400: '#22d3ee',
-                            500: '#06b6d4',
-                        },
-                        emerald: {
-                            400: '#34d399',
-                            500: '#10b981',
-                        }
-                    }
-                }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE MASTER LEDGER - Out of the Head, Into the System</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              800: '#115e59',
+              900: '#134e4a',
+              950: '#042f2e',
+            },
+            darkbg: {
+              900: '#0b0f17',
+              800: '#111827',
+              700: '#1f293d',
+              600: '#374151'
             }
+          }
         }
-    </script>
-    <!-- FontAwesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.25s ease, color 0.25s ease;
-        }
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        /* Scrollbar aesthetics */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(51, 65, 85, 0.8);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(71, 85, 105, 1);
-        }
-        /* Custom High Contrast Theme */
-        .high-contrast {
-            background-color: #000000 !important;
-            color: #ffffff !important;
-        }
-        .high-contrast .hc-card {
-            background-color: #0d0d0d !important;
-            border-color: #333333 !important;
-        }
-        .high-contrast .hc-text {
-            color: #ffff00 !important;
-        }
-    </style>
+      }
+    }
+  </script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(51, 65, 85, 0.8);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(71, 85, 105, 1);
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-darkbg-900 text-slate-100 min-h-screen transition-colors duration-200 antialiased selection:bg-brand-500 selection:text-white">
 
-    <!-- Top Navigation & Header Bar -->
-    <header class="sticky top-0 z-40 bg-slate-900/90 dark:bg-slate-900/90 border-b border-slate-800 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-emerald-500 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-cyan-500/20">
-                    <i class="fa-solid fa-vault"></i>
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-lg leading-none tracking-tight text-white flex items-center gap-2">
-                        THE MASTER LEDGER
-                        <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">v2.4 ONLINE</span>
-                    </h1>
-                    <p class="text-xs text-slate-400 font-medium">Out of the Head, Into the System</p>
-                </div>
-            </div>
-
-            <!-- Theme Toggle & Quick Action Controls -->
-            <div class="flex items-center space-x-3">
-                <!-- Theme Mode Selector -->
-                <div class="flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/60">
-                    <button onclick="setThemeMode('dark')" id="btn-theme-dark" class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-all flex items-center space-x-1 bg-cyan-500 text-slate-950 shadow-sm" title="Dark Theme">
-                        <i class="fa-solid fa-moon"></i>
-                        <span class="hidden sm:inline">Dark</span>
-                    </button>
-                    <button onclick="setThemeMode('light')" id="btn-theme-light" class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-all flex items-center space-x-1 text-slate-400 hover:text-white" title="Light Theme">
-                        <i class="fa-solid fa-sun"></i>
-                        <span class="hidden sm:inline">Light</span>
-                    </button>
-                    <button onclick="setThemeMode('contrast')" id="btn-theme-hc" class="px-2.5 py-1 text-xs font-semibold rounded-lg transition-all flex items-center space-x-1 text-slate-400 hover:text-white" title="High Contrast">
-                        <i class="fa-solid fa-circle-half-stroke"></i>
-                        <span class="hidden sm:inline">HC</span>
-                    </button>
-                </div>
-
-                <button onclick="openModal('add-tx-modal')" class="bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-md shadow-cyan-500/20">
-                    <i class="fa-solid fa-plus-circle text-sm"></i>
-                    <span>Add Entry</span>
-                </button>
-            </div>
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-40 bg-darkbg-800/95 backdrop-blur border-b border-slate-800 px-4 lg:px-8 py-3.5 shadow-lg">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      
+      <!-- App Brand & Status Badge -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center text-slate-950 font-bold text-xl shadow-lg shadow-brand-500/20">
+          <i class="fa-solid me-0 fa-receipt"></i>
         </div>
-    </header>
-
-    <!-- App Container -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-
-        <!-- Navigation Tabs -->
-        <nav class="flex border-b border-slate-800 space-x-2 sm:space-x-8 overflow-x-auto">
-            <button onclick="switchTab('master-ledger')" id="tab-btn-master-ledger" class="tab-btn py-3 px-1 border-b-2 font-bold text-sm flex items-center space-x-2 border-cyan-400 text-cyan-400 whitespace-nowrap">
-                <i class="fa-solid fa-receipt"></i>
-                <span>Master Ledger</span>
-            </button>
-            <button onclick="switchTab('pay-calculator')" id="tab-btn-pay-calculator" class="tab-btn py-3 px-1 border-b-2 font-bold text-sm flex items-center space-x-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap">
-                <i class="fa-solid fa-calculator"></i>
-                <span>Pay Rate ($20/hr) & Cash Flow</span>
-            </button>
-            <button onclick="switchTab('debt-acceleration')" id="tab-btn-debt-acceleration" class="tab-btn py-3 px-1 border-b-2 font-bold text-sm flex items-center space-x-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>Debt Payoff & Path B</span>
-            </button>
-            <button onclick="switchTab('tax-pipeline')" id="tab-btn-tax-pipeline" class="tab-btn py-3 px-1 border-b-2 font-bold text-sm flex items-center space-x-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap">
-                <i class="fa-solid fa-gears"></i>
-                <span>Schedule C & System Pipeline</span>
-            </button>
-        </nav>
-
-        <!-- KPI Executive Summary Cards -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Card 1: Senior Day Pay Rate -->
-            <div class="hc-card bg-slate-900 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden shadow-lg">
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Base Hourly Rate</div>
-                <div class="mt-2 flex items-baseline justify-between">
-                    <span class="text-2xl font-black font-mono text-white" id="stat-pay-rate">$20.00 <span class="text-xs text-slate-500 font-sans font-normal">/hr</span></span>
-                    <span class="px-2 py-0.5 text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-md">80h W-2</span>
-                </div>
-                <p class="text-xs text-slate-400 mt-2">Bi-Weekly Gross Base: <strong id="stat-gross-base" class="text-slate-200 font-mono">$1,600.00</strong></p>
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-emerald-500"></div>
-            </div>
-
-            <!-- Card 2: Expected Take Home Net -->
-            <div class="hc-card bg-slate-900 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden shadow-lg">
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Expected Net Take-Home Check</div>
-                <div class="mt-2 flex items-baseline justify-between">
-                    <span class="text-2xl font-black font-mono text-emerald-400" id="stat-net-check">$1,624.00</span>
-                    <span class="text-xs text-slate-400">/ Check</span>
-                </div>
-                <p class="text-xs text-slate-400 mt-2">With 10h OT ($30/h) + W-4 Safe Harbor</p>
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
-            </div>
-
-            <!-- Card 3: M&T Auto Loan Debt Balance -->
-            <div class="hc-card bg-slate-900 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden shadow-lg">
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">M&T Auto Loan Principal</div>
-                <div class="mt-2 flex items-baseline justify-between">
-                    <span class="text-2xl font-black font-mono text-amber-400" id="stat-auto-loan">$18,751.05</span>
-                    <span class="text-xs text-amber-400 font-semibold"><i class="fa-solid fa-bolt"></i> Path B</span>
-                </div>
-                <p class="text-xs text-slate-400 mt-2">Topstep 50% Injection: <strong class="text-slate-200 font-mono">+$500/mo</strong></p>
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-500"></div>
-            </div>
-
-            <!-- Card 4: Liquid Cash Reserve -->
-            <div class="hc-card bg-slate-900 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden shadow-lg">
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Liquid System Reserve</div>
-                <div class="mt-2 flex items-baseline justify-between">
-                    <span class="text-2xl font-black font-mono text-cyan-400" id="stat-liquid-buffer">$4,850.00</span>
-                    <span class="text-xs text-emerald-400 font-semibold"><i class="fa-solid fa-shield-halved"></i> Solvent</span>
-                </div>
-                <p class="text-xs text-slate-400 mt-2">High-Yield Emergency Buffer</p>
-                <div class="absolute bottom-0 left-0 right-0 h-1 bg-cyan-500"></div>
-            </div>
-        </section>
-
-        <!-- TAB CONTENT 1: MASTER LEDGER TRANSACTIONS -->
-        <section id="tab-master-ledger" class="tab-content space-y-6">
-            <!-- Search & Filter Controls -->
-            <div class="hc-card bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div class="w-full md:w-96 relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500"></i>
-                    <input type="text" id="tx-search" onkeyup="filterTransactions()" placeholder="Search transactions, categories, notes..." class="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-medium">
-                </div>
-
-                <div class="w-full md:w-auto flex flex-wrap gap-2 items-center justify-end">
-                    <select id="tx-category-filter" onchange="filterTransactions()" class="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
-                        <option value="ALL">All Categories</option>
-                        <option value="W-2 Payroll">W-2 Payroll ($20/hr)</option>
-                        <option value="Topstep Income">Topstep Trading Income</option>
-                        <option value="Debt Paydown">Debt Paydown (M&T / Amex)</option>
-                        <option value="Schedule C Expense">Schedule C Tax Write-Off</option>
-                        <option value="Living Expense">Living Expense</option>
-                    </select>
-
-                    <select id="tx-type-filter" onchange="filterTransactions()" class="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
-                        <option value="ALL">All Transaction Types</option>
-                        <option value="Income">Income (+)</option>
-                        <option value="Expense">Expense (-)</option>
-                        <option value="Transfer">Transfer / Debt Paydown</option>
-                    </select>
-
-                    <button onclick="resetTxFilters()" class="p-2 border border-slate-800 rounded-xl bg-slate-950 text-slate-400 hover:text-white" title="Reset Filters">
-                        <i class="fa-solid fa-rotate-right text-xs"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Transactions Table -->
-            <div class="hc-card bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider">
-                                <th class="py-3.5 px-4">Date</th>
-                                <th class="py-3.5 px-4">Category</th>
-                                <th class="py-3.5 px-4">Transaction / Description</th>
-                                <th class="py-3.5 px-4 text-right">Amount ($)</th>
-                                <th class="py-3.5 px-4 text-center">Status</th>
-                                <th class="py-3.5 px-4 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tx-tbody" class="divide-y divide-slate-800/60 font-medium">
-                            <!-- Dynamic Rows Rendered Here -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="no-tx-found" class="hidden p-8 text-center text-slate-500">
-                    <i class="fa-solid fa-receipt text-3xl mb-2 opacity-50"></i>
-                    <p>No transactions found matching your filter criteria.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB CONTENT 2: PAY RATE ($20/HR) & CASH FLOW CALCULATOR -->
-        <section id="tab-pay-calculator" class="tab-content hidden space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Interactive Inputs Panel -->
-                <div class="lg:col-span-6 hc-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-                    <div class="flex items-center space-x-3 pb-3 border-b border-slate-800">
-                        <div class="p-2.5 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-xl">
-                            <i class="fa-solid fa-calculator text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-bold text-white">Bi-Weekly Paycheck & Cash Flow Engine</h2>
-                            <p class="text-xs text-slate-400">Senior Day Counselor Base Pay Rate & Taxes</p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <!-- Pay Rate Input -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 mb-1">Base Pay Rate ($/hr)</label>
-                            <div class="relative">
-                                <span class="absolute left-3.5 top-2.5 text-slate-500 font-mono">$</span>
-                                <input type="number" id="calc-base-rate" value="20.00" step="0.50" oninput="runPayCalculations()" class="w-full pl-8 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl font-mono font-bold text-white focus:outline-none focus:border-cyan-500">
-                            </div>
-                        </div>
-
-                        <!-- Regular Hours Slider -->
-                        <div>
-                            <div class="flex justify-between text-xs font-semibold text-slate-300 mb-1">
-                                <span>Standard Bi-Weekly Hours</span>
-                                <span id="label-reg-hours" class="text-cyan-400 font-mono font-bold">80 hrs</span>
-                            </div>
-                            <input type="range" id="input-reg-hours" min="40" max="100" value="80" oninput="runPayCalculations()" class="w-full accent-cyan-500">
-                        </div>
-
-                        <!-- Overtime Hours Slider -->
-                        <div>
-                            <div class="flex justify-between text-xs font-semibold text-slate-300 mb-1">
-                                <span>Overtime Hours (1.5x = <span id="label-ot-rate" class="text-amber-400 font-mono">$30.00</span>/hr)</span>
-                                <span id="label-ot-hours" class="text-amber-400 font-mono font-bold">10 hrs</span>
-                            </div>
-                            <input type="range" id="input-ot-hours" min="0" max="40" value="10" oninput="runPayCalculations()" class="w-full accent-amber-500">
-                        </div>
-
-                        <!-- W-4 Safe Harbor Deductions Adjuster -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 mb-1">Est. Tax Rate (%)</label>
-                                <input type="number" id="input-tax-pct" value="15.0" step="0.5" oninput="runPayCalculations()" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 mb-1">W-4 Safe Harbor Withholding ($)</label>
-                                <input type="number" id="input-extra-w4" value="215.00" step="10" oninput="runPayCalculations()" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
-                            </div>
-                        </div>
-
-                        <!-- External Topstep Trading Monthly Injection -->
-                        <div class="pt-3 border-t border-slate-800">
-                            <label class="block text-xs font-bold text-slate-300 mb-1">Topstep Futures Trading Bi-Weekly Payout ($)</label>
-                            <div class="relative">
-                                <span class="absolute left-3.5 top-2.5 text-slate-500 font-mono">$</span>
-                                <input type="number" id="input-topstep-payout" value="1000.00" step="100" oninput="runPayCalculations()" class="w-full pl-8 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl font-mono font-bold text-emerald-400 focus:outline-none focus:border-emerald-500">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pay Output & Strategic Split Visualizer -->
-                <div class="lg:col-span-6 hc-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-6">
-                    <div>
-                        <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
-                            <span>Calculated Pay Breakdown</span>
-                            <span class="text-xs font-normal text-slate-400">Bi-Weekly Pay Period</span>
-                        </h3>
-
-                        <div class="space-y-3 font-medium">
-                            <div class="flex justify-between items-center py-2 border-b border-slate-800">
-                                <span class="text-xs text-slate-400">Base Regular Gross (80h @ $20.00)</span>
-                                <span class="text-xs font-mono font-bold text-slate-200" id="res-base-gross">$1,600.00</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-slate-800">
-                                <span class="text-xs text-slate-400">Overtime Gross (10h @ $30.00)</span>
-                                <span class="text-xs font-mono font-bold text-amber-400" id="res-ot-gross">$300.00</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-slate-800">
-                                <span class="text-xs text-slate-300 font-bold">Total Combined W-2 Gross</span>
-                                <span class="text-sm font-mono font-black text-white" id="res-total-gross">$1,900.00</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-slate-800">
-                                <span class="text-xs text-slate-400">Est. Tax & W-4 Deductions</span>
-                                <span class="text-xs font-mono font-bold text-rose-400" id="res-taxes">-$500.00</span>
-                            </div>
-                            <div class="flex justify-between items-center py-3 bg-emerald-500/10 border border-emerald-500/30 px-4 rounded-xl">
-                                <span class="text-xs font-bold text-emerald-300">Expected Net Take-Home Check</span>
-                                <span class="text-xl font-mono font-black text-emerald-400" id="res-net-check">$1,400.00</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Topstep 50/50 Allocation Box -->
-                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider"><i class="fa-solid fa-arrows-split-up-and-left"></i> Topstep 50/50 Path B Allocator</span>
-                            <span class="text-[10px] font-mono bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded">AUTO-SPLIT</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 text-center">
-                            <div class="p-3 bg-slate-900 rounded-lg border border-slate-800">
-                                <div class="text-[10px] text-slate-400 uppercase font-bold">50% M&T Loan Paydown</div>
-                                <div class="text-sm font-mono font-bold text-amber-400 mt-1" id="split-debt-amount">$500.00</div>
-                            </div>
-                            <div class="p-3 bg-slate-900 rounded-lg border border-slate-800">
-                                <div class="text-[10px] text-slate-400 uppercase font-bold">50% Liquid Cash Reserve</div>
-                                <div class="text-sm font-mono font-bold text-cyan-400 mt-1" id="split-liquid-amount">$500.00</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB CONTENT 3: 6-MONTH DEBT ACCELERATION & PATH B CHART -->
-        <section id="tab-debt-acceleration" class="tab-content hidden space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Path B Projection Table -->
-                <div class="lg:col-span-7 hc-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <h3 class="text-base font-bold text-white">Path B: Strategic Debt Acceleration Model</h3>
-                            <p class="text-xs text-slate-400">M&T Auto Loan Paydown ($18,751.05 Start Balance) + Liquid Reserve Growth</p>
-                        </div>
-                        <span class="px-2.5 py-1 text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg">Path B Active</span>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead>
-                                <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 font-semibold">
-                                    <th class="py-2.5 px-3">Timeline</th>
-                                    <th class="py-2.5 px-3">W-2 Net Income</th>
-                                    <th class="py-2.5 px-3">Topstep Extra</th>
-                                    <th class="py-2.5 px-3">Auto Principal Paid</th>
-                                    <th class="py-2.5 px-3 text-right">Remaining Auto Balance</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-800 font-mono">
-                                <tr>
-                                    <td class="py-2.5 px-3 font-sans font-bold text-white">Start</td>
-                                    <td class="py-2.5 px-3 text-slate-400">-</td>
-                                    <td class="py-2.5 px-3 text-slate-400">-</td>
-                                    <td class="py-2.5 px-3 text-slate-400">-</td>
-                                    <td class="py-2.5 px-3 text-right font-bold text-amber-400">$18,751.05</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2.5 px-3 font-sans font-medium text-slate-300">Month 1</td>
-                                    <td class="py-2.5 px-3">$3,248.00</td>
-                                    <td class="py-2.5 px-3 text-cyan-400">+$1,000.00</td>
-                                    <td class="py-2.5 px-3 text-emerald-400">-$950.00</td>
-                                    <td class="py-2.5 px-3 text-right font-bold text-slate-200">$17,801.05</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2.5 px-3 font-sans font-medium text-slate-300">Month 2</td>
-                                    <td class="py-2.5 px-3">$3,248.00</td>
-                                    <td class="py-2.5 px-3 text-cyan-400">+$1,000.00</td>
-                                    <td class="py-2.5 px-3 text-emerald-400">-$950.00</td>
-                                    <td class="py-2.5 px-3 text-right font-bold text-slate-200">$16,851.05</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2.5 px-3 font-sans font-medium text-slate-300">Month 3</td>
-                                    <td class="py-2.5 px-3">$3,248.00</td>
-                                    <td class="py-2.5 px-3 text-cyan-400">+$1,500.00</td>
-                                    <td class="py-2.5 px-3 text-emerald-400">-$1,200.00</td>
-                                    <td class="py-2.5 px-3 text-right font-bold text-slate-200">$15,651.05</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2.5 px-3 font-sans font-medium text-slate-300">Month 4</td>
-                                    <td class="py-2.5 px-3">$3,248.00</td>
-                                    <td class="py-2.5 px-3 text-cyan-400">+$1,500.00</td>
-                                    <td class="py-2.5 px-3 text-emerald-400">-$1,200.00</td>
-                                    <td class="py-2.5 px-3 text-right font-bold text-slate-200">$14,451.05</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2.5 px-3 font-sans font-medium text-slate-300">Month 5</td>
-                                    <td class="py-2.5 px-3">$3,248.00</td>
-                                    <td class="py-2.5 px-3 text-cyan-400">+$2,000.00</td>
-                                    <td class="py-2.5 px-3 text-emerald-400">-$1,450.00</td>
-                                    <td class="py-2.5 px-3 text-right font-bold text-slate-200">$13,001.05</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2.5 px-3 font-sans font-bold text-emerald-400">Month 6</td>
-                                    <td class="py-2.5 px-3">$3,248.00</td>
-                                    <td class="py-2.5 px-3 text-cyan-400">+$2,000.00</td>
-                                    <td class="py-2.5 px-3 text-emerald-400">-$1,450.00</td>
-                                    <td class="py-2.5 px-3 text-right font-bold text-emerald-400">$11,551.05</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Chart Visualizer -->
-                <div class="lg:col-span-5 hc-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-base font-bold text-white mb-1">M&T Auto Debt Payoff Trajectory</h3>
-                        <p class="text-xs text-slate-400 mb-4">Visualizing Principal Reduction vs Liquid Reserve Growth</p>
-                        <div class="h-64 relative">
-                            <canvas id="debtChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB CONTENT 4: SCHEDULE C WRITE-OFFS & MULTI-AGENT PIPELINE -->
-        <section id="tab-tax-pipeline" class="tab-content hidden space-y-6">
-            <!-- Schedule C Tax Write-Offs -->
-            <div class="hc-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-800 gap-4">
-                    <div>
-                        <h2 class="text-base font-bold text-white">Schedule C Tax Shelter Write-off Checklist</h2>
-                        <p class="text-xs text-slate-400">Maximize deductions against trading gains & independent contract income.</p>
-                    </div>
-                    <div class="bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-xl">
-                        <span class="text-[10px] text-slate-400 block uppercase font-bold">Total Active Write-offs</span>
-                        <span class="text-xl font-mono font-black text-emerald-400" id="tax-total">$3,420.00</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="tax-checklist">
-                    <!-- Dynamic Checklist Inserted Here -->
-                </div>
-            </div>
-
-            <!-- Multi-Agent Backend Pipeline Tracker -->
-            <div class="hc-card bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <div>
-                    <h2 class="text-base font-bold text-white">Multi-Agent Automation Pipeline Status</h2>
-                    <p class="text-xs text-slate-400">Live monitoring of background Python scripts and processing modules.</p>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" id="agent-pipeline-grid">
-                    <!-- Dynamic Agent Status Inserted Here -->
-                </div>
-
-                <!-- Execution Terminal -->
-                <div class="mt-4">
-                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Automation Terminal Log Output</div>
-                    <div class="bg-slate-950 font-mono text-[11px] p-4 rounded-xl border border-slate-800 h-40 overflow-y-auto space-y-1.5 text-slate-300">
-                        <p><span class="text-slate-500">[2026-10-20 08:00:12]</span> <span class="text-cyan-400">INFO</span> Pipeline startup initialized.</p>
-                        <p><span class="text-slate-500">[2026-10-20 08:00:13]</span> <span class="text-emerald-400">SUCCESS</span> script: create_packet.py executed cleanly.</p>
-                        <p><span class="text-slate-500">[2026-10-20 08:00:14]</span> <span class="text-emerald-400">SUCCESS</span> script: hiring_manager.py packet queued.</p>
-                        <p><span class="text-slate-500">[2026-10-20 08:00:16]</span> <span class="text-amber-400">WAITING</span> script: boss_review.py human approval step.</p>
-                        <p><span class="text-slate-500">[2026-10-20 08:00:18]</span> <span class="text-emerald-400">SUCCESS</span> master_ledger.py updated W-2 rate to $20.00/hr.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Modal Form: Add Transaction -->
-    <div id="add-tx-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="hc-card bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <div class="flex justify-between items-center pb-3 border-b border-slate-800">
-                <h3 class="text-base font-bold text-white">New Ledger Transaction</h3>
-                <button onclick="closeModal('add-tx-modal')" class="text-slate-400 hover:text-white text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <form id="tx-form" onsubmit="handleAddTx(event)" class="space-y-4 mt-4 text-xs">
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1">Date</label>
-                    <input type="date" id="tx-date" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono focus:outline-none focus:border-cyan-500">
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1">Transaction Type</label>
-                    <select id="tx-type" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500">
-                        <option value="Income">Income (+)</option>
-                        <option value="Expense">Expense (-)</option>
-                        <option value="Transfer">Transfer / Debt Paydown</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1">Category</label>
-                    <select id="tx-category" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500">
-                        <option value="W-2 Payroll">W-2 Payroll ($20/hr)</option>
-                        <option value="Topstep Income">Topstep Trading Income</option>
-                        <option value="Debt Paydown">Debt Paydown (M&T / Amex)</option>
-                        <option value="Schedule C Expense">Schedule C Tax Write-Off</option>
-                        <option value="Living Expense">Living Expense</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1">Description / Item</label>
-                    <input type="text" id="tx-desc" placeholder="e.g., Senior Day Services Paycheck" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-cyan-500">
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-300 mb-1">Amount ($)</label>
-                    <input type="number" id="tx-amount" step="0.01" placeholder="1624.00" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl font-mono text-white focus:outline-none focus:border-cyan-500">
-                </div>
-
-                <div class="flex justify-end space-x-3 pt-3">
-                    <button type="button" onclick="closeModal('add-tx-modal')" class="px-4 py-2 border border-slate-800 rounded-xl text-xs font-bold text-slate-400 hover:text-white">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-bold rounded-xl shadow-md">Save Transaction</button>
-                </div>
-            </form>
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h1 class="text-lg lg:text-xl font-extrabold tracking-tight text-white mono uppercase">THE MASTER LEDGER</h1>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> v2.4 ONLINE
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 font-medium">Out of the Head, Into the System</p>
         </div>
+      </div>
+
+      <!-- Controls & Quick Actions -->
+      <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+        <!-- Theme Switcher -->
+        <div class="flex items-center bg-darkbg-900 p-1 rounded-xl border border-slate-800">
+          <button id="themeDarkBtn" onclick="setTheme('dark')" class="p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-brand-400 bg-slate-800 shadow-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-moon"></i> <span class="hidden md:inline">Dark</span>
+          </button>
+          <button id="themeLightBtn" onclick="setTheme('light')" class="p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-sun"></i> <span class="hidden md:inline">Light</span>
+          </button>
+        </div>
+
+        <!-- Add Entry Button -->
+        <button onclick="openModal('addTransactionModal')" class="bg-gradient-to-r from-brand-500 to-teal-500 hover:from-brand-600 hover:to-teal-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm shadow-lg shadow-brand-500/20 transition-all flex items-center gap-2 active:scale-95">
+          <i class="fa-solid fa-plus text-xs"></i> <span>Add Entry</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <div class="bg-darkbg-800/50 border-b border-slate-800/80 px-4 lg:px-8">
+    <div class="max-w-7xl mx-auto flex space-x-2 md:space-x-6 overflow-x-auto py-2.5 text-xs md:text-sm font-semibold">
+      <button onclick="switchTab('ledger')" id="tab-ledger" class="tab-btn px-3 py-1.5 rounded-lg text-brand-400 bg-slate-800/90 border border-brand-500/30 flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-list-check"></i> Master Ledger
+      </button>
+      <button onclick="switchTab('pay')" id="tab-pay" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-calculator"></i> Pay Rate ($20/hr) & Cash Flow
+      </button>
+      <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-chart-line"></i> Auto Loan Acceleration (Path B)
+      </button>
+      <button onclick="switchTab('taxes')" id="tab-taxes" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-shield-halved"></i> Schedule C Tax Write-Offs
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+    <!-- KPI SUMMARY CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Base Hourly Rate -->
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden group hover:border-slate-700 transition-all">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Base Hourly Rate</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">80h W-2</span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl lg:text-3xl font-black mono text-white" id="displayBaseRate">$20.00</span>
+          <span class="text-xs text-slate-400 font-semibold">/hr</span>
+        </div>
+        <p class="mt-1 text-xs text-slate-400 font-medium">Bi-Weekly Gross Base: <span class="text-slate-200 font-bold mono" id="displayBiweeklyGross">$1,600.00</span></p>
+        <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
+          <div class="h-full bg-brand-400 rounded-full" style="width: 100%"></div>
+        </div>
+      </div>
+
+      <!-- Expected Take-Home Check -->
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden group hover:border-slate-700 transition-all">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Expected Net Take-Home</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Bi-Weekly</span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl lg:text-3xl font-black mono text-emerald-400" id="displayNetTakehome">$1,444.00</span>
+          <span class="text-xs text-slate-400 font-semibold">/ Check</span>
+        </div>
+        <p class="mt-1 text-xs text-slate-400 font-medium">Post W-4 Withholding + Standard Tax</p>
+        <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
+          <div class="h-full bg-emerald-400 rounded-full" style="width: 88%"></div>
+        </div>
+      </div>
+
+      <!-- Auto Loan Balance -->
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden group hover:border-slate-700 transition-all">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">M&T Auto Loan Principal</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Path B</span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl lg:text-3xl font-black mono text-amber-400" id="displayAutoLoan">$18,751.05</span>
+        </div>
+        <p class="mt-1 text-xs text-slate-400 font-medium">Topstep 50% Injection: <span class="text-amber-300 font-bold mono">+$1,000/mo</span></p>
+        <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
+          <div class="h-full bg-amber-400 rounded-full" style="width: 62%"></div>
+        </div>
+      </div>
+
+      <!-- Liquid Reserve -->
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden group hover:border-slate-700 transition-all">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Liquid System Reserve</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Solvent</span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl lg:text-3xl font-black mono text-cyan-400" id="displayLiquidReserve">$4,458.12</span>
+        </div>
+        <p class="mt-1 text-xs text-slate-400 font-medium">Unencumbered Buffer Protected</p>
+        <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
+          <div class="h-full bg-cyan-400 rounded-full" style="width: 75%"></div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Application JavaScript Code -->
-    <script>
-        // Default Ledger Transactions State
-        let transactions = [
-            { id: 1, date: '2026-10-16', category: 'W-2 Payroll', description: 'Senior Day Counselor Paystub (80h + 10h OT)', amount: 1624.00, type: 'Income', status: 'Cleared' },
-            { id: 2, date: '2026-10-12', category: 'Topstep Income', description: 'Topstep Funded Account Distribution', amount: 1000.00, type: 'Income', status: 'Cleared' },
-            { id: 3, date: '2026-10-10', category: 'Debt Paydown', description: 'M&T Auto Loan Principal Acceleration', amount: -500.00, type: 'Transfer', status: 'Cleared' },
-            { id: 4, date: '2026-10-08', category: 'Debt Paydown', description: 'Amex Gold Monthly Statement Payoff', amount: -320.00, type: 'Expense', status: 'Cleared' },
-            { id: 5, date: '2026-10-04', category: 'Schedule C Expense', description: 'TradingView & PickMyTrade Subscriptions', amount: -185.00, type: 'Expense', status: 'Cleared' }
-        ];
-
-        // Schedule C Deductions Data
-        const taxItems = [
-            { id: 'tax-1', name: 'Prop Firm Challenge & Evaluation Fees', amount: 850, active: true },
-            { id: 'tax-2', name: 'TradingView / Charting Software', amount: 360, active: true },
-            { id: 'tax-3', name: 'PickMyTrade Automation Software', amount: 420, active: true },
-            { id: 'tax-4', name: 'Dedicated Internet Fiber Line (50%)', amount: 600, active: true },
-            { id: 'tax-5', name: 'Trading Laptop & Hardware Allocation', amount: 1190, active: true }
-        ];
-
-        // Multi-Agent Pipeline Scripts
-        const pipelineAgents = [
-            { name: 'create_packet.py', status: 'Completed', icon: 'fa-file-code' },
-            { name: 'hiring_manager.py', status: 'Completed', icon: 'fa-user-check' },
-            { name: 'boss_review.py', status: 'Pending Approval', icon: 'fa-clipboard-check' },
-            { name: 'master_ledger.py', status: 'Active', icon: 'fa-vault' },
-            { name: 'visual_inspector.py', status: 'Standby', icon: 'fa-eye' }
-        ];
-
-        let debtChartInstance = null;
-
-        // Theme Toggle Manager
-        function setThemeMode(mode) {
-            const body = document.body;
-            const darkBtn = document.getElementById('btn-theme-dark');
-            const lightBtn = document.getElementById('btn-theme-light');
-            const hcBtn = document.getElementById('btn-theme-hc');
-
-            // Reset classes
-            body.className = "min-h-screen flex flex-col ";
-            [darkBtn, lightBtn, hcBtn].forEach(b => {
-                b.className = "px-2.5 py-1 text-xs font-semibold rounded-lg transition-all flex items-center space-x-1 text-slate-400 hover:text-white";
-            });
-
-            if (mode === 'light') {
-                body.className += "bg-slate-100 text-slate-900";
-                lightBtn.className = "px-2.5 py-1 text-xs font-semibold rounded-lg transition-all flex items-center space-x-1 bg-cyan-500 text-slate-950 shadow-sm";
-            } else if (mode === 'contrast') {
-                body.className += "high-contrast";
-                hcBtn.className = "px-2.5 py-1 text-xs font-semibold rounded-lg transition-all flex items-center space-x-1 bg-cyan-500 text-slate-950 shadow-sm";
-            } else {
-                body.className += "bg-slate-950 text-slate-100";
-                darkBtn.className = "px-2.5 py-1 text-xs font-semibold rounded-lg transition-all flex items-center space-x-1 bg-cyan-500 text-slate-950 shadow-sm";
-            }
-        }
-
-        // Navigation Tabs Switcher
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('border-cyan-400', 'text-cyan-400');
-                btn.classList.add('border-transparent', 'text-slate-400');
-            });
-
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
-            activeBtn.classList.remove('border-transparent', 'text-slate-400');
-            activeBtn.classList.add('border-cyan-400', 'text-cyan-400');
-
-            if (tabId === 'debt-acceleration' && !debtChartInstance) {
-                renderDebtChart();
-            }
-        }
-
-        // Render Master Ledger Transactions
-        function renderTransactions() {
-            const tbody = document.getElementById('tx-tbody');
-            const search = document.getElementById('tx-search').value.toLowerCase();
-            const categoryFilter = document.getElementById('tx-category-filter').value;
-            const typeFilter = document.getElementById('tx-type-filter').value;
-
-            tbody.innerHTML = '';
-
-            const filtered = transactions.filter(tx => {
-                const matchesSearch = tx.description.toLowerCase().includes(search) || tx.category.toLowerCase().includes(search);
-                const matchesCategory = categoryFilter === 'ALL' || tx.category === categoryFilter;
-                const matchesType = typeFilter === 'ALL' || tx.type === typeFilter;
-                return matchesSearch && matchesCategory && matchesType;
-            });
-
-            if (filtered.length === 0) {
-                document.getElementById('no-tx-found').classList.remove('hidden');
-            } else {
-                document.getElementById('no-tx-found').classList.add('hidden');
-                filtered.forEach(tx => {
-                    const isPositive = tx.amount > 0;
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-800/40 transition-colors";
-
-                    tr.innerHTML = `
-                        <td class="py-3 px-4 font-mono text-slate-400">${tx.date}</td>
-                        <td class="py-3 px-4">
-                            <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full ${getBadgeStyle(tx.category)}">
-                                ${tx.category}
-                            </span>
-                        </td>
-                        <td class="py-3 px-4 font-medium text-white">${tx.description}</td>
-                        <td class="py-3 px-4 text-right font-mono font-bold ${isPositive ? 'text-emerald-400' : 'text-slate-200'}">
-                            ${isPositive ? '+' : ''}$${Math.abs(tx.amount).toLocaleString('en-US', {minimumFractionDigits: 2})}
-                        </td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                <i class="fa-solid fa-circle-check text-[9px]"></i> ${tx.status}
-                            </span>
-                        </td>
-                        <td class="py-3 px-4 text-right">
-                            <button onclick="deleteTx(${tx.id})" class="text-slate-500 hover:text-rose-400 p-1" title="Delete Entry">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-        }
-
-        function getBadgeStyle(cat) {
-            switch(cat) {
-                case 'W-2 Payroll': return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-                case 'Topstep Income': return 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20';
-                case 'Debt Paydown': return 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
-                case 'Schedule C Expense': return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
-                default: return 'bg-slate-800 text-slate-300';
-            }
-        }
-
-        function filterTransactions() { renderTransactions(); }
+    <!-- TAB 1: MASTER LEDGER TRANSACTIONS -->
+    <section id="view-ledger" class="tab-view space-y-4">
+      <!-- Search & Filters -->
+      <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="relative w-full md:w-96">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+          <input type="text" id="searchInput" oninput="filterLedger()" placeholder="Search transactions, categories, notes..." class="w-full bg-darkbg-900 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors" />
+        </div>
         
-        function resetTxFilters() {
-            document.getElementById('tx-search').value = '';
-            document.getElementById('tx-category-filter').value = 'ALL';
-            document.getElementById('tx-type-filter').value = 'ALL';
-            renderTransactions();
+        <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+          <select id="categoryFilter" onchange="filterLedger()" class="bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-slate-300 focus:outline-none focus:border-brand-500">
+            <option value="ALL">All Categories</option>
+            <option value="W-2 Payroll">W-2 Payroll</option>
+            <option value="Topstep Income">Topstep Income</option>
+            <option value="Debt Paydown">Debt Paydown</option>
+            <option value="Schedule C Expense">Schedule C Expense</option>
+            <option value="Personal Living">Personal Living</option>
+          </select>
+
+          <select id="typeFilter" onchange="filterLedger()" class="bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-slate-300 focus:outline-none focus:border-brand-500">
+            <option value="ALL">All Transaction Types</option>
+            <option value="INCOME">Income (+)</option>
+            <option value="EXPENSE">Expense (-)</option>
+          </select>
+
+          <button onclick="resetFilters()" class="p-2 text-slate-400 hover:text-white bg-darkbg-900 border border-slate-700 rounded-xl text-xs transition-colors" title="Reset Filters">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ledger Table -->
+      <div class="bg-darkbg-800 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-darkbg-900/80 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <th class="py-3.5 px-4 whitespace-nowrap min-w-[110px]">Date</th>
+                <th class="py-3.5 px-4 whitespace-nowrap">Category</th>
+                <th class="py-3.5 px-4 whitespace-nowrap">Transaction / Description</th>
+                <th class="py-3.5 px-4 whitespace-nowrap text-right min-w-[120px]">Amount ($)</th>
+                <th class="py-3.5 px-4 whitespace-nowrap text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody" class="divide-y divide-slate-800/60 text-xs md:text-sm">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: PAY RATE & CASH FLOW CALCULATOR -->
+    <section id="view-pay" class="tab-view space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Interactive Paycheck Engine -->
+        <div class="lg:col-span-1 bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
+          <div class="border-b border-slate-700/60 pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-brand-400"></i> Pay Rate Calculator Engine
+            </h2>
+            <p class="text-xs text-slate-400">Adjust parameters to model expected take-home checks.</p>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1">Base Hourly Pay Rate ($/hr)</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-slate-500 font-bold">$</span>
+                <input type="number" id="calcPayRate" value="20.00" step="0.50" oninput="recalculatePaycheck()" class="w-full bg-darkbg-900 border border-slate-700 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-brand-500" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Standard Hours</label>
+                <input type="number" id="calcStandardHours" value="80" oninput="recalculatePaycheck()" class="w-full bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-brand-500" />
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Overtime Hours</label>
+                <input type="number" id="calcOtHours" value="10" oninput="recalculatePaycheck()" class="w-full bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-brand-500" />
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1">Est. Tax & Benefit Withholding (%)</label>
+              <input type="range" id="calcTaxRate" min="15" max="35" value="22" oninput="recalculatePaycheck()" class="w-full accent-brand-500" />
+              <div class="flex justify-between text-[11px] text-slate-400 font-mono mt-1">
+                <span>15%</span>
+                <span id="taxRateVal" class="text-brand-400 font-bold">22%</span>
+                <span>35%</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1">Form W-4 Extra Withholding / Check</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-slate-500 font-bold">$</span>
+                <input type="number" id="calcW4Extra" value="100.00" step="25" oninput="recalculatePaycheck()" class="w-full bg-darkbg-900 border border-slate-700 rounded-xl pl-8 pr-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-brand-500" />
+              </div>
+              <p class="text-[10px] text-slate-400 mt-1">Safe-harbor automated shelter deduction</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calculated Pay Output Summary -->
+        <div class="lg:col-span-2 bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-5 shadow-xl flex flex-col justify-between">
+          <div>
+            <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
+              <div>
+                <h2 class="text-base font-bold text-white">Bi-Weekly Paycheck Breakdown</h2>
+                <p class="text-xs text-slate-400">Live projection based on Senior Day Service Counselor rate</p>
+              </div>
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">
+                OT Rate: <span id="calcOtRateDisplay" class="mono font-black">$30.00</span>/hr
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+              <div class="bg-darkbg-900 p-3.5 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 font-medium uppercase block">Regular Base Gross</span>
+                <span class="text-xl font-extrabold text-white mono" id="calcRegularGross">$1,600.00</span>
+              </div>
+              <div class="bg-darkbg-900 p-3.5 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 font-medium uppercase block">Overtime Pay</span>
+                <span class="text-xl font-extrabold text-brand-400 mono" id="calcOtGross">$300.00</span>
+              </div>
+              <div class="bg-darkbg-900 p-3.5 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 font-medium uppercase block">Total Gross Pay</span>
+                <span class="text-xl font-extrabold text-teal-300 mono" id="calcTotalGross">$1,900.00</span>
+              </div>
+            </div>
+
+            <!-- Visual Bar Breakdown -->
+            <div class="mt-6 space-y-3">
+              <div class="flex justify-between text-xs font-semibold">
+                <span class="text-slate-300">Net Take-Home Pay</span>
+                <span class="text-emerald-400 mono font-extrabold text-base" id="calcNetTakehome">$1,382.00</span>
+              </div>
+              <div class="w-full bg-darkbg-900 h-4 rounded-full overflow-hidden flex border border-slate-800">
+                <div id="barNet" class="bg-emerald-500 h-full" style="width: 72%" title="Net Pay"></div>
+                <div id="barTax" class="bg-rose-500/80 h-full" style="width: 22%" title="Taxes"></div>
+                <div id="barW4" class="bg-amber-500/80 h-full" style="width: 6%" title="Extra W-4 Withholding"></div>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Net Take-Home</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span> Standard Taxes (<span id="taxDeductVal">$418.00</span>)</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Extra W-4 (<span id="w4DeductVal">$100.00</span>)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-brand-500/20 flex items-start gap-3">
+            <i class="fa-solid fa-circle-info text-brand-400 text-lg mt-0.5"></i>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <strong class="text-white">Cash Flow Impact:</strong> Setting your W-2 base rate to <strong>$20.00/hr</strong> stabilizes your core monthly income at ~$3,500 net (with overtime). This safely absorbs extra tax withholdings while leaving funds open to execute Path B auto loan payoff.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: AUTO LOAN ACCELERATION (PATH B) -->
+    <section id="view-debt" class="tab-view space-y-6 hidden">
+      <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-700/60 pb-4">
+          <div>
+            <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
+              <i class="fa-solid fa-car text-amber-400"></i> Path B: 6-Month Auto Loan Payoff Model
+            </h2>
+            <p class="text-xs text-slate-400">50% Topstep futures trading injection directly into M&T Bank principal</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              Starting Loan: $18,751.05
+            </span>
+          </div>
+        </div>
+
+        <!-- Payoff Chart -->
+        <div class="h-64 w-full bg-darkbg-900/60 p-4 rounded-xl border border-slate-800">
+          <canvas id="debtChart"></canvas>
+        </div>
+
+        <!-- 6-Month Projection Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs md:text-sm">
+            <thead>
+              <tr class="bg-darkbg-900 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase">
+                <th class="py-3 px-4">Timeline</th>
+                <th class="py-3 px-4">Est. W-2 Net (Post W-4)</th>
+                <th class="py-3 px-4 text-emerald-400">Topstep Principal Injection</th>
+                <th class="py-3 px-4 text-amber-400">M&T Principal Balance</th>
+                <th class="py-3 px-4 text-cyan-400">Ending Liquid Cash</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/80 font-mono">
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-sans font-bold text-slate-300">Baseline</td>
+                <td class="py-3 px-4 text-slate-400">—</td>
+                <td class="py-3 px-4 text-slate-400">$0.00</td>
+                <td class="py-3 px-4 text-amber-300 font-bold">$18,751.05</td>
+                <td class="py-3 px-4 text-cyan-300 font-bold">$5,907.54</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-sans font-bold text-slate-300">Month 1</td>
+                <td class="py-3 px-4 text-slate-200">$1,444.00</td>
+                <td class="py-3 px-4 text-emerald-400 font-bold">$0.00</td>
+                <td class="py-3 px-4 text-amber-300 font-bold">$18,555.61</td>
+                <td class="py-3 px-4 text-cyan-300 font-bold">$4,458.12 *</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-sans font-bold text-slate-300">Month 2</td>
+                <td class="py-3 px-4 text-slate-200">$1,444.00</td>
+                <td class="py-3 px-4 text-emerald-400 font-bold">$1,000.00</td>
+                <td class="py-3 px-4 text-amber-300 font-bold">$17,358.70</td>
+                <td class="py-3 px-4 text-cyan-300 font-bold">$4,458.12</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-sans font-bold text-slate-300">Month 3</td>
+                <td class="py-3 px-4 text-slate-200">$1,444.00</td>
+                <td class="py-3 px-4 text-emerald-400 font-bold">$2,000.00</td>
+                <td class="py-3 px-4 text-amber-300 font-bold">$15,145.33</td>
+                <td class="py-3 px-4 text-cyan-300 font-bold">$4,458.12</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-sans font-bold text-slate-300">Month 4</td>
+                <td class="py-3 px-4 text-slate-200">$1,444.00</td>
+                <td class="py-3 px-4 text-emerald-400 font-bold">$2,000.00</td>
+                <td class="py-3 px-4 text-amber-300 font-bold">$12,900.40</td>
+                <td class="py-3 px-4 text-cyan-300 font-bold">$4,458.12</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-sans font-bold text-slate-300">Month 5</td>
+                <td class="py-3 px-4 text-slate-200">$1,444.00</td>
+                <td class="py-3 px-4 text-emerald-400 font-bold">$2,000.00</td>
+                <td class="py-3 px-4 text-amber-300 font-bold">$10,623.67</td>
+                <td class="py-3 px-4 text-cyan-300 font-bold">$4,458.12</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30 bg-slate-800/20">
+                <td class="py-3 px-4 font-sans font-bold text-brand-400">Month 6</td>
+                <td class="py-3 px-4 text-slate-200">$1,444.00</td>
+                <td class="py-3 px-4 text-emerald-400 font-bold">$2,000.00</td>
+                <td class="py-3 px-4 text-amber-300 font-bold">$8,313.12</td>
+                <td class="py-3 px-4 text-cyan-300 font-bold">$4,458.12</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-slate-400 italic">* Month 1 cash drawdown reflects clearing $224.67 Amex Gold balance and $1,000 preventative timing belt kit service for Subaru WRX.</p>
+      </div>
+    </section>
+
+    <!-- TAB 4: TAX WRITE-OFFS & SYSTEM CHECKLIST -->
+    <section id="view-taxes" class="tab-view space-y-6 hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Schedule C Deductions -->
+        <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
+          <div class="border-b border-slate-700/60 pb-3">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-file-invoice-dollar text-purple-400"></i> Schedule C Tax Shelter Tracker
+            </h2>
+            <p class="text-xs text-slate-400">IRS-compliant write-offs to reduce taxable drag</p>
+          </div>
+
+          <div class="space-y-2.5 text-xs">
+            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
+              <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
+              <div>
+                <strong class="text-slate-200 block">Prop Firm Challenge & Evaluation Fees</strong>
+                <span class="text-slate-400 text-[11px]">100% deductible (Passed $50k Trading Combine & Challenge fees)</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
+              <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
+              <div>
+                <strong class="text-slate-200 block">Charting & Execution Software</strong>
+                <span class="text-slate-400 text-[11px]">TradingView, NinjaTrader, Tradovate monthly tiers</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
+              <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
+              <div>
+                <strong class="text-slate-200 block">Automation & Webhook Tools</strong>
+                <span class="text-slate-400 text-[11px]">PickMyTrade signal routing software</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
+              <input type="checkbox" class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
+              <div>
+                <strong class="text-slate-200 block">Real-Time CME Market Data Feeds</strong>
+                <span class="text-slate-400 text-[11px]">CME / CBOT / NYMEX Level 2 data packages</span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
+              <input type="checkbox" class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
+              <div>
+                <strong class="text-slate-200 block">Hardware & Home Office Setup %</strong>
+                <span class="text-slate-400 text-[11px]">Trading laptop, dual monitors, dedicated high-speed internet</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Python Agent Pipeline Status -->
+        <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
+          <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-network-wired text-brand-400"></i> Agent Automation Pipeline
+              </h2>
+              <p class="text-xs text-slate-400">Multi-agent backend status</p>
+            </div>
+            <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">GitHub Sync Active</span>
+          </div>
+
+          <div class="space-y-3 font-mono text-xs">
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
+              <span class="text-slate-300">create_packet.py</span>
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
+              <span class="text-slate-300">hiring_manager.py</span>
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
+              <span class="text-slate-300">boss_review.py</span>
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
+              <span class="text-slate-300">master_ledger.py</span>
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> ACTIVE</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
+              <span class="text-slate-300">send_packet_email.py</span>
+              <span class="text-amber-400 font-bold"><i class="fa-solid fa-clock text-[10px] mr-1"></i> STANDBY</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADD TRANSACTION MODAL -->
+  <div id="addTransactionModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-darkbg-800 border border-slate-700 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl relative">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+        <h3 class="text-base font-bold text-white">Add Master Ledger Entry</h3>
+        <button onclick="closeModal('addTransactionModal')" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="addTxForm" onsubmit="handleAddTransaction(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Date</label>
+          <input type="date" id="txDate" required class="w-full bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-500" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Category</label>
+          <select id="txCategory" required class="w-full bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-500">
+            <option value="W-2 Payroll">W-2 Payroll</option>
+            <option value="Topstep Income">Topstep Income</option>
+            <option value="Debt Paydown">Debt Paydown</option>
+            <option value="Schedule C Expense">Schedule C Expense</option>
+            <option value="Personal Living">Personal Living</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Description</label>
+          <input type="text" id="txDesc" placeholder="e.g., Paystub 80h + 10h OT" required class="w-full bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Type</label>
+            <select id="txType" required class="w-full bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-500">
+              <option value="INCOME">Income (+)</option>
+              <option value="EXPENSE">Expense (-)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Amount ($)</label>
+            <input type="number" id="txAmount" step="0.01" placeholder="0.00" required class="w-full bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-500" />
+          </div>
+        </div>
+
+        <div class="pt-3 flex gap-3">
+          <button type="button" onclick="closeModal('addTransactionModal')" class="w-1/2 py-2.5 rounded-xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Cancel</button>
+          <button type="submit" class="w-1/2 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-teal-500 text-slate-950 font-bold hover:opacity-90 transition-opacity">Save Entry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- APPLICATION JAVASCRIPT -->
+  <script>
+    // INITIAL LEDGER DATA
+    let ledgerData = [
+      { id: 1, date: '2026-10-16', category: 'W-2 Payroll', desc: 'Senior Day Service Counselor Paystub (80h + 10h OT)', type: 'INCOME', amount: 1624.00 },
+      { id: 2, date: '2026-10-12', category: 'Topstep Income', desc: 'Topstep Funded Account Distribution', type: 'INCOME', amount: 1000.00 },
+      { id: 3, date: '2026-10-10', category: 'Debt Paydown', desc: 'M&T Auto Loan Principal Acceleration', type: 'EXPENSE', amount: 500.00 },
+      { id: 4, date: '2026-10-08', category: 'Debt Paydown', desc: 'Amex Gold Monthly Statement Payoff', type: 'EXPENSE', amount: 320.00 },
+      { id: 5, date: '2026-10-04', category: 'Schedule C Expense', desc: 'TradingView & PickMyTrade Subscriptions', type: 'EXPENSE', amount: 185.00 }
+    ];
+
+    // INITIALIZATION
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set default date input to today
+      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+      
+      renderLedger();
+      recalculatePaycheck();
+      initDebtChart();
+    });
+
+    // THEME SWITCHER
+    function setTheme(mode) {
+      const html = document.documentElement;
+      const darkBtn = document.getElementById('themeDarkBtn');
+      const lightBtn = document.getElementById('themeLightBtn');
+
+      if (mode === 'dark') {
+        html.classList.add('dark');
+        darkBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-brand-400 bg-slate-800 shadow-sm flex items-center gap-1.5";
+        lightBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
+      } else {
+        html.classList.remove('dark');
+        lightBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-amber-500 bg-slate-200 shadow-sm flex items-center gap-1.5";
+        darkBtn.className = "p-1.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-slate-800 flex items-center gap-1.5";
+      }
+    }
+
+    // TAB SWITCHING
+    function switchTab(tabKey) {
+      document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = "tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all";
+      });
+
+      document.getElementById(`view-${tabKey}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabKey}`);
+      activeBtn.className = "tab-btn px-3 py-1.5 rounded-lg text-brand-400 bg-slate-800/90 border border-brand-500/30 flex items-center gap-2 transition-all";
+    }
+
+    // LEDGER RENDER & FILTERING
+    function renderLedger() {
+      const tbody = document.getElementById('ledgerTableBody');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const catFilter = document.getElementById('categoryFilter').value;
+      const typeFilter = document.getElementById('typeFilter').value;
+
+      const filtered = ledgerData.filter(item => {
+        const matchesSearch = item.desc.toLowerCase().includes(search) || item.category.toLowerCase().includes(search);
+        const matchesCat = catFilter === 'ALL' || item.category === catFilter;
+        const matchesType = typeFilter === 'ALL' || item.type === typeFilter;
+        return matchesSearch && matchesCat && matchesType;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-8 text-center text-slate-500 italic">No matching ledger entries found.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        const isIncome = item.type === 'INCOME';
+        const amtColor = isIncome ? 'text-emerald-400 font-bold' : 'text-slate-300 font-bold';
+        const prefix = isIncome ? '+' : '-';
+        
+        let badgeClass = 'bg-slate-800 text-slate-300';
+        if (item.category === 'W-2 Payroll') badgeClass = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+        if (item.category === 'Topstep Income') badgeClass = 'bg-brand-500/10 text-brand-400 border border-brand-500/20';
+        if (item.category === 'Debt Paydown') badgeClass = 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
+        if (item.category === 'Schedule C Expense') badgeClass = 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition-colors">
+            <td class="py-3.5 px-4 font-mono text-slate-300 whitespace-nowrap">${item.date}</td>
+            <td class="py-3.5 px-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeClass}">${item.category}</span>
+            </td>
+            <td class="py-3.5 px-4 text-slate-200 font-medium">${item.desc}</td>
+            <td class="py-3.5 px-4 text-right font-mono whitespace-nowrap ${amtColor}">${prefix}$${item.amount.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+            <td class="py-3.5 px-4 text-center">
+              <button onclick="deleteEntry(${item.id})" class="text-slate-500 hover:text-rose-400 transition-colors p-1" title="Delete">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterLedger() { renderLedger(); }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('categoryFilter').value = 'ALL';
+      document.getElementById('typeFilter').value = 'ALL';
+      renderLedger();
+    }
+
+    function handleAddTransaction(e) {
+      e.preventDefault();
+      const date = document.getElementById('txDate').value;
+      const category = document.getElementById('txCategory').value;
+      const desc = document.getElementById('txDesc').value;
+      const type = document.getElementById('txType').value;
+      const amount = parseFloat(document.getElementById('txAmount').value) || 0;
+
+      ledgerData.unshift({ id: Date.now(), date, category, desc, type, amount });
+      renderLedger();
+      closeModal('addTransactionModal');
+      document.getElementById('addTxForm').reset();
+      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+    }
+
+    function deleteEntry(id) {
+      ledgerData = ledgerData.filter(item => item.id !== id);
+      renderLedger();
+    }
+
+    // PAYCHECK ENGINE CALCULATIONS
+    function recalculatePaycheck() {
+      const payRate = parseFloat(document.getElementById('calcPayRate').value) || 20.00;
+      const stdHours = parseFloat(document.getElementById('calcStandardHours').value) || 80;
+      const otHours = parseFloat(document.getElementById('calcOtHours').value) || 0;
+      const taxPct = parseFloat(document.getElementById('calcTaxRate').value) || 22;
+      const w4Extra = parseFloat(document.getElementById('calcW4Extra').value) || 0;
+
+      const otRate = payRate * 1.5;
+      const regGross = payRate * stdHours;
+      const otGross = otRate * otHours;
+      const totalGross = regGross + otGross;
+
+      const stdTaxDeduct = totalGross * (taxPct / 100);
+      const totalTaxDeduct = stdTaxDeduct + w4Extra;
+      const netTakehome = Math.max(0, totalGross - totalTaxDeduct);
+
+      // DOM Updates
+      document.getElementById('taxRateVal').innerText = `${taxPct}%`;
+      document.getElementById('calcOtRateDisplay').innerText = `$${otRate.toFixed(2)}`;
+      document.getElementById('calcRegularGross').innerText = `$${regGross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+      document.getElementById('calcOtGross').innerText = `$${otGross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+      document.getElementById('calcTotalGross').innerText = `$${totalGross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+      document.getElementById('calcNetTakehome').innerText = `$${netTakehome.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+
+      document.getElementById('taxDeductVal').innerText = `$${stdTaxDeduct.toFixed(2)}`;
+      document.getElementById('w4DeductVal').innerText = `$${w4Extra.toFixed(2)}`;
+
+      // Dynamic Card Headers Sync
+      document.getElementById('displayBaseRate').innerText = `$${payRate.toFixed(2)}`;
+      document.getElementById('displayBiweeklyGross').innerText = `$${regGross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+      document.getElementById('displayNetTakehome').innerText = `$${netTakehome.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+
+      // Progress Bar width sync
+      if (totalGross > 0) {
+        document.getElementById('barNet').style.width = `${(netTakehome / totalGross) * 100}%`;
+        document.getElementById('barTax').style.width = `${(stdTaxDeduct / totalGross) * 100}%`;
+        document.getElementById('barW4').style.width = `${(w4Extra / totalGross) * 100}%`;
+      }
+    }
+
+    // CHART.JS DEBT VISUALIZATION
+    function initDebtChart() {
+      const ctx = document.getElementById('debtChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Baseline', 'Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
+          datasets: [{
+            label: 'M&T Auto Loan Principal ($)',
+            data: [18751.05, 18555.61, 17358.70, 15145.33, 12900.40, 10623.67, 8313.12],
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#f59e0b',
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', weight: '600' } } }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94a3b8' } },
+            y: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#94a3b8' } }
+          }
         }
+      });
+    }
 
-        function deleteTx(id) {
-            transactions = transactions.filter(t => t.id !== id);
-            renderTransactions();
-        }
-
-        function handleAddTx(e) {
-            e.preventDefault();
-            const date = document.getElementById('tx-date').value;
-            const type = document.getElementById('tx-type').value;
-            const category = document.getElementById('tx-category').value;
-            const description = document.getElementById('tx-desc').value;
-            let amount = parseFloat(document.getElementById('tx-amount').value);
-
-            if (type !== 'Income' && amount > 0) amount = -amount;
-
-            transactions.unshift({
-                id: Date.now(),
-                date,
-                type,
-                category,
-                description,
-                amount,
-                status: 'Cleared'
-            });
-
-            renderTransactions();
-            closeModal('add-tx-modal');
-            document.getElementById('tx-form').reset();
-        }
-
-        // Live Paycheck Calculations ($20/hr Base)
-        function runPayCalculations() {
-            const baseRate = parseFloat(document.getElementById('calc-base-rate').value) || 20.00;
-            const regHours = parseFloat(document.getElementById('input-reg-hours').value) || 80;
-            const otHours = parseFloat(document.getElementById('input-ot-hours').value) || 0;
-            const taxPct = parseFloat(document.getElementById('input-tax-pct').value) || 15;
-            const extraW4 = parseFloat(document.getElementById('input-extra-w4').value) || 0;
-            const topstep = parseFloat(document.getElementById('input-topstep-payout').value) || 0;
-
-            const otRate = baseRate * 1.5;
-            const baseGross = baseRate * regHours;
-            const otGross = otHours * otRate;
-            const totalGross = baseGross + otGross;
-
-            const estTaxes = (totalGross * (taxPct / 100)) + extraW4;
-            const netCheck = totalGross - estTaxes;
-
-            // Update Input Labels
-            document.getElementById('label-reg-hours').innerText = `${regHours} hrs`;
-            document.getElementById('label-ot-hours').innerText = `${otHours} hrs`;
-            document.getElementById('label-ot-rate').innerText = `$${otRate.toFixed(2)}`;
-
-            // Output Displays
-            document.getElementById('res-base-gross').innerText = `$${baseGross.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('res-ot-gross').innerText = `$${otGross.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('res-total-gross').innerText = `$${totalGross.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('res-taxes').innerText = `-$${estTaxes.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('res-net-check').innerText = `$${netCheck.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-
-            // Topstep 50/50 Path B Split
-            const splitDebt = topstep * 0.5;
-            const splitLiquid = topstep * 0.5;
-            document.getElementById('split-debt-amount').innerText = `$${splitDebt.toFixed(2)}`;
-            document.getElementById('split-liquid-amount').innerText = `$${splitLiquid.toFixed(2)}`;
-
-            // Executive Dashboard Sync
-            document.getElementById('stat-pay-rate').innerHTML = `$${baseRate.toFixed(2)} <span class="text-xs text-slate-500 font-sans font-normal">/hr</span>`;
-            document.getElementById('stat-gross-base').innerText = `$${baseGross.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('stat-net-check').innerText = `$${netCheck.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-        }
-
-        // Render Schedule C Write-offs Checklist
-        function renderTaxChecklist() {
-            const container = document.getElementById('tax-checklist');
-            container.innerHTML = '';
-
-            taxItems.forEach(item => {
-                const card = document.createElement('div');
-                card.className = `p-3.5 rounded-xl border flex items-center justify-between transition-all ${item.active ? 'bg-slate-950 border-cyan-500/30' : 'bg-slate-950/40 border-slate-800 opacity-50'}`;
-                
-                card.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <input type="checkbox" id="${item.id}" ${item.active ? 'checked' : ''} onchange="toggleTaxItem('${item.id}')" class="w-4 h-4 accent-cyan-500 rounded border-slate-700">
-                        <label for="${item.id}" class="text-xs font-bold text-slate-200 cursor-pointer">${item.name}</label>
-                    </div>
-                    <span class="font-mono font-bold text-emerald-400 text-xs">$${item.amount.toFixed(2)}</span>
-                `;
-                container.appendChild(card);
-            });
-
-            const total = taxItems.filter(i => i.active).reduce((s, i) => s + i.amount, 0);
-            document.getElementById('tax-total').innerText = `$${total.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-        }
-
-        function toggleTaxItem(id) {
-            const target = taxItems.find(i => i.id === id);
-            if (target) {
-                target.active = !target.active;
-                renderTaxChecklist();
-            }
-        }
-
-        // Render Multi-Agent Pipeline Cards
-        function renderPipeline() {
-            const container = document.getElementById('agent-pipeline-grid');
-            container.innerHTML = '';
-
-            pipelineAgents.forEach(agent => {
-                const isCompleted = agent.status === 'Completed';
-                const isActive = agent.status === 'Active';
-                
-                const card = document.createElement('div');
-                card.className = "p-3.5 bg-slate-950 border border-slate-800 rounded-xl flex flex-col items-center text-center space-y-2";
-
-                card.innerHTML = `
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs ${
-                        isCompleted ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                        isActive ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 animate-pulse' :
-                        'bg-slate-800 text-slate-400'
-                    }">
-                        <i class="fa-solid ${agent.icon}"></i>
-                    </div>
-                    <span class="text-xs font-mono font-bold text-white">${agent.name}</span>
-                    <span class="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded ${
-                        isCompleted ? 'bg-emerald-500/10 text-emerald-400' :
-                        isActive ? 'bg-cyan-500/10 text-cyan-400' :
-                        'bg-slate-800 text-slate-400'
-                    }">${agent.status}</span>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Render Chart.js Path B Acceleration
-        function renderDebtChart() {
-            const ctx = document.getElementById('debtChart').getContext('2d');
-            debtChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Start', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6'],
-                    datasets: [{
-                        label: 'M&T Auto Loan Balance ($)',
-                        data: [18751.05, 17801.05, 16851.05, 15651.05, 14451.05, 13001.05, 11551.05],
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#f59e0b'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                            ticks: { color: '#9ca3af', font: { family: 'JetBrains Mono' } }
-                        },
-                        x: {
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                            ticks: { color: '#9ca3af' }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Modal Handlers
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        // Initial App Load
-        window.onload = function() {
-            renderTransactions();
-            runPayCalculations();
-            renderTaxChecklist();
-            renderPipeline();
-
-            document.getElementById('tx-date').value = new Date().toISOString().split('T')[0];
-        };
-    </script>
+    // MODAL HELPERS
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+  </script>
 </body>
 </html>
