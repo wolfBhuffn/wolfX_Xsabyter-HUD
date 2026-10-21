@@ -94,18 +94,21 @@
 
   <!-- NAVIGATION TABS -->
   <div class="bg-darkbg-800/80 border-b border-slate-800 px-4 lg:px-8">
-    <div class="max-w-7xl mx-auto flex space-x-2 md:space-x-6 overflow-x-auto py-2.5 text-xs md:text-sm font-semibold">
+    <div class="max-w-7xl mx-auto flex space-x-2 md:space-x-4 overflow-x-auto py-2.5 text-xs md:text-sm font-semibold">
       <button onclick="switchTab('ledger')" id="tab-ledger" class="tab-btn px-3 py-1.5 rounded-lg text-brand-400 bg-slate-800/90 border border-brand-500/30 flex items-center gap-2 transition-all whitespace-nowrap">
         <i class="fa-solid fa-list-check"></i> Master Ledger Tab
       </button>
       <button onclick="switchTab('pay')" id="tab-pay" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-calculator"></i> Pay Rate ($20/hr) & Net Paycheck
+        <i class="fa-solid fa-calculator"></i> Pay Rate ($20) & Net Paycheck
       </button>
       <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-chart-line"></i> Auto Loan Acceleration (Path B)
+        <i class="fa-solid fa-chart-line"></i> Auto Loan (Path B)
       </button>
       <button onclick="switchTab('taxes')" id="tab-taxes" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-shield-halved"></i> Schedule C Tax Write-Offs
+        <i class="fa-solid fa-shield-halved"></i> Schedule C Tax Shelter
+      </button>
+      <button onclick="switchTab('agents')" id="tab-agents" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
+        <i class="fa-solid fa-network-wired"></i> Agent Pipeline
       </button>
     </div>
   </div>
@@ -141,7 +144,7 @@
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl lg:text-3xl font-black mono text-emerald-400">$1,956.52</span>
         </div>
-        <p class="mt-1 text-xs text-slate-400 font-medium">Gross: <span class="text-slate-200 font-bold mono">$2,667.80</span></p>
+        <p class="mt-1 text-xs text-slate-400 font-medium">Gross: <span class="text-slate-200 font-bold mono">$2,667.80</span>[span_0](start_span)[span_0](end_span)</p>
         <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
           <div class="h-full bg-emerald-400 rounded-full" style="width: 95%"></div>
         </div>
@@ -231,96 +234,99 @@
       </div>
     </section>
 
-    <!-- TAB 2: PAY RATE & PAYSTUB NET PAYCHECK -->
+    <!-- TAB 2: PAY RATE & OVERTIME SLIDER NET CHECK CALCULATOR -->
     <section id="view-pay" class="tab-view space-y-6 hidden">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- Paystub Breakdown Card -->
+        <!-- Overtime Slider Calculator Engine -->
         <div class="lg:col-span-1 bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
           <div class="border-b border-slate-700/60 pb-3">
             <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-file-invoice-dollar text-brand-400"></i> Verified Paystub (10/23)
+              <i class="fa-solid fa-sliders text-brand-400"></i> Overtime Slider Simulator
             </h2>
-            <p class="text-xs text-slate-400">Pay Rate: $20.00/hr | Senior Counselor</p>
+            <p class="text-xs text-slate-400">Model bi-weekly earnings with custom OT hours</p>
           </div>
 
-          <div class="space-y-3 font-mono text-xs">
-            <div class="flex justify-between p-2.5 rounded-xl bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-400">Regular Pay (80h @ $20)</span>
-              <span class="text-white font-bold">$1,539.50</span>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-semibold text-slate-300">Overtime Hours ($30/hr)</label>
+                <span id="sliderOtVal" class="text-brand-400 font-mono font-bold text-sm">37.61 hrs</span>
+              </div>
+              <input type="range" id="otSlider" min="0" max="50" step="0.5" value="37.61" oninput="updateOvertimeSimulation()" class="w-full accent-brand-500" />
+              <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                <span>0h (Base Only)</span>
+                <span>25h</span>
+                <span>50h Max</span>
+              </div>
             </div>
-            <div class="flex justify-between p-2.5 rounded-xl bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-400">Overtime (37.61h @ $30)</span>
-              <span class="text-brand-400 font-bold">$1,128.30</span>
+
+            <div class="bg-darkbg-900 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
+              <div class="flex justify-between">
+                <span class="text-slate-400">Base Pay (80h @ $20)</span>
+                <span class="text-white font-mono font-bold">$1,539.50</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Overtime Pay (<span id="simOtHours">37.61</span>h @ $30)</span>
+                <span class="text-brand-400 font-mono font-bold" id="simOtTotal">$1,128.30</span>
+              </div>
+              <div class="border-t border-slate-800 pt-2 flex justify-between font-bold">
+                <span class="text-slate-200">Simulated Gross</span>
+                <span class="text-teal-300 font-mono" id="simGross">$2,667.80</span>
+              </div>
             </div>
-            <div class="flex justify-between p-2.5 rounded-xl bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-400">Total Gross Income</span>
-              <span class="text-teal-300 font-bold">$2,667.80</span>
-            </div>
-            <div class="flex justify-between p-2.5 rounded-xl bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-400">Total Taxes</span>
-              <span class="text-rose-400 font-bold">-$400.53</span>
-            </div>
-            <div class="flex justify-between p-2.5 rounded-xl bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-400">Total Deductions</span>
-              <span class="text-amber-400 font-bold">-$310.75</span>
-            </div>
-            <div class="flex justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm">
-              <span class="text-emerald-300 font-bold font-sans">Net Take-Home Paycheck</span>
-              <span class="text-emerald-400 font-black">$1,956.52</span>
-            </div>
+
+            <p class="text-[11px] text-slate-400 leading-relaxed italic">
+              Adjust the slider to instantly project gross earnings and net take-home checks based on your verified tax & deduction rates.
+            </p>
           </div>
         </div>
 
-        <!-- Direct Deposit & Tax Split Details -->
+        <!-- Verified Paystub & Net Pay Breakdown -->
         <div class="lg:col-span-2 bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-5 shadow-xl flex flex-col justify-between">
           <div>
             <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
               <div>
-                <h2 class="text-base font-bold text-white">Direct Deposit & Tax Itemization</h2>
-                <p class="text-xs text-slate-400">Paycom Check Disbursement Details</p>
+                <h2 class="text-base font-bold text-white">Verified Paystub & Net Take-Home Check</h2>
+                <p class="text-xs text-slate-400">Pay Period 10/4 - 10/17 | Senior Counselor</p>
               </div>
               <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                Verified
+                Verified Net Pay
               </span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-              <div class="bg-darkbg-900 p-4 rounded-xl border border-slate-800 space-y-1">
-                <span class="text-[11px] text-slate-400 font-medium uppercase block">Chase Net Check (2156)</span>
-                <span class="text-xl font-extrabold text-white mono">$956.52</span>
-                <p class="text-[11px] text-slate-400">Standard direct deposit checking</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+              <div class="bg-darkbg-900 p-3.5 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 font-medium uppercase block">Total Gross Income</span>
+                <span class="text-xl font-extrabold text-teal-300 mono" id="displaySimGross">$2,667.80</span>[span_1](start_span)[span_1](end_span)
               </div>
-              <div class="bg-darkbg-900 p-4 rounded-xl border border-slate-800 space-y-1">
-                <span class="text-[11px] text-slate-400 font-medium uppercase block">American Express (2982)</span>
-                <span class="text-xl font-extrabold text-brand-400 mono">$1,000.00</span>
-                <p class="text-[11px] text-slate-400">One-time direct deposit distribution</p>
+              <div class="bg-darkbg-900 p-3.5 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 font-medium uppercase block">Taxes & Deductions</span>
+                <span class="text-xl font-extrabold text-rose-400 mono">-$711.28</span>
+              </div>
+              <div class="bg-darkbg-900 p-3.5 rounded-xl border border-slate-800">
+                <span class="text-[11px] text-slate-400 font-medium uppercase block">Net Take-Home Check</span>
+                <span class="text-xl font-extrabold text-emerald-400 mono" id="displaySimNet">$1,956.52</span>[span_2](start_span)[span_2](end_span)
               </div>
             </div>
 
-            <!-- Tax Breakdown -->
+            <!-- Direct Deposit Distribution -->
             <div class="mt-5 space-y-2">
-              <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Tax Withholdings ($400.53 Total)</h3>
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
-                <div class="bg-darkbg-900 p-2.5 rounded-lg border border-slate-800">
-                  <span class="text-slate-400 block text-[10px]">Federal W/H (FWT)</span>
-                  <span class="text-white font-mono font-bold">$31.75</span>
+              <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Direct Deposit Disbursement</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="bg-darkbg-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                  <div>
+                    <strong class="text-slate-200 block">Chase Checking (2156)</strong>
+                    <span class="text-slate-400 text-[10px]">Standard Net Check Deposit</span>
+                  </div>
+                  <span class="text-white font-mono font-bold">$956.52</span>
                 </div>
-                <div class="bg-darkbg-900 p-2.5 rounded-lg border border-slate-800">
-                  <span class="text-slate-400 block text-[10px]">Medicare (MED)</span>
-                  <span class="text-white font-mono font-bold">$34.42</span>
-                </div>
-                <div class="bg-darkbg-900 p-2.5 rounded-lg border border-slate-800">
-                  <span class="text-slate-400 block text-[10px]">Social Security (SSC)</span>
-                  <span class="text-white font-mono font-bold">$147.16</span>
-                </div>
-                <div class="bg-darkbg-900 p-2.5 rounded-lg border border-slate-800">
-                  <span class="text-slate-400 block text-[10px]">NYS W/H (NYW)</span>
-                  <span class="text-white font-mono font-bold">$106.47</span>
-                </div>
-                <div class="bg-darkbg-900 p-2.5 rounded-lg border border-slate-800 sm:col-span-2">
-                  <span class="text-slate-400 block text-[10px]">NYC Resident Local (NYR)</span>
-                  <span class="text-white font-mono font-bold">$80.73</span>
+                <div class="bg-darkbg-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                  <div>
+                    <strong class="text-slate-200 block">American Express (2982)</strong>
+                    <span class="text-slate-400 text-[10px]">One-Time Direct Deposit</span>
+                  </div>
+                  <span class="text-brand-400 font-mono font-bold">$1,000.00</span>
                 </div>
               </div>
             </div>
@@ -329,7 +335,7 @@
           <div class="bg-slate-900/80 p-4 rounded-xl border border-brand-500/20 flex items-start gap-3 mt-4">
             <i class="fa-solid fa-circle-info text-brand-400 text-lg mt-0.5"></i>
             <p class="text-xs text-slate-300 leading-relaxed">
-              <strong class="text-white">Pay Rate Update Active:</strong> Your <strong>$20.00/hr</strong> pay rate and expected take-home paycheck of <strong>$1,956.52</strong> are locked into the system, perfectly funding your monthly vehicle acceleration and system operations.
+              <strong class="text-white">Overtime Impact:</strong> Each additional 5 hours of overtime adds approximately <strong>$117.00</strong> in net take-home pay after taxes, directly supercharging your liquidity buffers.
             </p>
           </div>
         </div>
@@ -428,98 +434,126 @@
       </div>
     </section>
 
-    <!-- TAB 4: TAX WRITE-OFFS & SYSTEM CHECKLIST -->
+    <!-- TAB 4: SCHEDULE C TAX WRITE-OFFS (INCLUDING BLOWN ACCOUNTS) -->
     <section id="view-taxes" class="tab-view space-y-6 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <!-- Schedule C Deductions -->
-        <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
-          <div class="border-b border-slate-700/60 pb-3">
+      <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
+        <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
+          <div>
             <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-file-invoice-dollar text-purple-400"></i> Schedule C Tax Shelter Tracker
+              <i class="fa-solid fa-file-invoice-dollar text-purple-400"></i> Schedule C Tax Shelter Tracker & Blown Accounts
             </h2>
-            <p class="text-xs text-slate-400">IRS-compliant write-offs to reduce taxable drag</p>
+            <p class="text-xs text-slate-400">IRS-compliant business write-offs (IRC Section 162)</p>
           </div>
-
-          <div class="space-y-2.5 text-xs">
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
-              <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
-              <div>
-                <strong class="text-slate-200 block">Prop Firm Challenge & Evaluation Fees</strong>
-                <span class="text-slate-400 text-[11px]">100% deductible (Passed $50k Trading Combine & Challenge fees)</span>
-              </div>
-            </label>
-
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
-              <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
-              <div>
-                <strong class="text-slate-200 block">Charting & Execution Software</strong>
-                <span class="text-slate-400 text-[11px]">TradingView, NinjaTrader, Tradovate monthly tiers</span>
-              </div>
-            </label>
-
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
-              <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
-              <div>
-                <strong class="text-slate-200 block">Automation & Webhook Tools</strong>
-                <span class="text-slate-400 text-[11px]">PickMyTrade signal routing software</span>
-              </div>
-            </label>
-
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
-              <input type="checkbox" class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
-              <div>
-                <strong class="text-slate-200 block">Real-Time CME Market Data Feeds</strong>
-                <span class="text-slate-400 text-[11px]">CME / CBOT / NYMEX Level 2 data packages</span>
-              </div>
-            </label>
-
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
-              <input type="checkbox" class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
-              <div>
-                <strong class="text-slate-200 block">Hardware & Home Office Setup %</strong>
-                <span class="text-slate-400 text-[11px]">Trading laptop, dual monitors, dedicated high-speed internet</span>
-              </div>
-            </label>
-          </div>
+          <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">Tax Deductible</span>
         </div>
 
-        <!-- Python Agent Pipeline Status -->
-        <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
-          <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
+        <div class="space-y-3 text-xs">
+          <!-- Blown Accounts / Failed Combines -->
+          <label class="flex items-center gap-3 p-3.5 rounded-xl bg-darkbg-900 border border-purple-500/30 hover:border-purple-500 cursor-pointer transition-all">
+            <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
             <div>
-              <h2 class="text-base font-bold text-white flex items-center gap-2">
-                <i class="fa-solid fa-network-wired text-brand-400"></i> Agent Automation Pipeline
-              </h2>
-              <p class="text-xs text-slate-400">Multi-agent backend status</p>
+              <strong class="text-slate-100 block text-sm">Blown Accounts, Failed Combines & Reset Fees (Topstep)</strong>
+              <span class="text-slate-300 text-[11px]">100% deductible as ordinary and necessary business trading losses / evaluation expenses under IRC Sec. 162. Every failed combine or reset fee directly offsets taxable gross trading income.</span>
             </div>
-            <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">GitHub Sync Active</span>
+          </label>
+
+          <label class="flex items-center gap-3 p-3.5 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
+            <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
+            <div>
+              <strong class="text-slate-200 block">Prop Firm Evaluation & Passed Combine Fees</strong>
+              <span class="text-slate-400 text-[11px]">100% deductible evaluation fees for passed $50k accounts.</span>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3.5 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
+            <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
+            <div>
+              <strong class="text-slate-200 block">Charting & Execution Software</strong>
+              <span class="text-slate-400 text-[11px]">TradingView, NinjaTrader, Tradovate monthly platform tiers.</span>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3.5 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
+            <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
+            <div>
+              <strong class="text-slate-200 block">Automation & Webhook Tools</strong>
+              <span class="text-slate-400 text-[11px]">PickMyTrade signal routing software.</span>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-3 p-3.5 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
+            <input type="checkbox" class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
+            <div>
+              <strong class="text-slate-200 block">Real-Time CME Market Data Feeds</strong>
+              <span class="text-slate-400 text-[11px]">CME / CBOT / NYMEX Level 2 exchange data packages.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: AGENTS & PIPELINE -->
+    <section id="view-agents" class="tab-view space-y-6 hidden">
+      <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
+        <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-network-wired text-brand-400"></i> Multi-Agent Backend Pipeline
+            </h2>
+            <p class="text-xs text-slate-400">THE MASTER LEDGER: Out of the Head, Into the System</p>
+          </div>
+          <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">GitHub Private Repo</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-3 font-mono text-xs">
+            <div class="flex items-center justify-between p-3 rounded-xl bg-darkbg-900 border border-slate-800">
+              <div>
+                <span class="text-slate-200 font-bold block">create_packet.py</span>
+                <span class="text-slate-400 text-[10px]">Builds task packets</span>
+              </div>
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-darkbg-900 border border-slate-800">
+              <div>
+                <span class="text-slate-200 font-bold block">hiring_manager.py</span>
+                <span class="text-slate-400 text-[10px]">Routes packets to correct agent</span>
+              </div>
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-darkbg-900 border border-slate-800">
+              <div>
+                <span class="text-slate-200 font-bold block">boss_review.py</span>
+                <span class="text-slate-400 text-[10px]">Validates agent outputs</span>
+              </div>
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
+            </div>
           </div>
 
           <div class="space-y-3 font-mono text-xs">
-            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-300">create_packet.py</span>
-              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
-            </div>
-            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-300">hiring_manager.py</span>
-              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
-            </div>
-            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-300">boss_review.py</span>
-              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
-            </div>
-            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-300">master_ledger.py</span>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-darkbg-900 border border-slate-800">
+              <div>
+                <span class="text-slate-200 font-bold block">master_ledger.py</span>
+                <span class="text-slate-400 text-[10px]">Core logging & state</span>
+              </div>
               <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> ACTIVE</span>
             </div>
-            <div class="flex items-center justify-between p-2.5 rounded-lg bg-darkbg-900 border border-slate-800">
-              <span class="text-slate-300">send_packet_email.py</span>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-darkbg-900 border border-slate-800">
+              <div>
+                <span class="text-slate-200 font-bold block">send_packet_email.py</span>
+                <span class="text-slate-400 text-[10px]">Dispatch notifications</span>
+              </div>
               <span class="text-amber-400 font-bold"><i class="fa-solid fa-clock text-[10px] mr-1"></i> STANDBY</span>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-darkbg-900 border border-slate-800">
+              <div>
+                <span class="text-slate-200 font-bold block">visual_inspector.py</span>
+                <span class="text-slate-400 text-[10px]">Pipeline status visualizer</span>
+              </div>
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check text-[10px] mr-1"></i> PASS</span>
             </div>
           </div>
         </div>
-
       </div>
     </section>
 
@@ -554,7 +588,7 @@
 
         <div>
           <label class="block font-semibold text-slate-300 mb-1">Description</label>
-          <input type="text" id="txDesc" placeholder="e.g., Paystub 10/23 Net Pay" required class="w-full bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-500" />
+          <input type="text" id="txDesc" placeholder="e.g., Topstep Reset Fee / Blown Account" required class="w-full bg-darkbg-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-brand-500" />
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -582,17 +616,18 @@
   <!-- APPLICATION JAVASCRIPT -->
   <script>
     let ledgerData = [
-      { id: 1, date: '2026-10-23', category: 'W-2 Payroll', desc: 'Senior Counselor Paystub ($20/hr | Net $1,956.52)', type: 'INCOME', amount: 1956.52 },
+      { id: 1, date: '2026-10-23', category: 'W-2 Payroll', desc: 'Senior Counselor Paystub (Gross $2,667.80 | Net $1,956.52)', type: 'INCOME', amount: 1956.52 },
       { id: 2, date: '2026-10-12', category: 'Topstep Income', desc: 'Topstep Funded Account Distribution', type: 'INCOME', amount: 1000.00 },
       { id: 3, date: '2026-10-10', category: 'Debt Paydown', desc: 'M&T Auto Loan Principal Acceleration', type: 'EXPENSE', amount: 500.00 },
       { id: 4, date: '2026-10-08', category: 'Debt Paydown', desc: 'Amex Gold Monthly Statement Payoff', type: 'EXPENSE', amount: 320.00 },
-      { id: 5, date: '2026-10-04', category: 'Schedule C Expense', desc: 'TradingView & PickMyTrade Subscriptions', type: 'EXPENSE', amount: 185.00 }
+      { id: 5, date: '2026-10-04', category: 'Schedule C Expense', desc: 'Topstep Blown Account Reset & Combine Fees', type: 'EXPENSE', amount: 245.00 }
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
       renderLedger();
       initDebtChart();
+      updateOvertimeSimulation();
     });
 
     function setTheme(mode) {
@@ -620,6 +655,23 @@
       document.getElementById(`view-${tabKey}`).classList.remove('hidden');
       const activeBtn = document.getElementById(`tab-${tabKey}`);
       activeBtn.className = "tab-btn px-3 py-1.5 rounded-lg text-brand-400 bg-slate-800/90 border border-brand-500/30 flex items-center gap-2 transition-all whitespace-nowrap";
+    }
+
+    function updateOvertimeSimulation() {
+      const otHours = parseFloat(document.getElementById('otSlider').value) || 0;
+      const baseGross = 1539.50; // 80h @ $19.24 / standard base
+      const otTotal = otHours * 30.00; // $30/hr OT rate
+      const gross = baseGross + otTotal;
+      
+      // Proportional net take home based on verified $2,667.80 gross -> $1,956.52 net ratio (~73.34%)
+      const net = gross * 0.7334;
+
+      document.getElementById('sliderOtVal').innerText = `${otHours.toFixed(1)} hrs`;
+      document.getElementById('simOtHours').innerText = otHours.toFixed(1);
+      document.getElementById('simOtTotal').innerText = `$${otTotal.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+      document.getElementById('simGross').innerText = `$${gross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+      document.getElementById('displaySimGross').innerText = `$${gross.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+      document.getElementById('displaySimNet').innerText = `$${net.toLocaleString('en-US', {minimumFractionDigits:2})}`;
     }
 
     function renderLedger() {
