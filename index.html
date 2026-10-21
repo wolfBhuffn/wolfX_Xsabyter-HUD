@@ -94,15 +94,18 @@
 
   <!-- NAVIGATION TABS -->
   <div class="bg-darkbg-800/80 border-b border-slate-800 px-4 lg:px-8">
-    <div class="max-w-7xl mx-auto flex space-x-2 md:space-x-4 overflow-x-auto py-2.5 text-xs md:text-sm font-semibold">
+    <div class="max-w-7xl mx-auto flex space-x-2 md:space-x-3 overflow-x-auto py-2.5 text-xs md:text-sm font-semibold">
       <button onclick="switchTab('ledger')" id="tab-ledger" class="tab-btn px-3 py-1.5 rounded-lg text-brand-400 bg-slate-800/90 border border-brand-500/30 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-list-check"></i> Master Ledger Tab
+        <i class="fa-solid fa-list-check"></i> Master Ledger
+      </button>
+      <button onclick="switchTab('banking')" id="tab-banking" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
+        <i class="fa-solid fa-credit-card"></i> Bank Balances & Routing
       </button>
       <button onclick="switchTab('pay')" id="tab-pay" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-calculator"></i> Pay Rate ($20) & Net Paycheck
+        <i class="fa-solid fa-calculator"></i> Pay Rate ($20) & Net Check
       </button>
       <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
-        <i class="fa-solid fa-chart-line"></i> Auto Loan (Path B)
+        <i class="fa-solid fa-car"></i> Auto Loan (Path B)
       </button>
       <button onclick="switchTab('taxes')" id="tab-taxes" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 flex items-center gap-2 transition-all whitespace-nowrap">
         <i class="fa-solid fa-shield-halved"></i> Schedule C Tax Shelter
@@ -234,7 +237,137 @@
       </div>
     </section>
 
-    <!-- TAB 2: PAY RATE & OVERTIME SLIDER NET CHECK CALCULATOR -->
+    <!-- TAB 2: BANK BALANCES, DUE DATES & BILL-TO-CARD ROUTING -->
+    <section id="view-banking" class="tab-view space-y-6 hidden">
+      
+      <!-- Bank Balances & Reward Points Summary -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">SoFi Checking & Savings</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">Primary Hub</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-2xl font-black mono text-white">$3,450.00</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-400">Autopay funding source for bills</p>
+        </div>
+
+        <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Chase Total Checking</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">W-2 Deposit</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-2xl font-black mono text-white">$956.52</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-400">Chase Freedom & Bill routing</p>
+        </div>
+
+        <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">American Express Checking</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">Trading Payouts</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-2xl font-black mono text-white">$1,850.00</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-400">Amex Gold & Blue rewards hub</p>
+        </div>
+      </div>
+
+      <!-- Bill Routing & Autopay Alert Table -->
+      <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+        <div class="border-b border-slate-700/60 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-shield-heart text-emerald-400"></i> Bill Routing, Credit Cards & Autopay Alerts
+            </h2>
+            <p class="text-xs text-slate-400">Automated alerts fire 48 hours (2 days) prior to due date for seamless cash flow</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Autopay Active (-2 Days)
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs md:text-sm">
+            <thead>
+              <tr class="bg-darkbg-900 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase">
+                <th class="py-3 px-4">Expense / Bill Category</th>
+                <th class="py-3 px-4">Assigned Credit Card</th>
+                <th class="py-3 px-4">Accumulated Rewards Points</th>
+                <th class="py-3 px-4">Due Date</th>
+                <th class="py-3 px-4">Autopay Alert Status</th>
+                <th class="py-3 px-4">Funding Bank Account</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/80 font-mono">
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 font-sans font-bold text-slate-200">
+                  <i class="fa-solid fa-gas-pump text-amber-400 mr-2"></i> Gas & Fuel
+                </td>
+                <td class="py-3 px-4 text-blue-300 font-semibold">Amex Blue (Blue Cash)</td>
+                <td class="py-3 px-4 text-emerald-400 font-bold">3% Cash Back (1,450 pts)</td>
+                <td class="py-3 px-4 text-slate-300">15th of month</td>
+                <td class="py-3 px-4">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <i class="fa-solid fa-bell mr-1"></i> Alert (13th)
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-slate-400">SoFi Checking</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 font-sans font-bold text-slate-200">
+                  <i class="fa-solid fa-basket-shopping text-brand-400 mr-2"></i> Groceries & Supermarket
+                </td>
+                <td class="py-3 px-4 text-amber-300 font-semibold">Amex Gold Card</td>
+                <td class="py-3 px-4 text-emerald-400 font-bold">4x Membership Rewards (4,820 pts)</td>
+                <td class="py-3 px-4 text-slate-300">22nd of month</td>
+                <td class="py-3 px-4">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <i class="fa-solid fa-bell mr-1"></i> Alert (20th)
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-slate-400">Amex Checking</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 font-sans font-bold text-slate-200">
+                  <i class="fa-solid fa-film text-purple-400 mr-2"></i> Entertainment & Subscriptions
+                </td>
+                <td class="py-3 px-4 text-indigo-300 font-semibold">Chase Freedom</td>
+                <td class="py-3 px-4 text-emerald-400 font-bold">3% / 5x Ultimate Rewards (2,100 pts)</td>
+                <td class="py-3 px-4 text-slate-300">28th of month</td>
+                <td class="py-3 px-4">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <i class="fa-solid fa-bell mr-1"></i> Alert (26th)
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-slate-400">Chase Checking</td>
+              </tr>
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-3 px-4 font-sans font-bold text-slate-200">
+                  <i class="fa-solid fa-car text-amber-500 mr-2"></i> M&T Auto Loan Principal
+                </td>
+                <td class="py-3 px-4 text-slate-400">Direct ACH</td>
+                <td class="py-3 px-4 text-slate-500">—</td>
+                <td class="py-3 px-4 text-slate-300">5th of month</td>
+                <td class="py-3 px-4">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <i class="fa-solid fa-bell mr-1"></i> Alert (3rd)
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-slate-400">SoFi Checking</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-slate-400 italic">Autopay alerts automatically trigger notification pings 48 hours before due dates to verify checking account liquidity buffers before ACH settlement.</p>
+      </div>
+
+    </section>
+
+    <!-- TAB 3: PAY RATE & OVERTIME SLIDER NET CHECK CALCULATOR -->
     <section id="view-pay" class="tab-view space-y-6 hidden">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -343,7 +476,7 @@
       </div>
     </section>
 
-    <!-- TAB 3: AUTO LOAN ACCELERATION (PATH B) -->
+    <!-- TAB 4: AUTO LOAN ACCELERATION (PATH B) -->
     <section id="view-debt" class="tab-view space-y-6 hidden">
       <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-6">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-700/60 pb-4">
@@ -434,7 +567,7 @@
       </div>
     </section>
 
-    <!-- TAB 4: SCHEDULE C TAX WRITE-OFFS (INCLUDING BLOWN ACCOUNTS) -->
+    <!-- TAB 5: SCHEDULE C TAX WRITE-OFFS (INCLUDING BLOWN ACCOUNTS) -->
     <section id="view-taxes" class="tab-view space-y-6 hidden">
       <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
         <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
@@ -492,7 +625,7 @@
       </div>
     </section>
 
-    <!-- TAB 5: AGENTS & PIPELINE -->
+    <!-- TAB 6: AGENTS & PIPELINE -->
     <section id="view-agents" class="tab-view space-y-6 hidden">
       <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
         <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
@@ -662,8 +795,6 @@
       const baseGross = 1539.50; // 80h @ $19.24 / standard base
       const otTotal = otHours * 30.00; // $30/hr OT rate
       const gross = baseGross + otTotal;
-      
-      // Proportional net take home based on verified $2,667.80 gross -> $1,956.52 net ratio (~73.34%)
       const net = gross * 0.7334;
 
       document.getElementById('sliderOtVal').innerText = `${otHours.toFixed(1)} hrs`;
