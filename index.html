@@ -53,7 +53,6 @@
       from { transform: translateY(1rem); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
-    /* Matrix cyber grid background pattern */
     .cyber-bg {
       background-image: radial-gradient(rgba(20, 184, 166, 0.08) 1px, transparent 1px), radial-gradient(rgba(13, 148, 136, 0.04) 1px, transparent 1px);
       background-size: 32px 32px;
@@ -70,16 +69,20 @@
   <header class="sticky top-0 z-40 bg-darkbg-800/90 backdrop-blur-md border-b border-brand-500/20 px-4 lg:px-8 py-3.5 shadow-2xl shadow-brand-500/5">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       
-      <!-- App Brand & Status Badge -->
+      <!-- App Brand & Wolf Gnarly Icon -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-teal-400 to-cyan-400 flex items-center justify-center text-slate-950 font-bold text-xl shadow-lg shadow-brand-500/30">
-          <i class="fa-solid fa-receipt"></i>
+        <!-- Gnarly Wolf Head SVG Icon -->
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-600 via-teal-400 to-cyan-400 flex items-center justify-center text-slate-950 shadow-lg shadow-brand-500/30 p-2 border border-brand-300/40">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7 text-slate-950 filter drop-shadow">
+            <path d="M12 2L9 7L3 9L7 14L5 21L12 18L19 21L17 14L21 9L15 7L12 2Z" stroke="#07090e" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M9 12L12 15L15 12" stroke="#07090e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
         <div>
           <div class="flex items-center gap-2.5 flex-wrap">
             <h1 class="text-lg lg:text-xl font-extrabold tracking-tight text-white mono uppercase drop-shadow-[0_0_10px_rgba(20,184,166,0.3)]">THE MASTER LEDGER</h1>
             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/30 shadow-[0_0_10px_rgba(20,184,166,0.2)]">
-              <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span> v2.6 MATRIX ONLINE
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span> v2.7 WOLF MATRIX
             </span>
           </div>
           <p class="text-xs text-slate-400 font-medium">Out of the Head, Into the System</p>
@@ -507,7 +510,7 @@
             </h2>
             <p class="text-xs text-slate-400">Manage local configuration, currency formatting, and data backups</p>
           </div>
-          <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/30">v2.6 Core Config</span>
+          <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/30">v2.7 Core Config</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
