@@ -147,7 +147,7 @@
         <div class="mt-2 flex items-baseline gap-2">
           <span class="text-2xl lg:text-3xl font-black mono text-emerald-400">$1,956.52</span>
         </div>
-        <p class="mt-1 text-xs text-slate-400 font-medium">Gross: <span class="text-slate-200 font-bold mono">$2,667.80</span>[span_1](start_span)[span_1](end_span)</p>
+        <p class="mt-1 text-xs text-slate-400 font-medium">Gross: <span class="text-slate-200 font-bold mono">$2,667.80</span>[span_0](start_span)[span_0](end_span)</p>
         <div class="h-1 w-full bg-slate-700/50 rounded-full mt-3 overflow-hidden">
           <div class="h-full bg-emerald-400 rounded-full" style="width: 95%"></div>
         </div>
@@ -233,7 +233,7 @@
       </div>
     </section>
 
-    <!-- TAB 2: BANK BALANCES, DUE DATES & BILL-TO-CARD ROUTING -->
+    <!-- TAB 2: BANK BALANCES, BILL ROUTING & AUTO PAY SCHEDULER SYSTEM -->
     <section id="view-banking" class="tab-view space-y-6 hidden">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-darkbg-800 p-4 rounded-2xl border border-slate-800 shadow-xl">
@@ -264,19 +264,70 @@
         </div>
       </div>
 
+      <!-- AUTO PAY SCHEDULER SYSTEM -->
       <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
         <div class="border-b border-slate-700/60 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
             <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-shield-heart text-emerald-400"></i> Bill Routing, Credit Cards & Autopay Alerts
+              <i class="fa-solid fa-clock-rotate-left text-brand-400"></i> Auto Pay Scheduler System & Alerts
             </h2>
-            <p class="text-xs text-slate-400">Automated alerts fire 48 hours (2 days) prior to due date</p>
+            <p class="text-xs text-slate-400">Intelligent system triggers autopay alerts and liquidity checks exactly 2 days before due dates</p>
           </div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Autopay Active (-2 Days)
-          </span>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Scheduler Armed (-2 Days)
+            </span>
+          </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-darkbg-900 p-4 rounded-xl border border-slate-800 space-y-2">
+            <div class="flex justify-between text-xs font-bold text-slate-300">
+              <span>Amex Blue (Gas)</span>
+              <span class="text-emerald-400">Due 15th</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Alert fires: <strong>13th</strong> (-2 Days)</p>
+            <div class="flex justify-between items-center text-xs pt-1">
+              <span class="text-slate-500">Status: <span class="text-emerald-400 font-semibold">Scheduled</span></span>
+              <button onclick="simulateAutopay('Amex Blue')" class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 font-bold transition-all text-[10px]">Test ACH</button>
+            </div>
+          </div>
+
+          <div class="bg-darkbg-900 p-4 rounded-xl border border-slate-800 space-y-2">
+            <div class="flex justify-between text-xs font-bold text-slate-300">
+              <span>Amex Gold (Groceries)</span>
+              <span class="text-emerald-400">Due 22nd</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Alert fires: <strong>20th</strong> (-2 Days)</p>
+            <div class="flex justify-between items-center text-xs pt-1">
+              <span class="text-slate-500">Status: <span class="text-emerald-400 font-semibold">Scheduled</span></span>
+              <button onclick="simulateAutopay('Amex Gold')" class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 font-bold transition-all text-[10px]">Test ACH</button>
+            </div>
+          </div>
+
+          <div class="bg-darkbg-900 p-4 rounded-xl border border-slate-800 space-y-2">
+            <div class="flex justify-between text-xs font-bold text-slate-300">
+              <span>Chase Freedom (Entertainment)</span>
+              <span class="text-emerald-400">Due 28th</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Alert fires: <strong>26th</strong> (-2 Days)</p>
+            <div class="flex justify-between items-center text-xs pt-1">
+              <span class="text-slate-500">Status: <span class="text-emerald-400 font-semibold">Scheduled</span></span>
+              <button onclick="simulateAutopay('Chase Freedom')" class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 font-bold transition-all text-[10px]">Test ACH</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="schedulerLog" class="bg-darkbg-900 p-3 rounded-xl border border-slate-800 font-mono text-xs text-slate-400">
+          <span>> Auto Pay Scheduler online. All 3 credit card autopays armed for T-2 day liquidity check.</span>
+        </div>
+      </div>
+
+      <!-- Bill Routing & Reward Points Table -->
+      <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+        <h2 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-credit-card text-emerald-400"></i> Bill Routing & Accumulated Rewards
+        </h2>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs md:text-sm">
             <thead>
@@ -285,7 +336,6 @@
                 <th class="py-3 px-4">Assigned Credit Card</th>
                 <th class="py-3 px-4">Accumulated Rewards Points</th>
                 <th class="py-3 px-4">Due Date</th>
-                <th class="py-3 px-4">Autopay Alert Status</th>
                 <th class="py-3 px-4">Funding Bank Account</th>
               </tr>
             </thead>
@@ -294,24 +344,21 @@
                 <td class="py-3 px-4 font-sans font-bold text-slate-200"><i class="fa-solid fa-gas-pump text-amber-400 mr-2"></i> Gas & Fuel</td>
                 <td class="py-3 px-4 text-blue-300 font-semibold">Amex Blue (Blue Cash)</td>
                 <td class="py-3 px-4 text-emerald-400 font-bold">3% Cash Back (1,450 pts)</td>
-                <td class="py-3 px-4 text-slate-300">15th of month</td>
-                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><i class="fa-solid fa-bell mr-1"></i> Alert (13th)</span></td>
+                <td class="py-3 px-4 text-slate-300">15th</td>
                 <td class="py-3 px-4 text-slate-400">SoFi Checking</td>
               </tr>
               <tr class="hover:bg-slate-800/40">
                 <td class="py-3 px-4 font-sans font-bold text-slate-200"><i class="fa-solid fa-basket-shopping text-brand-400 mr-2"></i> Groceries & Supermarket</td>
                 <td class="py-3 px-4 text-amber-300 font-semibold">Amex Gold Card</td>
                 <td class="py-3 px-4 text-emerald-400 font-bold">4x Membership Rewards (4,820 pts)</td>
-                <td class="py-3 px-4 text-slate-300">22nd of month</td>
-                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><i class="fa-solid fa-bell mr-1"></i> Alert (20th)</span></td>
+                <td class="py-3 px-4 text-slate-300">22nd</td>
                 <td class="py-3 px-4 text-slate-400">Amex Checking</td>
               </tr>
               <tr class="hover:bg-slate-800/40">
                 <td class="py-3 px-4 font-sans font-bold text-slate-200"><i class="fa-solid fa-film text-purple-400 mr-2"></i> Entertainment & Subscriptions</td>
                 <td class="py-3 px-4 text-indigo-300 font-semibold">Chase Freedom</td>
                 <td class="py-3 px-4 text-emerald-400 font-bold">3% / 5x Ultimate Rewards (2,100 pts)</td>
-                <td class="py-3 px-4 text-slate-300">28th of month</td>
-                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><i class="fa-solid fa-bell mr-1"></i> Alert (26th)</span></td>
+                <td class="py-3 px-4 text-slate-300">28th</td>
                 <td class="py-3 px-4 text-slate-400">Chase Checking</td>
               </tr>
             </tbody>
@@ -392,63 +439,44 @@
           <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">Tax Deductible</span>
         </div>
         <div class="space-y-3 text-xs">
-          <label class="flex items-center gap-3 p-3.5 rounded-xl bg-darkbg-900 border border-purple-500/30 hover:border-purple-500 cursor-pointer transition-all">
+          <label class="flex items-center gap-3 p-3.5 rounded-xl bg-darkbg-900 border border-purple-500/35 hover:border-purple-500 cursor-pointer transition-all">
             <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
             <div>
               <strong class="text-slate-100 block text-sm">Blown Accounts, Failed Combines & Reset Fees (Topstep)</strong>
               <span class="text-slate-300 text-[11px]">100% deductible as ordinary and necessary business trading losses / evaluation expenses under IRC Sec. 162.</span>
             </div>
           </label>
-          <label class="flex items-center gap-3 p-3.5 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500/40 cursor-pointer transition-all">
-            <input type="checkbox" checked class="w-4 h-4 rounded text-purple-500 accent-purple-500 bg-slate-800 border-slate-700" />
-            <div>
-              <strong class="text-slate-200 block">Charting & Execution Software</strong>
-              <span class="text-slate-400 text-[11px]">TradingView, NinjaTrader, Tradovate monthly platform tiers.</span>
-            </div>
-          </label>
         </div>
       </div>
     </section>
 
-    <!-- TAB 6: AI COMMAND CENTER & TASK QUEUE -->
+    <!-- TAB 6: AI COMMAND CENTER -->
     <section id="view-command" class="tab-view space-y-6 hidden">
       <div class="bg-darkbg-800 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
         <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
           <div>
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-terminal text-brand-400"></i> AI Command Center & Task Queue
-            </h2>
+            <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-terminal text-brand-400"></i> AI Command Center & Task Queue</h2>
             <p class="text-xs text-slate-400">Out of the Head, Into the System Dispatcher</p>
           </div>
           <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-500/20">Active Agents Ready</span>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button onclick="runAiCommand('cashflow')" class="p-4 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-brand-500 text-left transition-all group">
-            <div class="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-chart-pie"></i>
-            </div>
+            <div class="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-chart-pie"></i></div>
             <strong class="text-slate-200 block text-sm">Run Cash Flow Forecast</strong>
             <span class="text-slate-400 text-xs">Simulate 30-day liquidity & bill clearance</span>
           </button>
-
           <button onclick="runAiCommand('taxscan')" class="p-4 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-purple-500 text-left transition-all group">
-            <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-receipt"></i>
-            </div>
+            <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-receipt"></i></div>
             <strong class="text-slate-200 block text-sm">Scan Schedule C Deductions</strong>
             <span class="text-slate-400 text-xs">Calculate total tax savings from blown accounts</span>
           </button>
-
           <button onclick="runAiCommand('gitcommit')" class="p-4 rounded-xl bg-darkbg-900 border border-slate-800 hover:border-amber-500 text-left transition-all group">
-            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-              <i class="fa-solid fa-code-commit"></i>
-            </div>
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform"><i class="fa-solid fa-code-commit"></i></div>
             <strong class="text-slate-200 block text-sm">Sync GitHub Master Ledger</strong>
             <span class="text-slate-400 text-xs">Push latest state and update status box</span>
           </button>
         </div>
-
         <div id="aiConsoleOutput" class="bg-darkbg-900 p-4 rounded-xl border border-slate-800 font-mono text-xs text-brand-400 min-h-[100px] flex items-center">
           <span>> AI Command Center ready. Select an action above to execute protocol...</span>
         </div>
@@ -543,6 +571,11 @@
       });
       document.getElementById(`view-${tabKey}`).classList.remove('hidden');
       document.getElementById(`tab-${tabKey}`).className = "tab-btn px-3 py-1.5 rounded-lg text-brand-400 bg-slate-800/90 border border-brand-500/30 flex items-center gap-2 transition-all whitespace-nowrap";
+    }
+
+    function simulateAutopay(cardName) {
+      const log = document.getElementById('schedulerLog');
+      log.innerHTML = `> [ACH TEST SUCCESS] Autopay ping sent for <strong class="text-white">${cardName}</strong>. Liquidity verified across linked checking accounts (-2 days buffer check passed).`;
     }
 
     function runAiCommand(cmd) {
