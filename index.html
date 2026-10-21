@@ -249,13 +249,120 @@
           <div class="bionic-eye-glow"></div>
           <div class="laser-beam"></div>
         </div>
-        <!-- Back Face -->
+        <!-- Angled / Depth Face -->
         <div class="avatar-face avatar-back">
           <img src="1E9F0964-8AF5-40C4-B71F-B94C3C2DCE06.png" alt="Black Cyber Wolf Avatar Angle" />
           <div class="bionic-eye-glow"></div>
         </div>
       </div>
     </div>
+
+    <style>
+      /* --- 3D INTERACTIVE AVATAR & BIONIC EYE STYLES --- */
+      .avatar-3d-wrapper {
+        width: 200px;
+        height: 200px;
+        perspective: 1000px;
+        margin: 0 auto;
+        position: relative;
+        cursor: pointer;
+        z-index: 10;
+      }
+
+      .avatar-3d-card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.15s ease-out;
+        border-radius: 50%;
+        box-shadow: 0 0 30px rgba(220, 20, 60, 0.4);
+      }
+
+      .avatar-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        overflow: hidden;
+        backface-visibility: hidden;
+        border: 2px solid #333;
+        background: #090909;
+      }
+
+      .avatar-face img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .avatar-back {
+        transform: rotateY(180deg);
+      }
+
+      /* BIONIC CRIMSON EYE & LASER BEAM */
+      .bionic-eye-glow {
+        position: absolute;
+        top: 41%;
+        left: 48%;
+        width: 16px;
+        height: 16px;
+        background: radial-gradient(circle, #ff0033 0%, #880000 70%, transparent 100%);
+        border-radius: 50%;
+        box-shadow: 0 0 14px #ff0033, 0 0 28px #ff0033;
+        animation: pulseBionicEye 1.6s infinite alternate ease-in-out;
+        pointer-events: none;
+      }
+
+      .laser-beam {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #ff0033, #ffffff, #ff0033, transparent);
+        box-shadow: 0 0 10px #ff0033;
+        animation: laserScan 2.5s infinite linear;
+        pointer-events: none;
+      }
+
+      @keyframes pulseBionicEye {
+        0% { transform: scale(0.85); opacity: 0.7; }
+        100% { transform: scale(1.3); opacity: 1; }
+      }
+
+      @keyframes laserScan {
+        0% { top: 15%; left: -100%; opacity: 0; }
+        50% { opacity: 1; }
+        100% { top: 85%; left: 100%; opacity: 0; }
+      }
+    </style>
+
+    <script>
+      // 3D MOUSE-TRACKING ROTATION TILT
+      document.addEventListener('DOMContentLoaded', () => {
+        const avatarWrapper = document.getElementById('avatar3D');
+        const avatarCard = avatarWrapper ? avatarWrapper.querySelector('.avatar-3d-card') : null;
+
+        if (avatarWrapper && avatarCard) {
+          avatarWrapper.addEventListener('mousemove', (e) => {
+            const rect = avatarWrapper.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            const rotateX = (-y / rect.height) * 35;
+            const rotateY = (x / rect.width) * 35;
+            
+            avatarCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.06, 1.06, 1.06)`;
+          });
+
+          avatarWrapper.addEventListener('mouseleave', () => {
+            avatarCard.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+          });
+        }
+      });
+    </script>
+
 
 
                             <!-- GROUP: BLACK WOLF HEAD (Embedded inside hood or unveiled) -->
