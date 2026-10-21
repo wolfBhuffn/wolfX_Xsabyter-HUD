@@ -3,778 +3,950 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Master Ledger | Cyber-Wolf Matrix v4.0</title>
-    <!-- Tailwind CSS CDN -->
+    <title>wolfX_Xsabyter // NEXUS SYSTEM ARCHITECTURE</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: JetBrains Mono & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,500;0,700;0,800;1,400&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        cyber: {
-                            bg: '#0a0a0a',
-                            card: '#121212',
-                            cardHover: '#1a1a1a',
-                            border: '#27272a',
-                            red: '#f43f5e',
-                            redHover: '#e11d48',
-                            glow: 'rgba(244, 63, 94, 0.15)',
-                            text: '#f4f4f5',
-                            muted: '#a1a1aa'
-                        }
+                        obsidian: '#090909',
+                        'obsidian-light': '#141414',
+                        'obsidian-card': '#1a1a1a',
+                        bone: '#E8DFC9',
+                        crimson: '#C51F30',
+                        'crimson-glow': '#ff2a3f',
+                        ash: '#77736D',
+                        signal: '#D69A42',
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace']
+                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['Space Grotesk', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'crimson-glow': '0 0 25px rgba(197, 31, 48, 0.35)',
+                        'signal-glow': '0 0 20px rgba(214, 154, 66, 0.25)',
+                        'hud': 'inset 0 0 15px rgba(197, 31, 48, 0.15)',
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scanline': 'scanline 8s linear infinite',
+                        'eye-glow': 'eyeGlow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(1000%)' }
+                        },
+                        eyeGlow: {
+                            '0%': { filter: 'drop-shadow(0 0 2px #C51F30)' },
+                            '100%': { filter: 'drop-shadow(0 0 12px #ff2a3f)' }
+                        }
                     }
                 }
             }
         }
     </script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
-            color: #f4f4f5;
+            background-color: #090909;
+            color: #E8DFC9;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
         }
-        .cyber-border {
-            border: 1px solid #27272a;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+
+        /* Scanline Overlay Effect */
+        .scanlines {
+            position: relative;
         }
-        .cyber-border:hover {
-            border-color: rgba(244, 63, 94, 0.4);
+        .scanlines::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 40;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+            opacity: 0.6;
         }
-        .neon-glow {
-            box-shadow: 0 0 15px rgba(244, 63, 94, 0.2);
-        }
-        .neon-glow-strong {
-            box-shadow: 0 0 25px rgba(244, 63, 94, 0.4);
-        }
-        /* Custom scrollbar */
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0a0a0a;
+            background: #090909;
         }
         ::-webkit-scrollbar-thumb {
-            background: #27272a;
+            background: #77736D;
             border-radius: 3px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #f43f5e;
+            background: #C51F30;
+        }
+
+        /* Tactical HUD Corner Elements */
+        .hud-border {
+            position: relative;
+            border: 1px solid rgba(119, 115, 109, 0.3);
+        }
+        .hud-border::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 8px; height: 8px;
+            border-top: 2px solid #C51F30;
+            border-left: 2px solid #C51F30;
+        }
+        .hud-border::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 8px; height: 8px;
+            border-bottom: 2px solid #C51F30;
+            border-right: 2px solid #C51F30;
+        }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #141414;
+            height: 6px;
+            border-radius: 3px;
+            border: 1px solid #77736D;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 2px;
+            background: #C51F30;
+            cursor: pointer;
+            box-shadow: 0 0 10px #C51F30;
+        }
+
+        .clip-corner {
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
         }
     </style>
 </head>
-<body class="bg-cyber-bg text-cyber-text min-h-screen flex flex-col selection:bg-cyber-red selection:text-white">
+<body class="scanlines min-h-screen flex flex-col selection:bg-crimson selection:text-bone">
 
-    <!-- Top Notification Banner -->
-    <div id="notification-banner" class="hidden bg-cyber-red/20 border-b border-cyber-red/40 px-4 py-2 text-xs font-mono text-cyber-red flex items-center justify-between z-50">
-        <div class="flex items-center space-x-2">
-            <i data-lucide="shield-alert" class="w-4 h-4 animate-pulse"></i>
-            <span id="banner-text">Liquidity Alert: Amex Bill due in 48 hours. 2-day reserve check verified.</span>
-        </div>
-        <button onclick="dismissBanner()" class="hover:text-white">&times;</button>
-    </div>
-
-    <div class="flex flex-1 overflow-hidden">
-        
-        <!-- Sidebar Navigation (Desktop) -->
-        <aside class="hidden md:flex flex-col w-64 bg-cyber-card border-r border-cyber-border z-30">
-            <!-- Brand Header -->
-            <div class="p-6 border-b border-cyber-border flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-red to-rose-900 flex items-center justify-center neon-glow">
-                    <i data-lucide="wolf" class="w-6 h-6 text-white"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-sm tracking-wide text-white">MASTER LEDGER</h1>
-                    <span class="text-[10px] font-mono text-cyber-red tracking-widest uppercase">v4.0 Cyber-Wolf</span>
-                </div>
+    <!-- TOP TELEMETRY BAR -->
+    <header class="sticky top-0 z-50 bg-obsidian/90 backdrop-blur-md border-b border-ash/30 text-xs font-mono">
+        <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap justify-between items-center gap-4">
+            <!-- Brand Identity -->
+            <div class="flex items-center space-x-3">
+                <span class="inline-block w-2.5 h-2.5 bg-crimson rounded-full animate-pulse"></span>
+                <span class="font-extrabold tracking-wider text-base text-bone font-mono">wolf<span class="text-crimson">X</span>_Xsabyter</span>
+                <span class="text-ash hidden sm:inline">|</span>
+                <span class="text-ash hidden sm:inline tracking-tight">NEXUS_OS v4.0.9</span>
             </div>
 
             <!-- Navigation Links -->
-            <nav class="flex-1 px-4 py-6 space-y-2">
-                <button onclick="switchTab('command')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all bg-cyber-red text-white neon-glow" data-target="command">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                    <span>Command Hub</span>
-                </button>
-                <button onclick="switchTab('debt')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="debt">
-                    <i data-lucide="trending-down" class="w-4 h-4"></i>
-                    <span>Debt Paydown (Path B)</span>
-                </button>
-                <button onclick="switchTab('bills')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="bills">
-                    <i data-lucide="bell-ring" class="w-4 h-4"></i>
-                    <span>Bill Routing System</span>
-                </button>
-                <button onclick="switchTab('trading')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="trading">
-                    <i data-lucide="candlestick-chart" class="w-4 h-4"></i>
-                    <span>Trading & Cashflow</span>
-                </button>
-                <button onclick="switchTab('apis')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="apis">
-                    <i data-lucide="cpu" class="w-4 h-4"></i>
-                    <span>API & Integrations</span>
-                </button>
+            <nav class="hidden md:flex space-x-6 text-ash font-medium">
+                <a href="#persona" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-user-ninja text-[10px]"></i> PERSONA</a>
+                <a href="#telemetry" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-[10px]"></i> TELEMETRY</a>
+                <a href="#herd" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-users-slash text-[10px]"></i> THE HERD</a>
+                <a href="#terminal" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-terminal text-[10px]"></i> TERMINAL</a>
             </nav>
 
-            <!-- User / System Status Footer -->
-            <div class="p-4 border-t border-cyber-border bg-cyber-bg/50">
-                <div class="flex items-center justify-between text-xs font-mono text-cyber-muted">
-                    <span class="flex items-center space-x-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span>MATRIX SECURE</span>
-                    </span>
-                    <span class="text-cyber-red font-semibold">99.9%</span>
+            <!-- System Status Indicator -->
+            <div class="flex items-center space-x-4">
+                <div class="hidden lg:flex items-center space-x-2 bg-obsidian-light px-2.5 py-1 rounded border border-ash/20">
+                    <span class="text-ash">CLOCK:</span>
+                    <span id="liveClock" class="text-signal font-mono">12:00:00 UTC</span>
+                </div>
+                <div id="statusBadge" class="flex items-center space-x-2 bg-crimson/10 text-crimson px-2.5 py-1 rounded border border-crimson/40">
+                    <i class="fa-solid fa-triangle-exclamation text-xs animate-pulse"></i>
+                    <span class="font-bold tracking-wider">SYSTEM: COMPROMISED</span>
                 </div>
             </div>
-        </aside>
-
-        <!-- Mobile Drawer & Main Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-            
-            <!-- Top Bar (Mobile Hamburger & Quick Stats) -->
-            <header class="h-16 border-b border-cyber-border bg-cyber-card/80 backdrop-blur sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg bg-cyber-cardHover text-cyber-text hover:text-cyber-red">
-                        <i data-lucide="menu" class="w-6 h-6"></i>
-                    </button>
-                    <div>
-                        <h2 id="current-page-title" class="text-sm font-bold tracking-wider uppercase text-white">Command Hub</h2>
-                        <p class="text-[11px] font-mono text-cyber-muted">Out of the Head, Into the System</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center space-x-4">
-                    <div class="hidden sm:flex items-center space-x-2 bg-cyber-bg px-3 py-1.5 rounded-lg border border-cyber-border text-xs font-mono">
-                        <span class="text-cyber-muted">W-2 Rate:</span>
-                        <span class="text-cyber-red font-bold">$20.00/hr</span>
-                    </div>
-                    <button onclick="triggerQuickInjectModal()" class="flex items-center space-x-2 bg-cyber-red hover:bg-cyber-redHover text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all neon-glow">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                        <span class="hidden sm:inline">Inject Funds</span>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Mobile Drawer Menu -->
-            <div id="mobile-drawer" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden md:hidden flex">
-                <div class="w-72 bg-cyber-card border-r border-cyber-border h-full flex flex-col p-6 space-y-6">
-                    <div class="flex items-center justify-between border-b border-cyber-border pb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-lg bg-cyber-red flex items-center justify-center">
-                                <i data-lucide="wolf" class="w-5 h-5 text-white"></i>
-                            </div>
-                            <span class="font-bold text-sm text-white">MASTER LEDGER</span>
-                        </div>
-                        <button onclick="toggleMobileMenu()" class="p-1 rounded-lg text-cyber-muted hover:text-white">
-                            <i data-lucide="x" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-                    <nav class="space-y-2 flex-1">
-                        <button onclick="switchTab('command'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium bg-cyber-red text-white" data-target="command">
-                            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                            <span>Command Hub</span>
-                        </button>
-                        <button onclick="switchTab('debt'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="debt">
-                            <i data-lucide="trending-down" class="w-4 h-4"></i>
-                            <span>Debt Paydown (Path B)</span>
-                        </button>
-                        <button onclick="switchTab('bills'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="bills">
-                            <i data-lucide="bell-ring" class="w-4 h-4"></i>
-                            <span>Bill Routing System</span>
-                        </button>
-                        <button onclick="switchTab('trading'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="trading">
-                            <i data-lucide="candlestick-chart" class="w-4 h-4"></i>
-                            <span>Trading & Cashflow</span>
-                        </button>
-                        <button onclick="switchTab('apis'); toggleMobileMenu();" class="mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white" data-target="apis">
-                            <i data-lucide="cpu" class="w-4 h-4"></i>
-                            <span>API & Integrations</span>
-                        </button>
-                    </nav>
-                </div>
-                <div class="flex-1" onclick="toggleMobileMenu()"></div>
-            </div>
-
-            <!-- Main Dynamic Content Views -->
-            <main class="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto space-y-6">
-
-                <!-- VIEW 1: COMMAND HUB -->
-                <section id="view-command" class="view-section space-y-6">
-                    <!-- Top Welcome Card -->
-                    <div class="bg-gradient-to-r from-cyber-card to-cyber-cardHover p-6 rounded-2xl cyber-border relative overflow-hidden">
-                        <div class="absolute right-0 top-0 w-96 h-full bg-cyber-red/5 blur-3xl pointer-events-none"></div>
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
-                            <div>
-                                <div class="flex items-center space-x-2 text-xs font-mono text-cyber-red mb-1">
-                                    <i data-lucide="shield-check" class="w-4 h-4"></i>
-                                    <span>SYSTEM OPERATIONAL • V4.0 CYBER-WOLF MATRIX</span>
-                                </div>
-                                <h2 class="text-2xl font-bold text-white">Financial Command & Acceleration Hub</h2>
-                                <p class="text-sm text-cyber-muted mt-1">Eliminating cognitive overhead through automated payroll, debt neutralization, and liquidity routing.</p>
-                            </div>
-                            <div class="flex space-x-3">
-                                <div class="bg-cyber-bg px-4 py-3 rounded-xl border border-cyber-border text-right">
-                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Bi-Weekly Paycheck</div>
-                                    <div class="text-lg font-bold font-mono text-white">$1,956.52</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KPI Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="bg-cyber-card p-5 rounded-xl cyber-border">
-                            <div class="flex justify-between items-start mb-3">
-                                <span class="text-xs font-mono text-cyber-muted uppercase">Base Wage Rate</span>
-                                <span class="p-2 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="dollar-sign" class="w-4 h-4"></i></span>
-                            </div>
-                            <div class="text-2xl font-bold font-mono text-white">$20.00<span class="text-xs text-cyber-muted">/hr</span></div>
-                            <div class="text-xs text-emerald-400 mt-2 flex items-center space-x-1">
-                                <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
-                                <span>Standard W-2 payroll active</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-cyber-card p-5 rounded-xl cyber-border">
-                            <div class="flex justify-between items-start mb-3">
-                                <span class="text-xs font-mono text-cyber-muted uppercase">Overtime Simulation</span>
-                                <span class="p-2 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="zap" class="w-4 h-4"></i></span>
-                            </div>
-                            <div class="text-2xl font-bold font-mono text-white">$30.00<span class="text-xs text-cyber-muted">/hr</span></div>
-                            <div class="text-xs text-cyber-red mt-2 flex items-center space-x-1">
-                                <i data-lucide="activity" class="w-3 h-3"></i>
-                                <span>1.5x Multiplier loaded</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-cyber-card p-5 rounded-xl cyber-border">
-                            <div class="flex justify-between items-start mb-3">
-                                <span class="text-xs font-mono text-cyber-muted uppercase">M&T Auto Loan (Path B)</span>
-                                <span class="p-2 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="car" class="w-4 h-4"></i></span>
-                            </div>
-                            <div class="text-2xl font-bold font-mono text-white" id="kpi-loan-balance">$8,450.00</div>
-                            <div class="text-xs text-cyber-muted mt-2">6-month accelerated model</div>
-                        </div>
-
-                        <div class="bg-cyber-card p-5 rounded-xl cyber-border">
-                            <div class="flex justify-between items-start mb-3">
-                                <span class="text-xs font-mono text-cyber-muted uppercase">Topstep Injection Pool</span>
-                                <span class="p-2 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
-                            </div>
-                            <div class="text-2xl font-bold font-mono text-emerald-400" id="kpi-topstep-pool">$1,250.00</div>
-                            <div class="text-xs text-cyber-muted mt-2">50% automated routing</div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Simulation & Recent Log Feed -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Simulation Calculator Card -->
-                        <div class="lg:col-span-2 bg-cyber-card p-6 rounded-2xl cyber-border flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-bold text-white text-sm uppercase tracking-wide flex items-center space-x-2">
-                                        <i data-lucide="calculator" class="w-4 h-4 text-cyber-red"></i>
-                                        <span>Payroll & Overtime Simulator</span>
-                                    </h3>
-                                    <span class="text-xs font-mono text-cyber-muted">Interactive Engine</span>
-                                </div>
-                                <p class="text-xs text-cyber-muted mb-6">Calculate net earnings based on regular hours and overtime injection multipliers.</p>
-                                
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                                    <div>
-                                        <label class="block text-xs font-mono text-cyber-muted mb-2">Regular Hours (Bi-Weekly)</label>
-                                        <input type="number" id="sim-reg-hours" value="80" oninput="runPayrollSimulation()" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-red focus:outline-none font-mono">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-mono text-cyber-muted mb-2">Overtime Hours (1.5x)</label>
-                                        <input type="number" id="sim-ot-hours" value="10" oninput="runPayrollSimulation()" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-red focus:outline-none font-mono">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex flex-col sm:flex-row justify-between items-center gap-4">
-                                <div>
-                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Simulated Gross Pay</div>
-                                    <div id="sim-gross" class="text-xl font-bold font-mono text-white">$1,900.00</div>
-                                </div>
-                                <div class="sm:text-right">
-                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Estimated Net Pay (After Taxes)</div>
-                                    <div id="sim-net" class="text-xl font-bold font-mono text-cyber-red">$1,558.00</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- System Activity Feed -->
-                        <div class="bg-cyber-card p-6 rounded-2xl cyber-border flex flex-col">
-                            <h3 class="font-bold text-white text-sm uppercase tracking-wide flex items-center space-x-2 mb-4">
-                                <i data-lucide="terminal" class="w-4 h-4 text-cyber-red"></i>
-                                <span>Matrix Activity Log</span>
-                            </h3>
-                            <div class="space-y-3 flex-1 overflow-y-auto max-h-[240px] pr-1" id="activity-log-feed">
-                                <div class="p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono">
-                                    <div class="text-cyber-muted text-[10px]">10:42 AM • System</div>
-                                    <div class="text-white mt-0.5">Topstep futures distribution synced (+ $625.00)</div>
-                                </div>
-                                <div class="p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono">
-                                    <div class="text-cyber-muted text-[10px]">08:15 AM • Liquidity Check</div>
-                                    <div class="text-white mt-0.5">Amex bill due in 48h. Verified reserve funds.</div>
-                                </div>
-                                <div class="p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono">
-                                    <div class="text-cyber-muted text-[10px]">Yesterday • Schedule C</div>
-                                    <div class="text-white mt-0.5">Logged mileage & software deductions.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- VIEW 2: DEBT PAYDOWN (PATH B) -->
-                <section id="view-debt" class="view-section hidden space-y-6">
-                    <div class="bg-cyber-card p-6 rounded-2xl cyber-border">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                            <div>
-                                <span class="text-xs font-mono text-cyber-red uppercase">Path B Acceleration Model</span>
-                                <h2 class="text-xl font-bold text-white mt-1">M&T Auto Loan Principal Reduction</h2>
-                                <p class="text-xs text-cyber-muted mt-0.5">Fueling aggressive 6-month payoff with 50% Topstep futures cash injections.</p>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="injectIntoLoan(250)" class="bg-cyber-red hover:bg-cyber-redHover text-white px-3 py-2 rounded-lg text-xs font-medium transition-all neon-glow flex items-center space-x-1.5">
-                                    <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-                                    <span>Inject $250 Topstep Fund</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Progress Bar & Stats -->
-                        <div class="space-y-4 mb-8">
-                            <div class="flex justify-between text-xs font-mono">
-                                <span class="text-cyber-muted">Payoff Progress (Target: $0.00)</span>
-                                <span class="text-white font-bold" id="loan-progress-percent">62.4% Paid</span>
-                            </div>
-                            <div class="w-full bg-cyber-bg h-3 rounded-full overflow-hidden border border-cyber-border p-0.5">
-                                <div id="loan-progress-bar" class="bg-gradient-to-r from-rose-600 to-cyber-red h-full rounded-full transition-all duration-500" style="width: 62.4%;"></div>
-                            </div>
-                            <div class="grid grid-cols-3 gap-4 pt-2">
-                                <div class="bg-cyber-bg p-3 rounded-xl border border-cyber-border">
-                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Initial Balance</div>
-                                    <div class="text-sm font-bold font-mono text-white">$22,500.00</div>
-                                </div>
-                                <div class="bg-cyber-bg p-3 rounded-xl border border-cyber-border">
-                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Current Balance</div>
-                                    <div class="text-sm font-bold font-mono text-cyber-red" id="current-loan-display">$8,450.00</div>
-                                </div>
-                                <div class="bg-cyber-bg p-3 rounded-xl border border-cyber-border">
-                                    <div class="text-[10px] font-mono text-cyber-muted uppercase">Est. Payoff Horizon</div>
-                                    <div class="text-sm font-bold font-mono text-emerald-400">4.2 Months</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 6-Month Projection Table -->
-                        <h3 class="font-bold text-white text-sm uppercase tracking-wide mb-3">6-Month Automated Amortization Schedule</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs font-mono">
-                                <thead class="bg-cyber-bg text-cyber-muted uppercase text-[10px] border-b border-cyber-border">
-                                    <tr>
-                                        <th class="p-3">Month</th>
-                                        <th class="p-3">Starting Balance</th>
-                                        <th class="p-3">Base Payment</th>
-                                        <th class="p-3">Topstep 50% Injection</th>
-                                        <th class="p-3">Ending Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-cyber-border" id="amortization-table-body">
-                                    <tr class="hover:bg-cyber-cardHover">
-                                        <td class="p-3 text-white font-bold">Month 1</td>
-                                        <td class="p-3">$8,450.00</td>
-                                        <td class="p-3">$450.00</td>
-                                        <td class="p-3 text-emerald-400">+$625.00</td>
-                                        <td class="p-3 text-cyber-red font-bold">$7,375.00</td>
-                                    </tr>
-                                    <tr class="hover:bg-cyber-cardHover">
-                                        <td class="p-3 text-white font-bold">Month 2</td>
-                                        <td class="p-3">$7,375.00</td>
-                                        <td class="p-3">$450.00</td>
-                                        <td class="p-3 text-emerald-400">+$625.00</td>
-                                        <td class="p-3 text-cyber-red font-bold">$6,300.00</td>
-                                    </tr>
-                                    <tr class="hover:bg-cyber-cardHover">
-                                        <td class="p-3 text-white font-bold">Month 3</td>
-                                        <td class="p-3">$6,300.00</td>
-                                        <td class="p-3">$450.00</td>
-                                        <td class="p-3 text-emerald-400">+$625.00</td>
-                                        <td class="p-3 text-cyber-red font-bold">$5,225.00</td>
-                                    </tr>
-                                    <tr class="hover:bg-cyber-cardHover">
-                                        <td class="p-3 text-white font-bold">Month 4</td>
-                                        <td class="p-3">$5,225.00</td>
-                                        <td class="p-3">$450.00</td>
-                                        <td class="p-3 text-emerald-400">+$625.00</td>
-                                        <td class="p-3 text-cyber-red font-bold">$4,150.00</td>
-                                    </tr>
-                                    <tr class="hover:bg-cyber-cardHover">
-                                        <td class="p-3 text-white font-bold">Month 5</td>
-                                        <td class="p-3">$4,150.00</td>
-                                        <td class="p-3">$450.00</td>
-                                        <td class="p-3 text-emerald-400">+$625.00</td>
-                                        <td class="p-3 text-cyber-red font-bold">$3,075.00</td>
-                                    </tr>
-                                    <tr class="hover:bg-cyber-cardHover">
-                                        <td class="p-3 text-white font-bold">Month 6</td>
-                                        <td class="p-3">$3,075.00</td>
-                                        <td class="p-3">$450.00</td>
-                                        <td class="p-3 text-emerald-400">+$625.00</td>
-                                        <td class="p-3 text-emerald-400 font-bold">$2,000.00 (Near Zero)</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- VIEW 3: BILL ROUTING SYSTEM -->
-                <section id="view-bills" class="view-section hidden space-y-6">
-                    <div class="bg-cyber-card p-6 rounded-2xl cyber-border">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                            <div>
-                                <span class="text-xs font-mono text-cyber-red uppercase">Automated Liquidity Safeguards</span>
-                                <h2 class="text-xl font-bold text-white mt-1">Credit Card Rewards & Bill Routing</h2>
-                                <p class="text-xs text-cyber-muted mt-0.5">Automated 2-day liquidity checks prior to Amex, Chase, and GEICO due dates.</p>
-                            </div>
-                            <button onclick="runLiquidityCheck()" class="bg-cyber-cardHover hover:bg-cyber-border text-white px-4 py-2 rounded-lg text-xs font-mono transition-all border border-cyber-border flex items-center space-x-2">
-                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                                <span>Run Liquidity Scan</span>
-                            </button>
-                        </div>
-
-                        <!-- Bill Cards Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                            <div class="bg-cyber-bg p-5 rounded-xl border border-cyber-border flex flex-col justify-between">
-                                <div>
-                                    <div class="flex justify-between items-start mb-2">
-                                        <span class="font-bold text-white text-sm">Amex Platinum / Gold</span>
-                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyber-red/20 text-cyber-red">Due in 2 Days</span>
-                                    </div>
-                                    <div class="text-xl font-bold font-mono text-white my-3">$1,245.80</div>
-                                    <p class="text-xs text-cyber-muted">Rewards routing: 4x Dining / 5x Flights active.</p>
-                                </div>
-                                <div class="mt-4 pt-3 border-t border-cyber-border flex items-center justify-between text-xs font-mono">
-                                    <span class="text-emerald-400 flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> <span>Liquid Ready</span></span>
-                                    <button onclick="payBill('Amex')" class="text-cyber-red hover:underline font-bold">Execute Pay</button>
-                                </div>
-                            </div>
-
-                            <div class="bg-cyber-bg p-5 rounded-xl border border-cyber-border flex flex-col justify-between">
-                                <div>
-                                    <div class="flex justify-between items-start mb-2">
-                                        <span class="font-bold text-white text-sm">Chase Sapphire Reserve</span>
-                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Due in 9 Days</span>
-                                    </div>
-                                    <div class="text-xl font-bold font-mono text-white my-3">$810.20</div>
-                                    <p class="text-xs text-cyber-muted">Rewards routing: 3x Travel & Dining active.</p>
-                                </div>
-                                <div class="mt-4 pt-3 border-t border-cyber-border flex items-center justify-between text-xs font-mono">
-                                    <span class="text-emerald-400 flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> <span>Liquid Ready</span></span>
-                                    <button onclick="payBill('Chase')" class="text-cyber-red hover:underline font-bold">Execute Pay</button>
-                                </div>
-                            </div>
-
-                            <div class="bg-cyber-bg p-5 rounded-xl border border-cyber-border flex flex-col justify-between">
-                                <div>
-                                    <div class="flex justify-between items-start mb-2">
-                                        <span class="font-bold text-white text-sm">GEICO Auto Insurance</span>
-                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Due in 14 Days</span>
-                                    </div>
-                                    <div class="text-xl font-bold font-mono text-white my-3">$145.00</div>
-                                    <p class="text-xs text-cyber-muted">Auto-debit scheduled from primary checking.</p>
-                                </div>
-                                <div class="mt-4 pt-3 border-t border-cyber-border flex items-center justify-between text-xs font-mono">
-                                    <span class="text-emerald-400 flex items-center space-x-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> <span>Liquid Ready</span></span>
-                                    <button onclick="payBill('GEICO')" class="text-cyber-red hover:underline font-bold">Execute Pay</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- VIEW 4: TRADING & CASHFLOW -->
-                <section id="view-trading" class="view-section hidden space-y-6">
-                    <div class="bg-cyber-card p-6 rounded-2xl cyber-border">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                            <div>
-                                <span class="text-xs font-mono text-cyber-red uppercase">Futures & Equity Command</span>
-                                <h2 class="text-xl font-bold text-white mt-1">Topstep Futures & Cashflow Hub</h2>
-                                <p class="text-xs text-cyber-muted mt-0.5">Tracking Topstep distributions, Webull portfolios, and MGC/MNQ futures instruments.</p>
-                            </div>
-                            <div class="bg-cyber-bg px-4 py-2 rounded-xl border border-cyber-border font-mono text-xs">
-                                <span class="text-cyber-muted">Total Trading Capital:</span> <span class="text-emerald-400 font-bold">$14,850.00</span>
-                            </div>
-                        </div>
-
-                        <!-- Trading Accounts Grid -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
-                                <div class="text-[10px] font-mono text-cyber-muted uppercase mb-1">Topstep X Account</div>
-                                <div class="text-lg font-bold font-mono text-white">$2,500.00</div>
-                                <div class="text-xs text-emerald-400 mt-1">Live Funded • 50% split active</div>
-                            </div>
-                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
-                                <div class="text-[10px] font-mono text-cyber-muted uppercase mb-1">Webull Equity</div>
-                                <div class="text-lg font-bold font-mono text-white">$6,350.00</div>
-                                <div class="text-xs text-emerald-400 mt-1">+3.4% this week</div>
-                            </div>
-                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
-                                <div class="text-[10px] font-mono text-cyber-muted uppercase mb-1">Roth IRA</div>
-                                <div class="text-lg font-bold font-mono text-white">$4,200.00</div>
-                                <div class="text-xs text-cyber-muted mt-1">Index long-term hold</div>
-                            </div>
-                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
-                                <div class="text-[10px] font-mono text-cyber-muted uppercase mb-1">MGC / MNQ Margin</div>
-                                <div class="text-lg font-bold font-mono text-cyber-red">$1,800.00</div>
-                                <div class="text-xs text-cyber-muted mt-1">Active micro futures allocation</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- VIEW 5: API & INTEGRATIONS HUB -->
-                <section id="view-apis" class="view-section hidden space-y-6">
-                    <div class="bg-cyber-card p-6 rounded-2xl cyber-border">
-                        <div class="flex justify-between items-center mb-6">
-                            <div>
-                                <span class="text-xs font-mono text-cyber-red uppercase">Command Line Integrations</span>
-                                <h2 class="text-xl font-bold text-white mt-1">API & Social Settings Hub</h2>
-                                <p class="text-xs text-cyber-muted mt-0.5">Manage webhooks, Telegram bot alerts, and AI provider credentials.</p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="p-2.5 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
-                                    <div>
-                                        <div class="font-bold text-sm text-white">Gemini API (Google)</div>
-                                        <div class="text-xs font-mono text-emerald-400 flex items-center space-x-1 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>Connected & Active</span></div>
-                                    </div>
-                                </div>
-                                <button class="px-3 py-1.5 rounded-lg bg-cyber-cardHover text-xs font-mono text-white hover:bg-cyber-border">Configure</button>
-                            </div>
-
-                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="p-2.5 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="cpu" class="w-5 h-5"></i></div>
-                                    <div>
-                                        <div class="font-bold text-sm text-white">Claude API (Anthropic)</div>
-                                        <div class="text-xs font-mono text-emerald-400 flex items-center space-x-1 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>Connected & Active</span></div>
-                                    </div>
-                                </div>
-                                <button class="px-3 py-1.5 rounded-lg bg-cyber-cardHover text-xs font-mono text-white hover:bg-cyber-border">Configure</button>
-                            </div>
-
-                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="p-2.5 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="send" class="w-5 h-5"></i></div>
-                                    <div>
-                                        <div class="font-bold text-sm text-white">Telegram Bot Webhook</div>
-                                        <div class="text-xs font-mono text-emerald-400 flex items-center space-x-1 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>Live Notifications</span></div>
-                                    </div>
-                                </div>
-                                <button class="px-3 py-1.5 rounded-lg bg-cyber-cardHover text-xs font-mono text-white hover:bg-cyber-border">Configure</button>
-                            </div>
-
-                            <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="p-2.5 rounded-lg bg-cyber-cardHover text-cyber-red"><i data-lucide="globe" class="w-5 h-5"></i></div>
-                                    <div>
-                                        <div class="font-bold text-sm text-white">Google Workspace & Drive</div>
-                                        <div class="text-xs font-mono text-emerald-400 flex items-center space-x-1 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>Sync Enabled</span></div>
-                                    </div>
-                                </div>
-                                <button class="px-3 py-1.5 rounded-lg bg-cyber-cardHover text-xs font-mono text-white hover:bg-cyber-border">Configure</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-            </main>
-
-            <!-- Footer -->
-            <footer class="border-t border-cyber-border bg-cyber-card/50 py-4 px-6 text-center text-xs font-mono text-cyber-muted">
-                The Master Ledger v4.0 Cyber-Wolf Matrix • Built for high-performance financial command.
-            </footer>
         </div>
-    </div>
+    </header>
 
-    <!-- Quick Injection Modal -->
-    <div id="quick-inject-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-cyber-card border border-cyber-border rounded-2xl max-w-md w-full p-6 space-y-4 relative">
-            <div class="flex justify-between items-center border-b border-cyber-border pb-3">
-                <h3 class="font-bold text-white text-sm uppercase flex items-center space-x-2">
-                    <i data-lucide="plus-circle" class="w-4 h-4 text-cyber-red"></i>
-                    <span>Simulate Fund Injection</span>
-                </h3>
-                <button onclick="closeQuickInjectModal()" class="text-cyber-muted hover:text-white">&times;</button>
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 space-y-16">
+
+        <!-- SECTION 1: HERO & DIGITAL PERSONA TOGGLE -->
+        <section id="persona" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4">
+            
+            <!-- Hero Text Column -->
+            <div class="lg:col-span-6 space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-signal/10 border border-signal/30 text-signal font-mono text-xs">
+                    <i class="fa-solid fa-shield-halved"></i> BRAND ARCHITECTURE & INFRASTRUCTURE
+                </div>
+                
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-bone leading-tight">
+                    OUT OF THE HEAD.<br/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-crimson via-signal to-bone">INTO THE SYSTEM.</span>
+                </h1>
+                
+                <p class="text-ash text-base sm:text-lg leading-relaxed max-w-xl">
+                    A hyper-disciplined visual protocol built for non-conformists. Operating in quiet obscurity through adaptive disguise until strategic execution demands full system initialization.
+                </p>
+
+                <!-- Interactive State Bar -->
+                <div class="p-4 rounded-lg bg-obsidian-card border border-ash/30 space-y-3 hud-border">
+                    <div class="flex justify-between items-center text-xs font-mono">
+                        <span class="text-ash">CURRENT ACTIVE STATE:</span>
+                        <span id="stateTextIndicator" class="text-signal font-bold tracking-widest">[MODE 01: DISGUISED]</span>
+                    </div>
+                    <div class="w-full bg-obsidian h-2 rounded-full overflow-hidden border border-ash/20">
+                        <div id="stateProgressBar" class="bg-signal h-full w-1/3 transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <!-- Action CTA Buttons -->
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <button id="toggleModeBtn" onclick="togglePersonaMode()" class="px-6 py-3 bg-crimson hover:bg-crimson-glow text-bone font-mono font-bold text-sm tracking-wider rounded transition-all transform hover:-translate-y-0.5 shadow-crimson-glow flex items-center gap-2 clip-corner">
+                        <i class="fa-solid fa-eye" id="toggleIcon"></i>
+                        <span id="toggleBtnText">TOGGLE REVEAL MODE</span>
+                    </button>
+                    <a href="#terminal" class="px-6 py-3 bg-obsidian-light hover:bg-ash/20 text-bone border border-ash/40 font-mono text-sm tracking-wider rounded transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-crimson"></i> INITIATE CLI
+                    </a>
+                    <button onclick="copyRepoURL()" class="px-4 py-3 bg-obsidian-light hover:border-signal text-ash hover:text-signal border border-ash/20 font-mono text-sm rounded transition-all" title="Copy GitHub Repo Command">
+                        <i class="fa-brands fa-github text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hero Interactive Avatar Display -->
+            <div class="lg:col-span-6 flex justify-center">
+                <div class="relative w-full max-w-md aspect-square bg-obsidian-card rounded-2xl border border-ash/30 p-6 flex flex-col justify-between shadow-2xl hud-border overflow-hidden group">
+                    
+                    <!-- Top Avatar Header -->
+                    <div class="flex justify-between items-center text-xs font-mono z-10">
+                        <span class="text-ash flex items-center gap-1.5"><i class="fa-solid fa-microchip text-crimson"></i> AVATAR_SPECS</span>
+                        <span id="personaLabel" class="text-signal font-semibold">DISGUISE_ACTIVE</span>
+                    </div>
+
+                    <!-- SVG Avatar Graphics Container -->
+                    <div class="relative flex-grow flex items-center justify-center my-4">
+                        
+                        <!-- Glowing Grid Backdrop -->
+                        <div class="absolute inset-0 bg-[radial-gradient(#C51F30_1px,transparent_1px)] [background-size:16px_16px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                        
+                        <!-- DYNAMIC SVG AVATAR -->
+                        <svg id="avatarSvg" class="w-64 h-64 transition-all duration-700 transform" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background Aura -->
+                            <circle cx="150" cy="150" r="110" fill="#090909" stroke="#77736D" stroke-width="1" stroke-dasharray="4 4" />
+                            <circle id="svgTargetRing" cx="150" cy="150" r="125" stroke="#D69A42" stroke-width="1" opacity="0.4" />
+
+                            <!-- GROUP: SHEEP DISGUISE HOODIE (Visible in Disguise Mode) -->
+                            <g id="svgSheepDisguise" class="transition-all duration-700 opacity-100 scale-100 origin-center">
+                                <!-- Plush Fleece Hood Outline -->
+                                <path d="M70,160 C60,110 90,60 150,60 C210,60 240,110 230,160 C220,200 210,230 150,240 C90,230 80,200 70,160 Z" fill="#E8DFC9" stroke="#77736D" stroke-width="3"/>
+                                <!-- Fleece Puffs / Texture -->
+                                <circle cx="90" cy="90" r="18" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
+                                <circle cx="120" cy="70" r="20" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
+                                <circle cx="150" cy="65" r="22" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
+                                <circle cx="180" cy="70" r="20" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
+                                <circle cx="210" cy="90" r="18" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
+                                <circle cx="75" cy="120" r="16" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
+                                <circle cx="225" cy="120" r="16" fill="#E8DFC9" stroke="#77736D" stroke-width="2"/>
+                                <!-- Zipper Track -->
+                                <path d="M150,130 L150,235" stroke="#090909" stroke-width="4" stroke-dasharray="3 3"/>
+                                <!-- Zipper Pull -->
+                                <rect x="145" y="150" width="10" height="15" rx="2" fill="#D69A42"/>
+                            </g>
+
+                            <!-- GROUP: BLACK WOLF HEAD (Embedded inside hood or unveiled) -->
+                            <g id="svgWolfHead" class="transition-all duration-700">
+                                <!-- Black Wolf Ears -->
+                                <path d="M95,100 L70,30 L125,75 Z" fill="#141414" stroke="#090909" stroke-width="2"/>
+                                <path d="M205,100 L230,30 L175,75 Z" fill="#141414" stroke="#090909" stroke-width="2"/>
+                                <path d="M90,90 L75,42 L115,75 Z" fill="#C51F30" opacity="0.3"/>
+                                
+                                <!-- Sleek Black Wolf Face Base -->
+                                <path d="M100,100 L150,195 L200,100 L180,80 L120,80 Z" fill="#090909" stroke="#77736D" stroke-width="2"/>
+                                <path d="M125,120 L150,185 L175,120 L150,105 Z" fill="#141414"/>
+
+                                <!-- Wolf Muzzle & Nose -->
+                                <polygon points="140,165 160,165 150,180" fill="#090909" stroke="#77736D" stroke-width="1"/>
+                                
+                                <!-- NATURAL EYE (Left) -->
+                                <ellipse cx="125" cy="115" rx="7" ry="4" fill="#E8DFC9"/>
+                                <circle cx="125" cy="115" r="3" fill="#090909"/>
+
+                                <!-- CRIMSON BIONIC EYE (Right - Always Active) -->
+                                <g class="animate-eye-glow">
+                                    <ellipse cx="175" cy="115" rx="8" ry="5" fill="#141414" stroke="#C51F30" stroke-width="2"/>
+                                    <circle cx="175" cy="115" r="4" fill="#C51F30"/>
+                                    <circle cx="175" cy="115" r="1.5" fill="#ff2a3f"/>
+                                    <!-- Bionic Targeting Reticle Lines -->
+                                    <line x1="163" y1="115" x2="187" y2="115" stroke="#C51F30" stroke-width="0.75" stroke-dasharray="1 1"/>
+                                    <line x1="175" y1="103" x2="175" y2="127" stroke="#C51F30" stroke-width="0.75" stroke-dasharray="1 1"/>
+                                </g>
+
+                                <!-- Cybernetic Facial Markings -->
+                                <path d="M175,123 L185,145 L170,155" stroke="#C51F30" stroke-width="1.5" fill="none" opacity="0.8"/>
+                            </g>
+                        </svg>
+
+                        <!-- Scanline Blade Overlay -->
+                        <div class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-crimson to-transparent animate-scanline opacity-60"></div>
+                    </div>
+
+                    <!-- Bottom Metadata Panel -->
+                    <div class="pt-3 border-t border-ash/20 flex justify-between items-center text-[11px] font-mono">
+                        <span class="text-ash"><i class="fa-solid fa-eye text-crimson"></i> OPTICS: <span class="text-bone">CYBER_CRIMSON</span></span>
+                        <span class="text-ash"><i class="fa-solid fa-code-commit text-signal"></i> VER: <span class="text-bone">4.0.9</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: MATRIX TELEMETRY DASHBOARD -->
+        <section id="telemetry" class="space-y-6">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-ash/30 pb-4">
+                <div>
+                    <div class="text-crimson font-mono text-xs font-bold tracking-widest uppercase">// APPLICATION UI</div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-bone">THE MATRIX TELEMETRY</h2>
+                </div>
+                <div class="text-xs font-mono text-ash flex items-center gap-4">
+                    <span><i class="fa-solid fa-server text-signal"></i> NODE: ONLINE</span>
+                    <span><i class="fa-solid fa-wave-square text-crimson"></i> LATENCY: 14ms</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Column: Diagnostic Sliders & Controls -->
+                <div class="lg:col-span-5 bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-6 hud-border">
+                    <h3 class="text-sm font-mono font-bold text-bone flex items-center justify-between border-b border-ash/20 pb-3">
+                        <span><i class="fa-solid fa-sliders text-crimson"></i> COGNITIVE METRICS</span>
+                        <span class="text-xs text-ash">LIVE_ADJUST</span>
+                    </h3>
+
+                    <!-- Metric 1: Risk Level -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-mono">
+                            <span class="text-ash">RISK ASSESSMENT</span>
+                            <span id="valRisk" class="text-crimson font-bold">78%</span>
+                        </div>
+                        <input type="range" id="sliderRisk" min="0" max="100" value="78" class="w-full" oninput="updateTelemetry()">
+                    </div>
+
+                    <!-- Metric 2: Cognitive Demand -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-mono">
+                            <span class="text-ash">DISCIPLINE INDEX</span>
+                            <span id="valDiscipline" class="text-signal font-bold">92%</span>
+                        </div>
+                        <input type="range" id="sliderDiscipline" min="0" max="100" value="92" class="w-full" oninput="updateTelemetry()">
+                    </div>
+
+                    <!-- Metric 3: Market Intelligence -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-mono">
+                            <span class="text-ash">HERD DIVERGENCE</span>
+                            <span id="valDivergence" class="text-bone font-bold">85%</span>
+                        </div>
+                        <input type="range" id="sliderDivergence" min="0" max="100" value="85" class="w-full" oninput="updateTelemetry()">
+                    </div>
+
+                    <!-- Quick Status Summary Card -->
+                    <div class="p-4 bg-obsidian rounded border border-ash/20 space-y-2 font-mono text-xs">
+                        <div class="text-ash text-[10px]">SYSTEM DIAGNOSTIC OUTCOME:</div>
+                        <div id="diagnosticMessage" class="text-bone font-semibold">
+                            > OPTIMAL OPERATIONAL THRESHOLD MAINTAINED.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visual Telemetry Grid & Canvas -->
+                <div class="lg:col-span-7 bg-obsidian-card p-6 rounded-xl border border-ash/30 flex flex-col justify-between space-y-4 hud-border">
+                    
+                    <div class="flex justify-between items-center border-b border-ash/20 pb-3 font-mono text-xs">
+                        <span class="text-bone font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-chart-simple text-signal"></i> REAL-TIME SIGNAL FREQUENCY
+                        </span>
+                        <span class="text-crimson animate-pulse">● LIVE_FEED</span>
+                    </div>
+
+                    <!-- Dynamic Canvas Audio Visualizer Simulation -->
+                    <div class="h-48 w-full bg-obsidian rounded border border-ash/20 p-2 relative overflow-hidden flex items-center justify-center">
+                        <canvas id="telemetryCanvas" class="w-full h-full"></canvas>
+                    </div>
+
+                    <!-- Live Telemetry Event Logs -->
+                    <div class="bg-obsidian p-3 rounded border border-ash/20 font-mono text-[11px] h-28 overflow-y-auto space-y-1.5" id="telemetryLogFeed">
+                        <div class="text-ash"><span class="text-signal">[12:00:01]</span> NEXUS core subsystem initialized.</div>
+                        <div class="text-ash"><span class="text-crimson">[12:00:04]</span> [ALERT] Unmonitored signal detected in sector 07.</div>
+                        <div class="text-ash"><span class="text-bone">[12:00:09]</span> Disguise protocol verified: Active.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: THE HERD CAMPAIGN / MINDSET SHOWCASE -->
+        <section id="herd" class="space-y-6">
+            <div class="border-b border-ash/30 pb-4">
+                <div class="text-signal font-mono text-xs font-bold tracking-widest uppercase">// MARKETING CAMPAIGN & MINDSET</div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-bone">THE HERD VS. THE INDIVIDUAL</h2>
+            </div>
+
+            <!-- Quadrant Philosophy Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Card 1 -->
+                <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-3 hover:border-crimson transition-all hud-border group">
+                    <div class="w-10 h-10 rounded bg-crimson/10 border border-crimson/30 flex items-center justify-center text-crimson group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-brain text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-bone">Independent Thinking</h3>
+                    <p class="text-ash text-xs leading-relaxed">
+                        Rejecting collective noise and consensus bias. Formulate strategies grounded in first-principles data.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-3 hover:border-signal transition-all hud-border group">
+                    <div class="w-10 h-10 rounded bg-signal/10 border border-signal/30 flex items-center justify-center text-signal group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-compass text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-bone">Unforgiving Discipline</h3>
+                    <p class="text-ash text-xs leading-relaxed">
+                        Precision execution regardless of market volatility or emotional distraction. Order above impulse.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-3 hover:border-crimson transition-all hud-border group">
+                    <div class="w-10 h-10 rounded bg-crimson/10 border border-crimson/30 flex items-center justify-center text-crimson group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-eye text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-bone">Risk Awareness</h3>
+                    <p class="text-ash text-xs leading-relaxed">
+                        Calculated exposure rather than blind fearlessness. Calculate downfalls before measuring returns.
+                    </p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-3 hover:border-bone transition-all hud-border group">
+                    <div class="w-10 h-10 rounded bg-bone/10 border border-bone/30 flex items-center justify-center text-bone group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-lightbulb text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-bone">Unseen Vision</h3>
+                    <p class="text-ash text-xs leading-relaxed">
+                        Perceiving structural vulnerabilities and high-probability opportunities hidden in plain sight.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Followers vs Discerners Interactive Comparison Toggle -->
+            <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-ash/20 pb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-bone">ARCHETYPE COMPARISON ENGINE</h3>
+                        <p class="text-ash text-xs">Evaluate behavioral patterns across systemic environments.</p>
+                    </div>
+                    <div class="inline-flex p-1 bg-obsidian rounded-lg border border-ash/30 text-xs font-mono">
+                        <button id="btnFollowers" onclick="setComparisonMode('followers')" class="px-4 py-1.5 rounded text-ash hover:text-bone transition-all">THE HERD (FOLLOWERS)</button>
+                        <button id="btnDiscerners" onclick="setComparisonMode('discerners')" class="px-4 py-1.5 rounded bg-crimson text-bone font-bold shadow-crimson-glow transition-all">THE WOLVES (DISCERNERS)</button>
+                    </div>
+                </div>
+
+                <div id="comparisonDisplay" class="grid grid-cols-1 md:grid-cols-3 gap-6 font-mono text-xs">
+                    <!-- Dynamic comparison cards inserted via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: INTERACTIVE CLI TERMINAL -->
+        <section id="terminal" class="space-y-4">
+            <div class="flex justify-between items-end border-b border-ash/30 pb-4">
+                <div>
+                    <div class="text-crimson font-mono text-xs font-bold tracking-widest uppercase">// SYSTEM COMMAND INTERFACE</div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-bone">INTERACTIVE TERMINAL</h2>
+                </div>
+                <div class="text-xs font-mono text-ash hidden sm:block">
+                    TYPE <span class="text-signal">help</span> FOR AVAILABLE COMMANDS
+                </div>
+            </div>
+
+            <!-- Terminal Window -->
+            <div class="bg-obsidian rounded-xl border border-ash/40 shadow-2xl overflow-hidden hud-border">
+                
+                <!-- Terminal Header Bar -->
+                <div class="bg-obsidian-light px-4 py-3 border-b border-ash/30 flex items-center justify-between font-mono text-xs">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 rounded-full bg-crimson inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-signal inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-ash inline-block"></span>
+                        <span class="text-ash ml-2 text-[11px]">bash - wolfX_Xsabyter@nexus-core:~</span>
+                    </div>
+                    <button onclick="clearTerminal()" class="text-ash hover:text-bone text-xs">
+                        <i class="fa-solid fa-eraser"></i> CLEAR
+                    </button>
+                </div>
+
+                <!-- Command Quick Chips -->
+                <div class="px-4 py-2 bg-obsidian-card/50 border-b border-ash/20 flex flex-wrap gap-2 text-xs font-mono">
+                    <span class="text-ash self-center text-[10px]">QUICK COMMANDS:</span>
+                    <button onclick="executeQuickCmd('status')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-crimson text-bone hover:text-crimson transition-all">status</button>
+                    <button onclick="executeQuickCmd('reveal')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-signal text-bone hover:text-signal transition-all">reveal</button>
+                    <button onclick="executeQuickCmd('disguise')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-bone text-bone transition-all">disguise</button>
+                    <button onclick="executeQuickCmd('telemetry')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-crimson text-bone hover:text-crimson transition-all">telemetry</button>
+                    <button onclick="executeQuickCmd('herd')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-signal text-bone hover:text-signal transition-all">herd</button>
+                </div>
+
+                <!-- Terminal Output Container -->
+                <div id="terminalOutput" class="p-4 font-mono text-xs text-bone h-64 overflow-y-auto space-y-2">
+                    <div class="text-ash">NEXUS COMMAND LINE INTERFACE [v4.0.9]</div>
+                    <div class="text-ash">Copyright (c) wolfX_Xsabyter Brand Protocol. All rights reserved.</div>
+                    <div class="text-signal">Type 'help' or click quick commands above to execute system queries.</div>
+                    <div class="border-b border-ash/20 my-2"></div>
+                </div>
+
+                <!-- Terminal Input Form -->
+                <form id="terminalForm" onsubmit="handleCommand(event)" class="px-4 py-3 bg-obsidian-light border-t border-ash/30 flex items-center gap-2 font-mono text-xs">
+                    <span class="text-crimson font-bold">wolfX@nexus:~$</span>
+                    <input type="text" id="terminalInput" autocomplete="off" placeholder="Enter command here..." class="flex-grow bg-transparent text-bone focus:outline-none placeholder-ash/50">
+                    <button type="submit" class="text-crimson hover:text-bone px-3 py-1 bg-obsidian border border-crimson/40 rounded">EXECUTE</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION 5: BRAND PALETTE & DESIGN TOKENS -->
+        <section id="palette" class="space-y-6">
+            <div class="border-b border-ash/30 pb-4">
+                <div class="text-ash font-mono text-xs font-bold tracking-widest uppercase">// DESIGN SPECIFICATIONS</div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-bone">BRAND COLOR PALETTE</h2>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                
+                <!-- Swatch 1: Obsidian -->
+                <div onclick="copyHex('#090909', 'Obsidian')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
+                    <div class="h-20 w-full rounded border border-ash/40" style="background-color: #090909;"></div>
+                    <div>
+                        <div class="text-xs font-mono text-ash">PRIMARY DARK</div>
+                        <div class="text-sm font-bold text-bone flex justify-between items-center">
+                            <span>Obsidian</span>
+                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
+                        </div>
+                        <div class="text-xs font-mono text-signal">#090909</div>
+                    </div>
+                </div>
+
+                <!-- Swatch 2: Bone -->
+                <div onclick="copyHex('#E8DFC9', 'Bone')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
+                    <div class="h-20 w-full rounded" style="background-color: #E8DFC9;"></div>
+                    <div>
+                        <div class="text-xs font-mono text-ash">TEXT / HIGHLIGHT</div>
+                        <div class="text-sm font-bold text-bone flex justify-between items-center">
+                            <span>Bone</span>
+                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
+                        </div>
+                        <div class="text-xs font-mono text-signal">#E8DFC9</div>
+                    </div>
+                </div>
+
+                <!-- Swatch 3: Crimson -->
+                <div onclick="copyHex('#C51F30', 'Crimson')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
+                    <div class="h-20 w-full rounded" style="background-color: #C51F30;"></div>
+                    <div>
+                        <div class="text-xs font-mono text-ash">ALERT / OPTICS</div>
+                        <div class="text-sm font-bold text-bone flex justify-between items-center">
+                            <span>Crimson</span>
+                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
+                        </div>
+                        <div class="text-xs font-mono text-signal">#C51F30</div>
+                    </div>
+                </div>
+
+                <!-- Swatch 4: Ash -->
+                <div onclick="copyHex('#77736D', 'Ash')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
+                    <div class="h-20 w-full rounded" style="background-color: #77736D;"></div>
+                    <div>
+                        <div class="text-xs font-mono text-ash">SUBDUED / GRID</div>
+                        <div class="text-sm font-bold text-bone flex justify-between items-center">
+                            <span>Ash</span>
+                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
+                        </div>
+                        <div class="text-xs font-mono text-signal">#77736D</div>
+                    </div>
+                </div>
+
+                <!-- Swatch 5: Signal -->
+                <div onclick="copyHex('#D69A42', 'Signal')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
+                    <div class="h-20 w-full rounded" style="background-color: #D69A42;"></div>
+                    <div>
+                        <div class="text-xs font-mono text-ash">TELEMETRY / ACCENT</div>
+                        <div class="text-sm font-bold text-bone flex justify-between items-center">
+                            <span>Signal</span>
+                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
+                        </div>
+                        <div class="text-xs font-mono text-signal">#D69A42</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-ash/30 bg-obsidian py-8 font-mono text-xs text-ash">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <span class="font-bold text-bone">wolf<span class="text-crimson">X</span>_Xsabyter</span>
+                <span>// OUT OF THE HEAD. INTO THE SYSTEM.</span>
             </div>
             <div>
-                <label class="block text-xs font-mono text-cyber-muted mb-2">Injection Source</label>
-                <select id="inject-source" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-red focus:outline-none font-mono mb-4">
-                    <option value="Topstep">Topstep Futures Distribution</option>
-                    <option value="W2">W-2 Payroll Bi-Weekly Paycheck</option>
-                    <option value="ScheduleC">Schedule C Tax Deduction / Side Hustle</option>
-                </select>
-
-                <label class="block text-xs font-mono text-cyber-muted mb-2">Amount ($ USD)</label>
-                <input type="number" id="inject-amount" value="500" class="w-full bg-cyber-bg border border-cyber-border rounded-lg px-3 py-2 text-sm text-white focus:border-cyber-red focus:outline-none font-mono">
-            </div>
-            <div class="flex justify-end space-x-3 pt-2">
-                <button onclick="closeQuickInjectModal()" class="px-4 py-2 rounded-lg bg-cyber-cardHover text-xs font-mono text-cyber-muted hover:text-white">Cancel</button>
-                <button onclick="confirmInjection()" class="px-4 py-2 rounded-lg bg-cyber-red hover:bg-cyber-redHover text-xs font-mono text-white font-bold neon-glow">Execute Injection</button>
+                <span>BUILT FOR HIGH-STAKES SYSTEM ARCHITECTURE & BRAND DISCIPLINE</span>
             </div>
         </div>
+    </footer>
+
+    <!-- TOAST NOTIFICATION POPUP -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-obsidian-card border border-crimson px-4 py-3 rounded shadow-2xl font-mono text-xs text-bone flex items-center space-x-3 opacity-0 transition-opacity pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-info text-crimson"></i>
+        <span id="toastMessage">Notification message</span>
     </div>
 
-    <!-- JavaScript Application Logic -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Initialize Lucide Icons
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            runPayrollSimulation();
-            // Show notification banner on load
+        // Global State Variables
+        let isDisguiseActive = true;
+        let currentComparisonMode = 'discerners';
+
+        // Clock Update
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toISOString().substring(11, 19) + " UTC";
+            document.getElementById('liveClock').innerText = timeStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Persona Disguise / Reveal Toggle
+        function togglePersonaMode() {
+            isDisguiseActive = !isDisguiseActive;
+            const sheepHood = document.getElementById('svgSheepDisguise');
+            const targetRing = document.getElementById('svgTargetRing');
+            const stateText = document.getElementById('stateTextIndicator');
+            const progressBar = document.getElementById('stateProgressBar');
+            const btnText = document.getElementById('toggleBtnText');
+            const toggleIcon = document.getElementById('toggleIcon');
+            const personaLabel = document.getElementById('personaLabel');
+            const statusBadge = document.getElementById('statusBadge');
+
+            if (isDisguiseActive) {
+                // Set Disguise Mode
+                sheepHood.style.opacity = '1';
+                sheepHood.style.transform = 'scale(1)';
+                targetRing.setAttribute('stroke', '#D69A42');
+                stateText.innerText = '[MODE 01: DISGUISED]';
+                stateText.className = 'text-signal font-bold tracking-widest';
+                progressBar.style.width = '33%';
+                progressBar.className = 'bg-signal h-full transition-all duration-500';
+                btnText.innerText = 'TOGGLE REVEAL MODE';
+                toggleIcon.className = 'fa-solid fa-eye';
+                personaLabel.innerText = 'DISGUISE_ACTIVE';
+                personaLabel.className = 'text-signal font-semibold';
+                statusBadge.className = 'flex items-center space-x-2 bg-signal/10 text-signal px-2.5 py-1 rounded border border-signal/40';
+                statusBadge.innerHTML = '<i class="fa-solid fa-user-shield text-xs"></i><span class="font-bold tracking-wider">STATUS: DISGUISED</span>';
+                
+                logTelemetry('Disguise mode engaged. Fleece cloak active.');
+                showToast('SHEEP DISGUISE INITIALIZED', 'signal');
+            } else {
+                // Set Reveal Mode
+                sheepHood.style.opacity = '0.15';
+                sheepHood.style.transform = 'scale(1.1)';
+                targetRing.setAttribute('stroke', '#C51F30');
+                stateText.innerText = '[MODE 02: REVEALED]';
+                stateText.className = 'text-crimson font-bold tracking-widest';
+                progressBar.style.width = '100%';
+                progressBar.className = 'bg-crimson h-full transition-all duration-500';
+                btnText.innerText = 'TOGGLE DISGUISE MODE';
+                toggleIcon.className = 'fa-solid fa-eye-slash';
+                personaLabel.innerText = 'WOLF_UNVEILED';
+                personaLabel.className = 'text-crimson font-semibold';
+                statusBadge.className = 'flex items-center space-x-2 bg-crimson/10 text-crimson px-2.5 py-1 rounded border border-crimson/40';
+                statusBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs animate-pulse"></i><span class="font-bold tracking-wider">SYSTEM: REVEALED</span>';
+
+                logTelemetry('[CRITICAL] Reveal mode engaged. Bionic Wolf Persona exposed.');
+                showToast('BIONIC WOLF UNVEILED', 'crimson');
+            }
+        }
+
+        // Telemetry Sliders Logic
+        function updateTelemetry() {
+            const risk = document.getElementById('sliderRisk').value;
+            const discipline = document.getElementById('sliderDiscipline').value;
+            const divergence = document.getElementById('sliderDivergence').value;
+
+            document.getElementById('valRisk').innerText = risk + '%';
+            document.getElementById('valDiscipline').innerText = discipline + '%';
+            document.getElementById('valDivergence').innerText = divergence + '%';
+
+            const diag = document.getElementById('diagnosticMessage');
+            if (risk > 80 && discipline < 50) {
+                diag.innerText = '> WARNING: HIGH RISK EXPOSURE WITH SUB-OPTIMAL DISCIPLINE.';
+                diag.className = 'text-crimson font-bold';
+            } else if (divergence > 75) {
+                diag.innerText = '> OPTIMAL DIVERGENCE FROM HERD BIAS DETECTED.';
+                diag.className = 'text-signal font-bold';
+            } else {
+                diag.innerText = '> OPERATIONAL PARAMETERS BALANCED.';
+                diag.className = 'text-bone font-semibold';
+            }
+        }
+
+        // Live Audio Visualizer Canvas Simulation
+        const canvas = document.getElementById('telemetryCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let waveOffset = 0;
+        function drawVisualizer() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid line background
+            ctx.strokeStyle = 'rgba(119, 115, 109, 0.15)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.width; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+
+            // Draw Dynamic Crimson Wave
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#C51F30';
+
+            const riskVal = parseInt(document.getElementById('sliderRisk')?.value || 50);
+
+            for (let x = 0; x < canvas.width; x += 5) {
+                const y = (canvas.height / 2) + Math.sin((x + waveOffset) * 0.03) * (riskVal / 3) * Math.cos(x * 0.01);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Draw Secondary Signal Wave
+            ctx.beginPath();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#D69A42';
+            for (let x = 0; x < canvas.width; x += 8) {
+                const y = (canvas.height / 2) + Math.cos((x - waveOffset) * 0.02) * 20;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            waveOffset += 2;
+            requestAnimationFrame(drawVisualizer);
+        }
+        drawVisualizer();
+
+        // Telemetry Feed Logger
+        function logTelemetry(msg) {
+            const feed = document.getElementById('telemetryLogFeed');
+            const now = new Date();
+            const timeStr = now.toISOString().substring(11, 19);
+            const entry = document.createElement('div');
+            entry.className = 'text-ash';
+            entry.innerHTML = `<span class="text-crimson">[${timeStr}]</span> ${msg}`;
+            feed.prepend(entry);
+        }
+
+        // Archetype Comparison Data Switcher
+        const comparisonData = {
+            followers: [
+                { title: "Consensus Reliance", desc: "Waits for group validation prior to taking action, resulting in delayed execution.", status: "VULNERABLE", color: "text-ash" },
+                { title: "Emotional Volatility", desc: "Reacts impulsively to short-term market noise and sensationalized narratives.", status: "HIGH RISK", color: "text-crimson" },
+                { title: "Uniformity", desc: "Adheres strictly to traditional frameworks without questioning structural flaws.", status: "OBSOLETE", color: "text-ash" }
+            ],
+            discerners: [
+                { title: "First-Principles Analysis", desc: "Deconstructs complex environments to raw data points before forming execution thesis.", status: "DOMINANT", color: "text-signal" },
+                { title: "Emotional Neutrality", desc: "Maintains disciplined execution plans unaffected by external hysteria.", status: "OPTIMAL", color: "text-bone" },
+                { title: "Calculated Disguise", desc: "Blends seamlessly into the background until high-probability vectors emerge.", status: "STRATEGIC", color: "text-crimson" }
+            ]
+        };
+
+        function setComparisonMode(mode) {
+            currentComparisonMode = mode;
+            const container = document.getElementById('comparisonDisplay');
+            const btnF = document.getElementById('btnFollowers');
+            const btnD = document.getElementById('btnDiscerners');
+
+            if (mode === 'followers') {
+                btnF.className = 'px-4 py-1.5 rounded bg-ash/30 text-bone font-bold transition-all';
+                btnD.className = 'px-4 py-1.5 rounded text-ash hover:text-bone transition-all';
+            } else {
+                btnD.className = 'px-4 py-1.5 rounded bg-crimson text-bone font-bold shadow-crimson-glow transition-all';
+                btnF.className = 'px-4 py-1.5 rounded text-ash hover:text-bone transition-all';
+            }
+
+            container.innerHTML = comparisonData[mode].map(item => `
+                <div class="bg-obsidian p-4 rounded border border-ash/20 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-bone">${item.title}</span>
+                        <span class="${item.color} font-extrabold text-[10px]">${item.status}</span>
+                    </div>
+                    <p class="text-ash text-xs leading-relaxed font-sans">${item.desc}</p>
+                </div>
+            `).join('');
+        }
+        setComparisonMode('discerners');
+
+        // CLI Terminal Execution Handler
+        function handleCommand(e) {
+            e.preventDefault();
+            const input = document.getElementById('terminalInput');
+            const cmd = input.value.trim().toLowerCase();
+            if (!cmd) return;
+
+            appendTerminalLine(`wolfX@nexus:~$ ${cmd}`, 'text-crimson font-bold');
+            input.value = '';
+
+            processCommand(cmd);
+        }
+
+        function executeQuickCmd(cmd) {
+            appendTerminalLine(`wolfX@nexus:~$ ${cmd}`, 'text-crimson font-bold');
+            processCommand(cmd);
+        }
+
+        function processCommand(cmd) {
+            const output = document.getElementById('terminalOutput');
+            
+            switch (cmd) {
+                case 'help':
+                    appendTerminalLine(`AVAILABLE SYSTEM COMMANDS:
+  status     - Query core system operational state.
+  reveal     - Engage bionic wolf reveal protocol.
+  disguise   - Engage fleece sheep disguise protocol.
+  telemetry  - Fetch real-time system metrics.
+  herd       - Display archetype comparison.
+  clear      - Clear terminal console screen.`, 'text-signal');
+                    break;
+
+                case 'status':
+                    appendTerminalLine(`[SYSTEM METRICS]
+  IDENTITY: wolfX_Xsabyter
+  MODE: ${isDisguiseActive ? 'DISGUISED (Sheep Cloak)' : 'UNVEILED (Bionic Wolf)'}
+  CORE: ONLINE (0 errors)
+  TAGLINE: "OUT OF THE HEAD. INTO THE SYSTEM."`, 'text-bone');
+                    break;
+
+                case 'reveal':
+                    if (isDisguiseActive) togglePersonaMode();
+                    appendTerminalLine('[SUCCESS] Unveiled mode activated.', 'text-crimson');
+                    break;
+
+                case 'disguise':
+                    if (!isDisguiseActive) togglePersonaMode();
+                    appendTerminalLine('[SUCCESS] Disguise mode activated.', 'text-signal');
+                    break;
+
+                case 'telemetry':
+                    const r = document.getElementById('sliderRisk').value;
+                    const d = document.getElementById('sliderDiscipline').value;
+                    appendTerminalLine(`[TELEMETRY SNAPSHOT]
+  Risk Assessment: ${r}%
+  Discipline Index: ${d}%
+  Optics Status: ACTIVE_CRIMSON`, 'text-bone');
+                    break;
+
+                case 'herd':
+                    appendTerminalLine(`[HERD ARCHETYPE SUMMARY]
+  Followers seek consensus; Discerners seek truth.
+  The wolf in sheep's clothing operates unseen until execution.`, 'text-signal');
+                    break;
+
+                case 'clear':
+                    clearTerminal();
+                    return;
+
+                default:
+                    appendTerminalLine(`Command not recognized: '${cmd}'. Type 'help' for available commands.`, 'text-ash');
+                    break;
+            }
+
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function appendTerminalLine(text, className = 'text-bone') {
+            const output = document.getElementById('terminalOutput');
+            const line = document.createElement('div');
+            line.className = className + ' whitespace-pre-wrap';
+            line.innerText = text;
+            output.appendChild(line);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearTerminal() {
+            const output = document.getElementById('terminalOutput');
+            output.innerHTML = '<div class="text-ash">Console cleared. Type "help" for available commands.</div>';
+        }
+
+        // Copy Clipboard Helpers
+        function copyHex(hex, name) {
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = hex;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast(`Copied ${name} (${hex}) to clipboard!`, 'signal');
+        }
+
+        function copyRepoURL() {
+            const repoCmd = 'git clone https://github.com/wolfX_Xsabyter/nexus-architecture.git';
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = repoCmd;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast('Git Clone command copied to clipboard!', 'crimson');
+        }
+
+        function showToast(msg, type = 'crimson') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = msg;
+            if (type === 'signal') {
+                toast.style.borderColor = '#D69A42';
+                toastIcon.className = 'fa-solid fa-check text-signal';
+            } else {
+                toast.style.borderColor = '#C51F30';
+                toastIcon.className = 'fa-solid fa-triangle-exclamation text-crimson';
+            }
+
+            toast.style.opacity = '1';
             setTimeout(() => {
-                document.getElementById('notification-banner').classList.remove('hidden');
-            }, 800);
-        });
-
-        // Tab Switching Logic
-        function switchTab(targetId) {
-            // Hide all sections
-            document.querySelectorAll('.view-section').forEach(el => {
-                el.classList.add('hidden');
-            });
-            // Show target section
-            document.getElementById(`view-${targetId}`).classList.remove('hidden');
-
-            // Update desktop nav styles
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                if(btn.getAttribute('data-target') === targetId) {
-                    btn.className = "nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all bg-cyber-red text-white neon-glow";
-                } else {
-                    btn.className = "nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-cyber-muted hover:bg-cyber-cardHover hover:text-white";
-                }
-            });
-
-            // Update mobile nav styles
-            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
-                if(btn.getAttribute('data-target') === targetId) {
-                    btn.className = "mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium bg-cyber-red text-white";
-                } else {
-                    btn.className = "mobile-nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium text-cyber-muted hover:bg-cyber-cardHover hover:text-white";
-                }
-            });
-
-            // Update Header Title
-            const titles = {
-                'command': 'Command Hub',
-                'debt': 'Debt Paydown (Path B)',
-                'bills': 'Bill Routing System',
-                'trading': 'Trading & Cashflow',
-                'apis': 'API & Integrations'
-            };
-            document.getElementById('current-page-title').innerText = titles[targetId] || 'Dashboard';
-        }
-
-        // Mobile Drawer Toggle
-        function toggleMobileMenu() {
-            const drawer = document.getElementById('mobile-drawer');
-            drawer.classList.toggle('hidden');
-        }
-
-        // Dismiss Banner
-        function dismissBanner() {
-            document.getElementById('notification-banner').classList.add('hidden');
-        }
-
-        // Payroll Simulation Logic
-        function runPayrollSimulation() {
-            const regHours = parseFloat(document.getElementById('sim-reg-hours').value) || 0;
-            const otHours = parseFloat(document.getElementById('sim-ot-hours').value) || 0;
-            
-            const regRate = 20.0;
-            const otRate = 30.0;
-
-            const gross = (regHours * regRate) + (otHours * otRate);
-            const estNet = gross * 0.82; // Assuming ~18% tax withholding
-
-            document.getElementById('sim-gross').innerText = `$${gross.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('sim-net').innerText = `$${estNet.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        }
-
-        // Modal Controls
-        function triggerQuickInjectModal() {
-            document.getElementById('quick-inject-modal').classList.remove('hidden');
-        }
-
-        function closeQuickInjectModal() {
-            document.getElementById('quick-inject-modal').classList.add('hidden');
-        }
-
-        // Execute Fund Injection
-        let currentLoanBalance = 8450.00;
-        let topstepPool = 1250.00;
-
-        function confirmInjection() {
-            const source = document.getElementById('inject-source').value;
-            const amount = parseFloat(document.getElementById('inject-amount').value) || 0;
-            
-            if (amount <= 0) return;
-
-            topstepPool += amount;
-            document.getElementById('kpi-topstep-pool').innerText = `$${topstepPool.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-            // Add activity log
-            const feed = document.getElementById('activity-log-feed');
-            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            const logItem = document.createElement('div');
-            logItem.className = 'p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono';
-            logItem.innerHTML = `<div class="text-cyber-muted text-[10px]">${timeStr} • Injection</div><div class="text-white mt-0.5">+ $${amount.toLocaleString()} added from ${source}</div>`;
-            feed.prepend(logItem);
-
-            closeQuickInjectModal();
-        }
-
-        // Inject into Loan
-        function injectIntoLoan(amount) {
-            currentLoanBalance = Math.max(0, currentLoanBalance - amount);
-            document.getElementById('current-loan-display').innerText = `$${currentLoanBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('kpi-loan-balance').innerText = `$${currentLoanBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            
-            const percent = ((22500 - currentLoanBalance) / 22500) * 100;
-            document.getElementById('loan-progress-percent').innerText = `${percent.toFixed(1)}% Paid`;
-            document.getElementById('loan-progress-bar').style.width = `${percent}%`;
-
-            const feed = document.getElementById('activity-log-feed');
-            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const logItem = document.createElement('div');
-            logItem.className = 'p-2.5 rounded-lg bg-cyber-bg border border-cyber-border text-xs font-mono';
-            logItem.innerHTML = `<div class="text-cyber-muted text-[10px]">${timeStr} • Debt Paydown</div><div class="text-white mt-0.5">Applied $${amount} Topstep injection to M&T Auto Loan. New balance: $${currentLoanBalance.toLocaleString()}</div>`;
-            feed.prepend(logItem);
-        }
-
-        // Liquidity Check Scan
-        function runLiquidityCheck() {
-            alert('Liquidity Check Complete: All accounts hold >2x coverage for upcoming Amex and Chase dues.');
-        }
-
-        // Pay Bill
-        function payBill(billName) {
-            alert(`Executing payment route for ${billName}. Automated 2-day liquidity verification passed.`);
+                toast.style.opacity = '0';
+            }, 3000);
         }
     </script>
 </body>
