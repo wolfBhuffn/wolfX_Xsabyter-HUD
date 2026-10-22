@@ -139,7 +139,7 @@
         <!-- TOP GRID: 360 TURNTABLE (LEFT) & HERO PERSONA (RIGHT) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            <!-- LEFT COLUMN: 360 TURNTABLE AVATAR VIEWER (4 Cols) -->
+            <!-- LEFT COLUMN: 360 TURNTABLE AVATAR VIEWER (5 Cols) -->
             <section class="lg:col-span-5 flex flex-col space-y-4">
                 <div class="hud-border bg-obsidian-card p-4 clip-corner shadow-hud">
                     <div class="flex justify-between items-center mb-3">
@@ -153,7 +153,7 @@
                     <div class="turntable-hud-wrapper relative w-full aspect-square bg-obsidian border border-ash/30 rounded overflow-hidden cursor-grab active:cursor-grabbing flex items-center justify-center select-none" id="turntableViewer">
                         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-obsidian/40 pointer-events-none z-10"></div>
                         <div class="absolute top-2 right-2 text-[10px] font-mono text-crimson bg-obsidian/80 px-1.5 py-0.5 border border-crimson/30 z-20">FRAME <span id="frameCounter">1</span>/8</div>
-                        <img id="turntableImage" src="frame_1.png" alt="Wolf SaByter 360 Turntable" class="w-full h-full object-contain pointer-events-none select-none" draggable="false" />
+                        <img id="turntableImage" src="./assets/images/icons/frame_1.png" alt="Wolf SaByter 360 Turntable" class="w-full h-full object-contain pointer-events-none select-none" draggable="false" />
                         <div class="turntable-status absolute bottom-3 left-3 font-mono text-[10px] text-signal bg-obsidian/80 px-2 py-0.5 border-l-2 border-signal z-20 tracking-wider">
                             STATUS: SYNCED
                         </div>
@@ -189,14 +189,13 @@
                     </div>
                 </div>
 
-                <!-- Action CTA Buttons + NEW GLITCH FEATURE -->
+                <!-- Action CTA Buttons + GLITCH FEATURE -->
                 <div class="flex flex-wrap gap-3 pt-2">
                     <button id="toggleModeBtn" onclick="togglePersonaMode()" class="px-5 py-2.5 bg-crimson hover:bg-crimson-glow text-bone font-mono font-bold text-xs tracking-wider rounded transition-all transform hover:-translate-y-0.5 shadow-crimson-glow flex items-center gap-2">
-                        <i class="fa-solid fa-fa-eye" id="toggleIcon"></i>
+                        <i class="fa-solid fa-eye" id="toggleIcon"></i>
                         <span id="toggleBtnText">TOGGLE REVEAL MODE</span>
                     </button>
                     
-                    <!-- NEW FEATURE: SYSTEM GLITCH PULSE -->
                     <button onclick="triggerGlitchPulse()" class="px-4 py-2.5 bg-obsidian-light hover:bg-signal/20 text-signal border border-signal/40 font-mono font-bold text-xs tracking-wider rounded transition-all flex items-center gap-2">
                         <i class="fa-solid fa-bolt"></i> PULSE GLITCH
                     </button>
@@ -218,10 +217,16 @@
             document.getElementById('liveClock').innerText = now.toISOString().slice(11, 19) + ' UTC';
         }, 1000);
 
-        // 360 Turntable Engine
+        // 360 Turntable Engine with Correct Asset Paths
         const frames = [
-            "frame_1.png", "frame_2.png", "frame_3.png", "frame_4.png",
-            "frame_5.png", "frame_6.png", "frame_7.png", "frame_8.png"
+            "./assets/images/icons/frame_1.png",
+            "./assets/images/icons/frame_2.png",
+            "./assets/images/icons/frame_3.png",
+            "./assets/images/icons/frame_4.png",
+            "./assets/images/icons/frame_5.png",
+            "./assets/images/icons/frame_6.png",
+            "./assets/images/icons/frame_7.png",
+            "./assets/images/icons/frame_8.png"
         ];
 
         // Preload frames
@@ -295,7 +300,7 @@
             }
         }
 
-        // NEW FEATURE: Tactical Glitch Pulse trigger
+        // Tactical Glitch Pulse trigger
         function triggerGlitchPulse() {
             const body = document.getElementById('mainBody');
             body.classList.add('glitch-fx');
