@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: JetBrains Mono & Inter -->
+    <!-- Google Fonts: JetBrains Mono & Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,500;0,700;0,800;1,400&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
@@ -36,21 +36,6 @@
                         'crimson-glow': '0 0 25px rgba(197, 31, 48, 0.35)',
                         'signal-glow': '0 0 20px rgba(214, 154, 66, 0.25)',
                         'hud': 'inset 0 0 15px rgba(197, 31, 48, 0.15)',
-                    },
-                    animation: {
-                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'scanline': 'scanline 8s linear infinite',
-                        'eye-glow': 'eyeGlow 2s ease-in-out infinite alternate',
-                    },
-                    keyframes: {
-                        scanline: {
-                            '0%': { transform: 'translateY(-100%)' },
-                            '100%': { transform: 'translateY(1000%)' }
-                        },
-                        eyeGlow: {
-                            '0%': { filter: 'drop-shadow(0 0 2px #C51F30)' },
-                            '100%': { filter: 'drop-shadow(0 0 12px #ff2a3f)' }
-                        }
                     }
                 }
             }
@@ -81,21 +66,24 @@
             opacity: 0.6;
         }
 
+        /* Glitch Animation Class */
+        .glitch-fx {
+            animation: glitchAnim 0.3s cubic-bezier(.25, .46, .45, .94) both;
+        }
+        @keyframes glitchAnim {
+            0% { transform: translate(0); filter: hue-rotate(0deg); }
+            20% { transform: translate(-3px, 3px); filter: hue-rotate(90deg); }
+            40% { transform: translate(-3px, -3px); filter: hue-rotate(180deg); }
+            60% { transform: translate(3px, 3px); filter: hue-rotate(270deg); }
+            80% { transform: translate(3px, -3px); filter: hue-rotate(45deg); }
+            100% { transform: translate(0); filter: hue-rotate(0deg); }
+        }
+
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #090909;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #77736D;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #C51F30;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #090909; }
+        ::-webkit-scrollbar-thumb { background: #77736D; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #C51F30; }
 
         /* Tactical HUD Corner Elements */
         .hud-border {
@@ -103,51 +91,21 @@
             border: 1px solid rgba(119, 115, 109, 0.3);
         }
         .hud-border::before {
-            content: '';
-            position: absolute;
-            top: -1px; left: -1px;
-            width: 8px; height: 8px;
-            border-top: 2px solid #C51F30;
-            border-left: 2px solid #C51F30;
+            content: ''; position: absolute; top: -1px; left: -1px; width: 8px; height: 8px; border-top: 2px solid #C51F30; border-left: 2px solid #C51F30;
         }
         .hud-border::after {
-            content: '';
-            position: absolute;
-            bottom: -1px; right: -1px;
-            width: 8px; height: 8px;
-            border-bottom: 2px solid #C51F30;
-            border-right: 2px solid #C51F30;
+            content: ''; position: absolute; bottom: -1px; right: -1px; width: 8px; height: 8px; border-bottom: 2px solid #C51F30; border-right: 2px solid #C51F30;
         }
-
-        /* Range Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            background: #141414;
-            height: 6px;
-            border-radius: 3px;
-            border: 1px solid #77736D;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px;
-            width: 16px;
-            border-radius: 2px;
-            background: #C51F30;
-            cursor: pointer;
-            box-shadow: 0 0 10px #C51F30;
-        }
-
         .clip-corner {
             clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
         }
     </style>
 </head>
-<body class="scanlines min-h-screen flex flex-col selection:bg-crimson selection:text-bone">
+<body class="scanlines min-h-screen flex flex-col selection:bg-crimson selection:text-bone" id="mainBody">
 
     <!-- TOP TELEMETRY BAR -->
     <header class="sticky top-0 z-50 bg-obsidian/90 backdrop-blur-md border-b border-ash/30 text-xs font-mono">
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap justify-between items-center gap-4">
-            <!-- Brand Identity -->
             <div class="flex items-center space-x-3">
                 <span class="inline-block w-2.5 h-2.5 bg-crimson rounded-full animate-pulse"></span>
                 <span class="font-extrabold tracking-wider text-base text-bone font-mono">wolf<span class="text-crimson">X</span>_Xsabyter</span>
@@ -155,7 +113,6 @@
                 <span class="text-ash hidden sm:inline tracking-tight">NEXUS_OS v4.0.9</span>
             </div>
 
-            <!-- Navigation Links -->
             <nav class="hidden md:flex space-x-6 text-ash font-medium">
                 <a href="#persona" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-user-ninja text-[10px]"></i> PERSONA</a>
                 <a href="#telemetry" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-[10px]"></i> TELEMETRY</a>
@@ -163,7 +120,6 @@
                 <a href="#terminal" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-terminal text-[10px]"></i> TERMINAL</a>
             </nav>
 
-            <!-- System Status Indicator -->
             <div class="flex items-center space-x-4">
                 <div class="hidden lg:flex items-center space-x-2 bg-obsidian-light px-2.5 py-1 rounded border border-ash/20">
                     <span class="text-ash">CLOCK:</span>
@@ -180,12 +136,12 @@
     <!-- MAIN CONTENT CONTAINER -->
     <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full flex flex-col space-y-8">
         
-        <!-- TURNTABLE & HERO GRID -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <!-- TOP GRID: 360 TURNTABLE (LEFT) & HERO PERSONA (RIGHT) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            <!-- LEFT COLUMN: 360 TURNTABLE AVATAR VIEWER -->
-            <section class="lg:col-span-1 flex flex-col space-y-4">
-                <div class="hud-border bg-obsidian-card p-4 clip-corner">
+            <!-- LEFT COLUMN: 360 TURNTABLE AVATAR VIEWER (4 Cols) -->
+            <section class="lg:col-span-5 flex flex-col space-y-4">
+                <div class="hud-border bg-obsidian-card p-4 clip-corner shadow-hud">
                     <div class="flex justify-between items-center mb-3">
                         <h2 class="font-mono text-sm tracking-widest text-bone flex items-center gap-2">
                             <i class="fa-solid fa-cube text-crimson"></i> AVATAR // 360_TURNTABLE
@@ -197,7 +153,7 @@
                     <div class="turntable-hud-wrapper relative w-full aspect-square bg-obsidian border border-ash/30 rounded overflow-hidden cursor-grab active:cursor-grabbing flex items-center justify-center select-none" id="turntableViewer">
                         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-obsidian/40 pointer-events-none z-10"></div>
                         <div class="absolute top-2 right-2 text-[10px] font-mono text-crimson bg-obsidian/80 px-1.5 py-0.5 border border-crimson/30 z-20">FRAME <span id="frameCounter">1</span>/8</div>
-                        <img id="turntableImage" src="frame_1.png" alt="Wolf SaByter 360 Turntable" class="w-full h-full object-contain pointer-events-none" draggable="false" />
+                        <img id="turntableImage" src="frame_1.png" alt="Wolf SaByter 360 Turntable" class="w-full h-full object-contain pointer-events-none select-none" draggable="false" />
                         <div class="turntable-status absolute bottom-3 left-3 font-mono text-[10px] text-signal bg-obsidian/80 px-2 py-0.5 border-l-2 border-signal z-20 tracking-wider">
                             STATUS: SYNCED
                         </div>
@@ -205,22 +161,22 @@
                 </div>
             </section>
 
-            <!-- RIGHT COLUMN: SECTION 1 HERO & DIGITAL PERSONA -->
-            
-            <!-- Hero Text Column -->
-            <div class="lg:col-span-6 space-y-6">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-signal/10 border border-signal/30 text-signal font-mono text-xs">
-                    <i class="fa-solid fa-shield-halved"></i> BRAND ARCHITECTURE & INFRASTRUCTURE
+            <!-- RIGHT COLUMN: HERO & DIGITAL PERSONA (7 Cols) -->
+            <section id="persona" class="lg:col-span-7 flex flex-col space-y-6">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-signal/10 border border-signal/30 text-signal font-mono text-xs">
+                        <i class="fa-solid fa-shield-halved"></i> BRAND ARCHITECTURE & INFRASTRUCTURE
+                    </div>
+                    
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-bone leading-tight">
+                        OUT OF THE HEAD.<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-crimson via-signal to-bone">INTO THE SYSTEM.</span>
+                    </h1>
+                    
+                    <p class="text-ash text-sm sm:text-base leading-relaxed max-w-xl">
+                        A hyper-disciplined visual protocol built for non-conformists. Operating in quiet obscurity through adaptive disguise until strategic execution demands full system initialization.
+                    </p>
                 </div>
-                
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-bone leading-tight">
-                    OUT OF THE HEAD.<br/>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-crimson via-signal to-bone">INTO THE SYSTEM.</span>
-                </h1>
-                
-                <p class="text-ash text-base sm:text-lg leading-relaxed max-w-xl">
-                    A hyper-disciplined visual protocol built for non-conformists. Operating in quiet obscurity through adaptive disguise until strategic execution demands full system initialization.
-                </p>
 
                 <!-- Interactive State Bar -->
                 <div class="p-4 rounded-lg bg-obsidian-card border border-ash/30 space-y-3 hud-border">
@@ -233,845 +189,119 @@
                     </div>
                 </div>
 
-                <!-- Action CTA Buttons -->
-                <div class="flex flex-wrap gap-4 pt-2">
-                    <button id="toggleModeBtn" onclick="togglePersonaMode()" class="px-6 py-3 bg-crimson hover:bg-crimson-glow text-bone font-mono font-bold text-sm tracking-wider rounded transition-all transform hover:-translate-y-0.5 shadow-crimson-glow flex items-center gap-2 clip-corner">
-                        <i class="fa-solid fa-eye" id="toggleIcon"></i>
+                <!-- Action CTA Buttons + NEW GLITCH FEATURE -->
+                <div class="flex flex-wrap gap-3 pt-2">
+                    <button id="toggleModeBtn" onclick="togglePersonaMode()" class="px-5 py-2.5 bg-crimson hover:bg-crimson-glow text-bone font-mono font-bold text-xs tracking-wider rounded transition-all transform hover:-translate-y-0.5 shadow-crimson-glow flex items-center gap-2">
+                        <i class="fa-solid fa-fa-eye" id="toggleIcon"></i>
                         <span id="toggleBtnText">TOGGLE REVEAL MODE</span>
                     </button>
-                    <a href="#terminal" class="px-6 py-3 bg-obsidian-light hover:bg-ash/20 text-bone border border-ash/40 font-mono text-sm tracking-wider rounded transition-all flex items-center gap-2">
+                    
+                    <!-- NEW FEATURE: SYSTEM GLITCH PULSE -->
+                    <button onclick="triggerGlitchPulse()" class="px-4 py-2.5 bg-obsidian-light hover:bg-signal/20 text-signal border border-signal/40 font-mono font-bold text-xs tracking-wider rounded transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-bolt"></i> PULSE GLITCH
+                    </button>
+
+                    <a href="#terminal" class="px-5 py-2.5 bg-obsidian-light hover:bg-ash/20 text-bone border border-ash/40 font-mono font-medium text-xs tracking-wider rounded transition-all flex items-center gap-2">
                         <i class="fa-solid fa-terminal text-crimson"></i> INITIATE CLI
                     </a>
-                    <button onclick="copyRepoURL()" class="px-4 py-3 bg-obsidian-light hover:border-signal text-ash hover:text-signal border border-ash/20 font-mono text-sm rounded transition-all" title="Copy GitHub Repo Command">
-                        <i class="fa-brands fa-github text-base"></i>
-                    </button>
                 </div>
-            </div>
-
-            <!-- Hero Interactive Avatar Display -->
-            <div class="lg:col-span-6 flex justify-center">
-                <div class="relative w-full max-w-md aspect-square bg-obsidian-card rounded-2xl border border-ash/30 p-6 flex flex-col justify-between shadow-2xl hud-border overflow-hidden group">
-                    
-                    <!-- Top Avatar Header -->
-                    <div class="flex justify-between items-center text-xs font-mono z-10">
-                        <span class="text-ash flex items-center gap-1.5"><i class="fa-solid fa-microchip text-crimson"></i> AVATAR_SPECS</span>
-                        <span id="personaLabel" class="text-signal font-semibold">DISGUISE_ACTIVE</span>
-                    </div>
-
-                    <!-- SVG Avatar Graphics Container -->
-                    <div class="relative flex-grow flex items-center justify-center my-4">
-                        
-                        <!-- Glowing Grid Backdrop -->
-                        <div class="absolute inset-0 bg-[radial-gradient(#C51F30_1px,transparent_1px)] [background-size:16px_16px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                        
-    <!-- INTERACTIVE 3D AVATAR WITH BIONIC CRIMSON EYE -->
-    <div class="avatar-3d-wrapper" id="avatar3D">
-      <div class="avatar-3d-card">
-        <!-- Front Face -->
-        <div class="avatar-face avatar-front">
-          <img src="3dfrontal.png" alt="Black Cyber Wolf Avatar Front" />
-          <div class="bionic-eye-glow"></div>
-          <div class="laser-beam"></div>
+            </section>
         </div>
-        <!-- Angled / Depth Face -->
-        <div class="avatar-face avatar-back">
-          <img src="1E9F0964-8AF5-40C4-B71F-B94C3C2DCE06.png" alt="Black Cyber Wolf Avatar Angle" />
-          <div class="bionic-eye-glow"></div>
-        </div>
-      </div>
-    </div>
-
-    <style>
-      /* --- 3D INTERACTIVE AVATAR & BIONIC EYE STYLES --- */
-      .avatar-3d-wrapper {
-        width: 200px;
-        height: 200px;
-        perspective: 1000px;
-        margin: 0 auto;
-        position: relative;
-        cursor: pointer;
-        z-index: 10;
-      }
-
-      .avatar-3d-card {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        transform-style: preserve-3d;
-        transition: transform 0.15s ease-out;
-        border-radius: 50%;
-        box-shadow: 0 0 30px rgba(220, 20, 60, 0.4);
-      }
-
-      .avatar-face {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        overflow: hidden;
-        backface-visibility: hidden;
-        border: 2px solid #333;
-        background: #090909;
-      }
-
-      .avatar-face img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .avatar-back {
-        transform: rotateY(180deg);
-      }
-
-      /* BIONIC CRIMSON EYE & LASER BEAM */
-      .bionic-eye-glow {
-        position: absolute;
-        top: 41%;
-        left: 48%;
-        width: 16px;
-        height: 16px;
-        background: radial-gradient(circle, #ff0033 0%, #880000 70%, transparent 100%);
-        border-radius: 50%;
-        box-shadow: 0 0 14px #ff0033, 0 0 28px #ff0033;
-        animation: pulseBionicEye 1.6s infinite alternate ease-in-out;
-        pointer-events: none;
-      }
-
-      .laser-beam {
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #ff0033, #ffffff, #ff0033, transparent);
-        box-shadow: 0 0 10px #ff0033;
-        animation: laserScan 2.5s infinite linear;
-        pointer-events: none;
-      }
-
-      @keyframes pulseBionicEye {
-        0% { transform: scale(0.85); opacity: 0.7; }
-        100% { transform: scale(1.3); opacity: 1; }
-      }
-
-      @keyframes laserScan {
-        0% { top: 15%; left: -100%; opacity: 0; }
-        50% { opacity: 1; }
-        100% { top: 85%; left: 100%; opacity: 0; }
-      }
-    </style>
-
-    <script>
-      // 3D MOUSE-TRACKING ROTATION TILT
-      document.addEventListener('DOMContentLoaded', () => {
-        const avatarWrapper = document.getElementById('avatar3D');
-        const avatarCard = avatarWrapper ? avatarWrapper.querySelector('.avatar-3d-card') : null;
-
-        if (avatarWrapper && avatarCard) {
-          avatarWrapper.addEventListener('mousemove', (e) => {
-            const rect = avatarWrapper.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            const rotateX = (-y / rect.height) * 35;
-            const rotateY = (x / rect.width) * 35;
-            
-            avatarCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.06, 1.06, 1.06)`;
-          });
-
-          avatarWrapper.addEventListener('mouseleave', () => {
-            avatarCard.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-          });
-        }
-      });
-    </script>
-
-
-
-                            <!-- GROUP: BLACK WOLF HEAD (Embedded inside hood or unveiled) -->
-                            <g id="svgWolfHead" class="transition-all duration-700">
-                                <!-- Black Wolf Ears -->
-                                <path d="M95,100 L70,30 L125,75 Z" fill="#141414" stroke="#090909" stroke-width="2"/>
-                                <path d="M205,100 L230,30 L175,75 Z" fill="#141414" stroke="#090909" stroke-width="2"/>
-                                <path d="M90,90 L75,42 L115,75 Z" fill="#C51F30" opacity="0.3"/>
-                                
-                                <!-- Sleek Black Wolf Face Base -->
-                                <path d="M100,100 L150,195 L200,100 L180,80 L120,80 Z" fill="#090909" stroke="#77736D" stroke-width="2"/>
-                                <path d="M125,120 L150,185 L175,120 L150,105 Z" fill="#141414"/>
-
-                                <!-- Wolf Muzzle & Nose -->
-                                <polygon points="140,165 160,165 150,180" fill="#090909" stroke="#77736D" stroke-width="1"/>
-                                
-                                <!-- NATURAL EYE (Left) -->
-                                <ellipse cx="125" cy="115" rx="7" ry="4" fill="#E8DFC9"/>
-                                <circle cx="125" cy="115" r="3" fill="#090909"/>
-
-                                <!-- CRIMSON BIONIC EYE (Right - Always Active) -->
-                                <g class="animate-eye-glow">
-                                    <ellipse cx="175" cy="115" rx="8" ry="5" fill="#141414" stroke="#C51F30" stroke-width="2"/>
-                                    <circle cx="175" cy="115" r="4" fill="#C51F30"/>
-                                    <circle cx="175" cy="115" r="1.5" fill="#ff2a3f"/>
-                                    <!-- Bionic Targeting Reticle Lines -->
-                                    <line x1="163" y1="115" x2="187" y2="115" stroke="#C51F30" stroke-width="0.75" stroke-dasharray="1 1"/>
-                                    <line x1="175" y1="103" x2="175" y2="127" stroke="#C51F30" stroke-width="0.75" stroke-dasharray="1 1"/>
-                                </g>
-
-                                <!-- Cybernetic Facial Markings -->
-                                <path d="M175,123 L185,145 L170,155" stroke="#C51F30" stroke-width="1.5" fill="none" opacity="0.8"/>
-                            </g>
-                        </svg>
-
-                        <!-- Scanline Blade Overlay -->
-                        <div class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-crimson to-transparent animate-scanline opacity-60"></div>
-                    </div>
-
-                    <!-- Bottom Metadata Panel -->
-                    <div class="pt-3 border-t border-ash/20 flex justify-between items-center text-[11px] font-mono">
-                        <span class="text-ash"><i class="fa-solid fa-eye text-crimson"></i> OPTICS: <span class="text-bone">CYBER_CRIMSON</span></span>
-                        <span class="text-ash"><i class="fa-solid fa-code-commit text-signal"></i> VER: <span class="text-bone">4.0.9</span></span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 2: MATRIX TELEMETRY DASHBOARD -->
-        <section id="telemetry" class="space-y-6">
-            
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-ash/30 pb-4">
-                <div>
-                    <div class="text-crimson font-mono text-xs font-bold tracking-widest uppercase">// APPLICATION UI</div>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-bone">THE MATRIX TELEMETRY</h2>
-                </div>
-                <div class="text-xs font-mono text-ash flex items-center gap-4">
-                    <span><i class="fa-solid fa-server text-signal"></i> NODE: ONLINE</span>
-                    <span><i class="fa-solid fa-wave-square text-crimson"></i> LATENCY: 14ms</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Left Column: Diagnostic Sliders & Controls -->
-                <div class="lg:col-span-5 bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-6 hud-border">
-                    <h3 class="text-sm font-mono font-bold text-bone flex items-center justify-between border-b border-ash/20 pb-3">
-                        <span><i class="fa-solid fa-sliders text-crimson"></i> COGNITIVE METRICS</span>
-                        <span class="text-xs text-ash">LIVE_ADJUST</span>
-                    </h3>
-
-                    <!-- Metric 1: Risk Level -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between text-xs font-mono">
-                            <span class="text-ash">RISK ASSESSMENT</span>
-                            <span id="valRisk" class="text-crimson font-bold">78%</span>
-                        </div>
-                        <input type="range" id="sliderRisk" min="0" max="100" value="78" class="w-full" oninput="updateTelemetry()">
-                    </div>
-
-                    <!-- Metric 2: Cognitive Demand -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between text-xs font-mono">
-                            <span class="text-ash">DISCIPLINE INDEX</span>
-                            <span id="valDiscipline" class="text-signal font-bold">92%</span>
-                        </div>
-                        <input type="range" id="sliderDiscipline" min="0" max="100" value="92" class="w-full" oninput="updateTelemetry()">
-                    </div>
-
-                    <!-- Metric 3: Market Intelligence -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between text-xs font-mono">
-                            <span class="text-ash">HERD DIVERGENCE</span>
-                            <span id="valDivergence" class="text-bone font-bold">85%</span>
-                        </div>
-                        <input type="range" id="sliderDivergence" min="0" max="100" value="85" class="w-full" oninput="updateTelemetry()">
-                    </div>
-
-                    <!-- Quick Status Summary Card -->
-                    <div class="p-4 bg-obsidian rounded border border-ash/20 space-y-2 font-mono text-xs">
-                        <div class="text-ash text-[10px]">SYSTEM DIAGNOSTIC OUTCOME:</div>
-                        <div id="diagnosticMessage" class="text-bone font-semibold">
-                            > OPTIMAL OPERATIONAL THRESHOLD MAINTAINED.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column: Visual Telemetry Grid & Canvas -->
-                <div class="lg:col-span-7 bg-obsidian-card p-6 rounded-xl border border-ash/30 flex flex-col justify-between space-y-4 hud-border">
-                    
-                    <div class="flex justify-between items-center border-b border-ash/20 pb-3 font-mono text-xs">
-                        <span class="text-bone font-bold flex items-center gap-2">
-                            <i class="fa-solid fa-chart-simple text-signal"></i> REAL-TIME SIGNAL FREQUENCY
-                        </span>
-                        <span class="text-crimson animate-pulse">● LIVE_FEED</span>
-                    </div>
-
-                    <!-- Dynamic Canvas Audio Visualizer Simulation -->
-                    <div class="h-48 w-full bg-obsidian rounded border border-ash/20 p-2 relative overflow-hidden flex items-center justify-center">
-                        <canvas id="telemetryCanvas" class="w-full h-full"></canvas>
-                    </div>
-
-                    <!-- Live Telemetry Event Logs -->
-                    <div class="bg-obsidian p-3 rounded border border-ash/20 font-mono text-[11px] h-28 overflow-y-auto space-y-1.5" id="telemetryLogFeed">
-                        <div class="text-ash"><span class="text-signal">[12:00:01]</span> NEXUS core subsystem initialized.</div>
-                        <div class="text-ash"><span class="text-crimson">[12:00:04]</span> [ALERT] Unmonitored signal detected in sector 07.</div>
-                        <div class="text-ash"><span class="text-bone">[12:00:09]</span> Disguise protocol verified: Active.</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 3: THE HERD CAMPAIGN / MINDSET SHOWCASE -->
-        <section id="herd" class="space-y-6">
-            <div class="border-b border-ash/30 pb-4">
-                <div class="text-signal font-mono text-xs font-bold tracking-widest uppercase">// MARKETING CAMPAIGN & MINDSET</div>
-                <h2 class="text-2xl sm:text-3xl font-bold text-bone">THE HERD VS. THE INDIVIDUAL</h2>
-            </div>
-
-            <!-- Quadrant Philosophy Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                <!-- Card 1 -->
-                <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-3 hover:border-crimson transition-all hud-border group">
-                    <div class="w-10 h-10 rounded bg-crimson/10 border border-crimson/30 flex items-center justify-center text-crimson group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-brain text-lg"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-bone">Independent Thinking</h3>
-                    <p class="text-ash text-xs leading-relaxed">
-                        Rejecting collective noise and consensus bias. Formulate strategies grounded in first-principles data.
-                    </p>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-3 hover:border-signal transition-all hud-border group">
-                    <div class="w-10 h-10 rounded bg-signal/10 border border-signal/30 flex items-center justify-center text-signal group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-compass text-lg"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-bone">Unforgiving Discipline</h3>
-                    <p class="text-ash text-xs leading-relaxed">
-                        Precision execution regardless of market volatility or emotional distraction. Order above impulse.
-                    </p>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-3 hover:border-crimson transition-all hud-border group">
-                    <div class="w-10 h-10 rounded bg-crimson/10 border border-crimson/30 flex items-center justify-center text-crimson group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-eye text-lg"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-bone">Risk Awareness</h3>
-                    <p class="text-ash text-xs leading-relaxed">
-                        Calculated exposure rather than blind fearlessness. Calculate downfalls before measuring returns.
-                    </p>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-3 hover:border-bone transition-all hud-border group">
-                    <div class="w-10 h-10 rounded bg-bone/10 border border-bone/30 flex items-center justify-center text-bone group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-lightbulb text-lg"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-bone">Unseen Vision</h3>
-                    <p class="text-ash text-xs leading-relaxed">
-                        Perceiving structural vulnerabilities and high-probability opportunities hidden in plain sight.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Followers vs Discerners Interactive Comparison Toggle -->
-            <div class="bg-obsidian-card p-6 rounded-xl border border-ash/30 space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-ash/20 pb-4">
-                    <div>
-                        <h3 class="text-base font-bold text-bone">ARCHETYPE COMPARISON ENGINE</h3>
-                        <p class="text-ash text-xs">Evaluate behavioral patterns across systemic environments.</p>
-                    </div>
-                    <div class="inline-flex p-1 bg-obsidian rounded-lg border border-ash/30 text-xs font-mono">
-                        <button id="btnFollowers" onclick="setComparisonMode('followers')" class="px-4 py-1.5 rounded text-ash hover:text-bone transition-all">THE HERD (FOLLOWERS)</button>
-                        <button id="btnDiscerners" onclick="setComparisonMode('discerners')" class="px-4 py-1.5 rounded bg-crimson text-bone font-bold shadow-crimson-glow transition-all">THE WOLVES (DISCERNERS)</button>
-                    </div>
-                </div>
-
-                <div id="comparisonDisplay" class="grid grid-cols-1 md:grid-cols-3 gap-6 font-mono text-xs">
-                    <!-- Dynamic comparison cards inserted via JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 4: INTERACTIVE CLI TERMINAL -->
-        <section id="terminal" class="space-y-4">
-            <div class="flex justify-between items-end border-b border-ash/30 pb-4">
-                <div>
-                    <div class="text-crimson font-mono text-xs font-bold tracking-widest uppercase">// SYSTEM COMMAND INTERFACE</div>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-bone">INTERACTIVE TERMINAL</h2>
-                </div>
-                <div class="text-xs font-mono text-ash hidden sm:block">
-                    TYPE <span class="text-signal">help</span> FOR AVAILABLE COMMANDS
-                </div>
-            </div>
-
-            <!-- Terminal Window -->
-            <div class="bg-obsidian rounded-xl border border-ash/40 shadow-2xl overflow-hidden hud-border">
-                
-                <!-- Terminal Header Bar -->
-                <div class="bg-obsidian-light px-4 py-3 border-b border-ash/30 flex items-center justify-between font-mono text-xs">
-                    <div class="flex items-center space-x-2">
-                        <span class="w-3 h-3 rounded-full bg-crimson inline-block"></span>
-                        <span class="w-3 h-3 rounded-full bg-signal inline-block"></span>
-                        <span class="w-3 h-3 rounded-full bg-ash inline-block"></span>
-                        <span class="text-ash ml-2 text-[11px]">bash - wolfX_Xsabyter@nexus-core:~</span>
-                    </div>
-                    <button onclick="clearTerminal()" class="text-ash hover:text-bone text-xs">
-                        <i class="fa-solid fa-eraser"></i> CLEAR
-                    </button>
-                </div>
-
-                <!-- Command Quick Chips -->
-                <div class="px-4 py-2 bg-obsidian-card/50 border-b border-ash/20 flex flex-wrap gap-2 text-xs font-mono">
-                    <span class="text-ash self-center text-[10px]">QUICK COMMANDS:</span>
-                    <button onclick="executeQuickCmd('status')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-crimson text-bone hover:text-crimson transition-all">status</button>
-                    <button onclick="executeQuickCmd('reveal')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-signal text-bone hover:text-signal transition-all">reveal</button>
-                    <button onclick="executeQuickCmd('disguise')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-bone text-bone transition-all">disguise</button>
-                    <button onclick="executeQuickCmd('telemetry')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-crimson text-bone hover:text-crimson transition-all">telemetry</button>
-                    <button onclick="executeQuickCmd('herd')" class="px-2.5 py-1 rounded bg-obsidian border border-ash/30 hover:border-signal text-bone hover:text-signal transition-all">herd</button>
-                </div>
-
-                <!-- Terminal Output Container -->
-                <div id="terminalOutput" class="p-4 font-mono text-xs text-bone h-64 overflow-y-auto space-y-2">
-                    <div class="text-ash">NEXUS COMMAND LINE INTERFACE [v4.0.9]</div>
-                    <div class="text-ash">Copyright (c) wolfX_Xsabyter Brand Protocol. All rights reserved.</div>
-                    <div class="text-signal">Type 'help' or click quick commands above to execute system queries.</div>
-                    <div class="border-b border-ash/20 my-2"></div>
-                </div>
-
-                <!-- Terminal Input Form -->
-                <form id="terminalForm" onsubmit="handleCommand(event)" class="px-4 py-3 bg-obsidian-light border-t border-ash/30 flex items-center gap-2 font-mono text-xs">
-                    <span class="text-crimson font-bold">wolfX@nexus:~$</span>
-                    <input type="text" id="terminalInput" autocomplete="off" placeholder="Enter command here..." class="flex-grow bg-transparent text-bone focus:outline-none placeholder-ash/50">
-                    <button type="submit" class="text-crimson hover:text-bone px-3 py-1 bg-obsidian border border-crimson/40 rounded">EXECUTE</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- SECTION 5: BRAND PALETTE & DESIGN TOKENS -->
-        <section id="palette" class="space-y-6">
-            <div class="border-b border-ash/30 pb-4">
-                <div class="text-ash font-mono text-xs font-bold tracking-widest uppercase">// DESIGN SPECIFICATIONS</div>
-                <h2 class="text-2xl sm:text-3xl font-bold text-bone">BRAND COLOR PALETTE</h2>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                
-                <!-- Swatch 1: Obsidian -->
-                <div onclick="copyHex('#090909', 'Obsidian')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
-                    <div class="h-20 w-full rounded border border-ash/40" style="background-color: #090909;"></div>
-                    <div>
-                        <div class="text-xs font-mono text-ash">PRIMARY DARK</div>
-                        <div class="text-sm font-bold text-bone flex justify-between items-center">
-                            <span>Obsidian</span>
-                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
-                        </div>
-                        <div class="text-xs font-mono text-signal">#090909</div>
-                    </div>
-                </div>
-
-                <!-- Swatch 2: Bone -->
-                <div onclick="copyHex('#E8DFC9', 'Bone')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
-                    <div class="h-20 w-full rounded" style="background-color: #E8DFC9;"></div>
-                    <div>
-                        <div class="text-xs font-mono text-ash">TEXT / HIGHLIGHT</div>
-                        <div class="text-sm font-bold text-bone flex justify-between items-center">
-                            <span>Bone</span>
-                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
-                        </div>
-                        <div class="text-xs font-mono text-signal">#E8DFC9</div>
-                    </div>
-                </div>
-
-                <!-- Swatch 3: Crimson -->
-                <div onclick="copyHex('#C51F30', 'Crimson')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
-                    <div class="h-20 w-full rounded" style="background-color: #C51F30;"></div>
-                    <div>
-                        <div class="text-xs font-mono text-ash">ALERT / OPTICS</div>
-                        <div class="text-sm font-bold text-bone flex justify-between items-center">
-                            <span>Crimson</span>
-                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
-                        </div>
-                        <div class="text-xs font-mono text-signal">#C51F30</div>
-                    </div>
-                </div>
-
-                <!-- Swatch 4: Ash -->
-                <div onclick="copyHex('#77736D', 'Ash')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
-                    <div class="h-20 w-full rounded" style="background-color: #77736D;"></div>
-                    <div>
-                        <div class="text-xs font-mono text-ash">SUBDUED / GRID</div>
-                        <div class="text-sm font-bold text-bone flex justify-between items-center">
-                            <span>Ash</span>
-                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
-                        </div>
-                        <div class="text-xs font-mono text-signal">#77736D</div>
-                    </div>
-                </div>
-
-                <!-- Swatch 5: Signal -->
-                <div onclick="copyHex('#D69A42', 'Signal')" class="bg-obsidian-card p-4 rounded-xl border border-ash/30 space-y-3 cursor-pointer hover:border-bone transition-all group">
-                    <div class="h-20 w-full rounded" style="background-color: #D69A42;"></div>
-                    <div>
-                        <div class="text-xs font-mono text-ash">TELEMETRY / ACCENT</div>
-                        <div class="text-sm font-bold text-bone flex justify-between items-center">
-                            <span>Signal</span>
-                            <i class="fa-regular fa-copy text-xs group-hover:text-signal"></i>
-                        </div>
-                        <div class="text-xs font-mono text-signal">#D69A42</div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
 
     </main>
 
-    <!-- FOOTER -->
-    <footer class="border-t border-ash/30 bg-obsidian py-8 font-mono text-xs text-ash">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <span class="font-bold text-bone">wolf<span class="text-crimson">X</span>_Xsabyter</span>
-                <span>// OUT OF THE HEAD. INTO THE SYSTEM.</span>
-            </div>
-            <div>
-                <span>BUILT FOR HIGH-STAKES SYSTEM ARCHITECTURE & BRAND DISCIPLINE</span>
-            </div>
-        </div>
-    </footer>
-
-    <!-- TOAST NOTIFICATION POPUP -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-obsidian-card border border-crimson px-4 py-3 rounded shadow-2xl font-mono text-xs text-bone flex items-center space-x-3 opacity-0 transition-opacity pointer-events-none">
-        <i id="toastIcon" class="fa-solid fa-circle-info text-crimson"></i>
-        <span id="toastMessage">Notification message</span>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT ENGINE -->
     <script>
-        // Global State Variables
-        let isDisguiseActive = true;
-        let currentComparisonMode = 'discerners';
-
-        // Clock Update
-        function updateClock() {
+        // Live Clock Ticker
+        setInterval(() => {
             const now = new Date();
-            const timeStr = now.toISOString().substring(11, 19) + " UTC";
-            document.getElementById('liveClock').innerText = timeStr;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+            document.getElementById('liveClock').innerText = now.toISOString().slice(11, 19) + ' UTC';
+        }, 1000);
 
-        // Persona Disguise / Reveal Toggle
+        // 360 Turntable Engine
+        const frames = [
+            "frame_1.png", "frame_2.png", "frame_3.png", "frame_4.png",
+            "frame_5.png", "frame_6.png", "frame_7.png", "frame_8.png"
+        ];
+
+        // Preload frames
+        frames.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+
+        const viewer = document.getElementById('turntableViewer');
+        const imgElement = document.getElementById('turntableImage');
+        const frameCounter = document.getElementById('frameCounter');
+
+        let currentFrame = 0;
+        let isDragging = false;
+        let startX = 0;
+        const sensitivity = 12;
+
+        function updateFrame(index) {
+            currentFrame = (index + frames.length) % frames.length;
+            imgElement.src = frames[currentFrame];
+            frameCounter.innerText = currentFrame + 1;
+        }
+
+        viewer.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX; });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - startX;
+            if (Math.abs(deltaX) >= sensitivity) {
+                const shift = Math.floor(Math.abs(deltaX) / sensitivity);
+                if (deltaX > 0) { updateFrame(currentFrame - shift); } 
+                else { updateFrame(currentFrame + shift); }
+                startX = e.clientX;
+            }
+        });
+
+        // Mobile touch support
+        viewer.addEventListener('touchstart', (e) => { isDragging = true; startX = e.touches[0].clientX; });
+        window.addEventListener('touchend', () => { isDragging = false; });
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.touches[0].clientX - startX;
+            if (Math.abs(deltaX) >= sensitivity) {
+                const shift = Math.floor(Math.abs(deltaX) / sensitivity);
+                if (deltaX > 0) { updateFrame(currentFrame - shift); } 
+                else { updateFrame(currentFrame + shift); }
+                startX = e.touches[0].clientX;
+            }
+        });
+
+        // Persona State Toggle Logic
+        let revealed = false;
         function togglePersonaMode() {
-            isDisguiseActive = !isDisguiseActive;
-            const sheepHood = document.getElementById('svgSheepDisguise');
-            const targetRing = document.getElementById('svgTargetRing');
-            const stateText = document.getElementById('stateTextIndicator');
+            revealed = !revealed;
+            const indicator = document.getElementById('stateTextIndicator');
             const progressBar = document.getElementById('stateProgressBar');
             const btnText = document.getElementById('toggleBtnText');
-            const toggleIcon = document.getElementById('toggleIcon');
-            const personaLabel = document.getElementById('personaLabel');
-            const statusBadge = document.getElementById('statusBadge');
-
-            if (isDisguiseActive) {
-                // Set Disguise Mode
-                sheepHood.style.opacity = '1';
-                sheepHood.style.transform = 'scale(1)';
-                targetRing.setAttribute('stroke', '#D69A42');
-                stateText.innerText = '[MODE 01: DISGUISED]';
-                stateText.className = 'text-signal font-bold tracking-widest';
-                progressBar.style.width = '33%';
-                progressBar.className = 'bg-signal h-full transition-all duration-500';
-                btnText.innerText = 'TOGGLE REVEAL MODE';
-                toggleIcon.className = 'fa-solid fa-eye';
-                personaLabel.innerText = 'DISGUISE_ACTIVE';
-                personaLabel.className = 'text-signal font-semibold';
-                statusBadge.className = 'flex items-center space-x-2 bg-signal/10 text-signal px-2.5 py-1 rounded border border-signal/40';
-                statusBadge.innerHTML = '<i class="fa-solid fa-user-shield text-xs"></i><span class="font-bold tracking-wider">STATUS: DISGUISED</span>';
-                
-                logTelemetry('Disguise mode engaged. Fleece cloak active.');
-                showToast('SHEEP DISGUISE INITIALIZED', 'signal');
-            } else {
-                // Set Reveal Mode
-                sheepHood.style.opacity = '0.15';
-                sheepHood.style.transform = 'scale(1.1)';
-                targetRing.setAttribute('stroke', '#C51F30');
-                stateText.innerText = '[MODE 02: REVEALED]';
-                stateText.className = 'text-crimson font-bold tracking-widest';
-                progressBar.style.width = '100%';
-                progressBar.className = 'bg-crimson h-full transition-all duration-500';
-                btnText.innerText = 'TOGGLE DISGUISE MODE';
-                toggleIcon.className = 'fa-solid fa-eye-slash';
-                personaLabel.innerText = 'WOLF_UNVEILED';
-                personaLabel.className = 'text-crimson font-semibold';
-                statusBadge.className = 'flex items-center space-x-2 bg-crimson/10 text-crimson px-2.5 py-1 rounded border border-crimson/40';
-                statusBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs animate-pulse"></i><span class="font-bold tracking-wider">SYSTEM: REVEALED</span>';
-
-                logTelemetry('[CRITICAL] Reveal mode engaged. Bionic Wolf Persona exposed.');
-                showToast('BIONIC WOLF UNVEILED', 'crimson');
-            }
-        }
-
-        // Telemetry Sliders Logic
-        function updateTelemetry() {
-            const risk = document.getElementById('sliderRisk').value;
-            const discipline = document.getElementById('sliderDiscipline').value;
-            const divergence = document.getElementById('sliderDivergence').value;
-
-            document.getElementById('valRisk').innerText = risk + '%';
-            document.getElementById('valDiscipline').innerText = discipline + '%';
-            document.getElementById('valDivergence').innerText = divergence + '%';
-
-            const diag = document.getElementById('diagnosticMessage');
-            if (risk > 80 && discipline < 50) {
-                diag.innerText = '> WARNING: HIGH RISK EXPOSURE WITH SUB-OPTIMAL DISCIPLINE.';
-                diag.className = 'text-crimson font-bold';
-            } else if (divergence > 75) {
-                diag.innerText = '> OPTIMAL DIVERGENCE FROM HERD BIAS DETECTED.';
-                diag.className = 'text-signal font-bold';
-            } else {
-                diag.innerText = '> OPERATIONAL PARAMETERS BALANCED.';
-                diag.className = 'text-bone font-semibold';
-            }
-        }
-
-        // Live Audio Visualizer Canvas Simulation
-        const canvas = document.getElementById('telemetryCanvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        let waveOffset = 0;
-        function drawVisualizer() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw grid line background
-            ctx.strokeStyle = 'rgba(119, 115, 109, 0.15)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < canvas.width; i += 20) {
-                ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, canvas.height);
-                ctx.stroke();
-            }
-
-            // Draw Dynamic Crimson Wave
-            ctx.beginPath();
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = '#C51F30';
-
-            const riskVal = parseInt(document.getElementById('sliderRisk')?.value || 50);
-
-            for (let x = 0; x < canvas.width; x += 5) {
-                const y = (canvas.height / 2) + Math.sin((x + waveOffset) * 0.03) * (riskVal / 3) * Math.cos(x * 0.01);
-                if (x === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-
-            // Draw Secondary Signal Wave
-            ctx.beginPath();
-            ctx.lineWidth = 1.5;
-            ctx.strokeStyle = '#D69A42';
-            for (let x = 0; x < canvas.width; x += 8) {
-                const y = (canvas.height / 2) + Math.cos((x - waveOffset) * 0.02) * 20;
-                if (x === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-
-            waveOffset += 2;
-            requestAnimationFrame(drawVisualizer);
-        }
-        drawVisualizer();
-
-        // Telemetry Feed Logger
-        function logTelemetry(msg) {
-            const feed = document.getElementById('telemetryLogFeed');
-            const now = new Date();
-            const timeStr = now.toISOString().substring(11, 19);
-            const entry = document.createElement('div');
-            entry.className = 'text-ash';
-            entry.innerHTML = `<span class="text-crimson">[${timeStr}]</span> ${msg}`;
-            feed.prepend(entry);
-        }
-
-        // Archetype Comparison Data Switcher
-        const comparisonData = {
-            followers: [
-                { title: "Consensus Reliance", desc: "Waits for group validation prior to taking action, resulting in delayed execution.", status: "VULNERABLE", color: "text-ash" },
-                { title: "Emotional Volatility", desc: "Reacts impulsively to short-term market noise and sensationalized narratives.", status: "HIGH RISK", color: "text-crimson" },
-                { title: "Uniformity", desc: "Adheres strictly to traditional frameworks without questioning structural flaws.", status: "OBSOLETE", color: "text-ash" }
-            ],
-            discerners: [
-                { title: "First-Principles Analysis", desc: "Deconstructs complex environments to raw data points before forming execution thesis.", status: "DOMINANT", color: "text-signal" },
-                { title: "Emotional Neutrality", desc: "Maintains disciplined execution plans unaffected by external hysteria.", status: "OPTIMAL", color: "text-bone" },
-                { title: "Calculated Disguise", desc: "Blends seamlessly into the background until high-probability vectors emerge.", status: "STRATEGIC", color: "text-crimson" }
-            ]
-        };
-
-        function setComparisonMode(mode) {
-            currentComparisonMode = mode;
-            const container = document.getElementById('comparisonDisplay');
-            const btnF = document.getElementById('btnFollowers');
-            const btnD = document.getElementById('btnDiscerners');
-
-            if (mode === 'followers') {
-                btnF.className = 'px-4 py-1.5 rounded bg-ash/30 text-bone font-bold transition-all';
-                btnD.className = 'px-4 py-1.5 rounded text-ash hover:text-bone transition-all';
-            } else {
-                btnD.className = 'px-4 py-1.5 rounded bg-crimson text-bone font-bold shadow-crimson-glow transition-all';
-                btnF.className = 'px-4 py-1.5 rounded text-ash hover:text-bone transition-all';
-            }
-
-            container.innerHTML = comparisonData[mode].map(item => `
-                <div class="bg-obsidian p-4 rounded border border-ash/20 space-y-2">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-bone">${item.title}</span>
-                        <span class="${item.color} font-extrabold text-[10px]">${item.status}</span>
-                    </div>
-                    <p class="text-ash text-xs leading-relaxed font-sans">${item.desc}</p>
-                </div>
-            `).join('');
-        }
-        setComparisonMode('discerners');
-
-        // CLI Terminal Execution Handler
-        function handleCommand(e) {
-            e.preventDefault();
-            const input = document.getElementById('terminalInput');
-            const cmd = input.value.trim().toLowerCase();
-            if (!cmd) return;
-
-            appendTerminalLine(`wolfX@nexus:~$ ${cmd}`, 'text-crimson font-bold');
-            input.value = '';
-
-            processCommand(cmd);
-        }
-
-        function executeQuickCmd(cmd) {
-            appendTerminalLine(`wolfX@nexus:~$ ${cmd}`, 'text-crimson font-bold');
-            processCommand(cmd);
-        }
-
-        function processCommand(cmd) {
-            const output = document.getElementById('terminalOutput');
             
-            switch (cmd) {
-                case 'help':
-                    appendTerminalLine(`AVAILABLE SYSTEM COMMANDS:
-  status     - Query core system operational state.
-  reveal     - Engage bionic wolf reveal protocol.
-  disguise   - Engage fleece sheep disguise protocol.
-  telemetry  - Fetch real-time system metrics.
-  herd       - Display archetype comparison.
-  clear      - Clear terminal console screen.`, 'text-signal');
-                    break;
-
-                case 'status':
-                    appendTerminalLine(`[SYSTEM METRICS]
-  IDENTITY: wolfX_Xsabyter
-  MODE: ${isDisguiseActive ? 'DISGUISED (Sheep Cloak)' : 'UNVEILED (Bionic Wolf)'}
-  CORE: ONLINE (0 errors)
-  TAGLINE: "OUT OF THE HEAD. INTO THE SYSTEM."`, 'text-bone');
-                    break;
-
-                case 'reveal':
-                    if (isDisguiseActive) togglePersonaMode();
-                    appendTerminalLine('[SUCCESS] Unveiled mode activated.', 'text-crimson');
-                    break;
-
-                case 'disguise':
-                    if (!isDisguiseActive) togglePersonaMode();
-                    appendTerminalLine('[SUCCESS] Disguise mode activated.', 'text-signal');
-                    break;
-
-                case 'telemetry':
-                    const r = document.getElementById('sliderRisk').value;
-                    const d = document.getElementById('sliderDiscipline').value;
-                    appendTerminalLine(`[TELEMETRY SNAPSHOT]
-  Risk Assessment: ${r}%
-  Discipline Index: ${d}%
-  Optics Status: ACTIVE_CRIMSON`, 'text-bone');
-                    break;
-
-                case 'herd':
-                    appendTerminalLine(`[HERD ARCHETYPE SUMMARY]
-  Followers seek consensus; Discerners seek truth.
-  The wolf in sheep's clothing operates unseen until execution.`, 'text-signal');
-                    break;
-
-                case 'clear':
-                    clearTerminal();
-                    return;
-
-                default:
-                    appendTerminalLine(`Command not recognized: '${cmd}'. Type 'help' for available commands.`, 'text-ash');
-                    break;
-            }
-
-            output.scrollTop = output.scrollHeight;
-        }
-
-        function appendTerminalLine(text, className = 'text-bone') {
-            const output = document.getElementById('terminalOutput');
-            const line = document.createElement('div');
-            line.className = className + ' whitespace-pre-wrap';
-            line.innerText = text;
-            output.appendChild(line);
-            output.scrollTop = output.scrollHeight;
-        }
-
-        function clearTerminal() {
-            const output = document.getElementById('terminalOutput');
-            output.innerHTML = '<div class="text-ash">Console cleared. Type "help" for available commands.</div>';
-        }
-
-        // Copy Clipboard Helpers
-        function copyHex(hex, name) {
-            const dummy = document.createElement('textarea');
-            document.body.appendChild(dummy);
-            dummy.value = hex;
-            dummy.select();
-            document.execCommand('copy');
-            document.body.removeChild(dummy);
-            showToast(`Copied ${name} (${hex}) to clipboard!`, 'signal');
-        }
-
-        function copyRepoURL() {
-            const repoCmd = 'git clone https://github.com/wolfX_Xsabyter/nexus-architecture.git';
-            const dummy = document.createElement('textarea');
-            document.body.appendChild(dummy);
-            dummy.value = repoCmd;
-            dummy.select();
-            document.execCommand('copy');
-            document.body.removeChild(dummy);
-            showToast('Git Clone command copied to clipboard!', 'crimson');
-        }
-
-        function showToast(msg, type = 'crimson') {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMessage');
-            const toastIcon = document.getElementById('toastIcon');
-
-            toastMsg.innerText = msg;
-            if (type === 'signal') {
-                toast.style.borderColor = '#D69A42';
-                toastIcon.className = 'fa-solid fa-check text-signal';
+            if (revealed) {
+                indicator.innerText = "[MODE 02: WOLF SABYTER INITIALIZED]";
+                indicator.className = "text-crimson font-bold tracking-widest";
+                progressBar.style.width = "100%";
+                progressBar.className = "bg-crimson h-full transition-all duration-500 shadow-crimson-glow";
+                btnText.innerText = "LOCKDOWN DISGUISE";
             } else {
-                toast.style.borderColor = '#C51F30';
-                toastIcon.className = 'fa-solid fa-triangle-exclamation text-crimson';
+                indicator.innerText = "[MODE 01: DISGUISED]";
+                indicator.className = "text-signal font-bold tracking-widest";
+                progressBar.style.width = "33%";
+                progressBar.className = "bg-signal h-full transition-all duration-500";
+                btnText.innerText = "TOGGLE REVEAL MODE";
             }
+        }
 
-            toast.style.opacity = '1';
+        // NEW FEATURE: Tactical Glitch Pulse trigger
+        function triggerGlitchPulse() {
+            const body = document.getElementById('mainBody');
+            body.classList.add('glitch-fx');
             setTimeout(() => {
-                toast.style.opacity = '0';
-            }, 3000);
+                body.classList.remove('glitch-fx');
+            }, 300);
         }
     </script>
 </body>
