@@ -178,10 +178,34 @@
     </header>
 
     <!-- MAIN CONTENT CONTAINER -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 space-y-16">
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full flex flex-col space-y-8">
+        
+        <!-- TURNTABLE & HERO GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+            
+            <!-- LEFT COLUMN: 360 TURNTABLE AVATAR VIEWER -->
+            <section class="lg:col-span-1 flex flex-col space-y-4">
+                <div class="hud-border bg-obsidian-card p-4 clip-corner">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="font-mono text-sm tracking-widest text-bone flex items-center gap-2">
+                            <i class="fa-solid fa-cube text-crimson"></i> AVATAR // 360_TURNTABLE
+                        </h2>
+                        <span class="text-[10px] font-mono bg-obsidian px-2 py-0.5 text-ash border border-ash/30">DRAG TO ROTATE</span>
+                    </div>
 
-        <!-- SECTION 1: HERO & DIGITAL PERSONA TOGGLE -->
-        <section id="persona" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4">
+                    <!-- TURNTABLE VIEWER CONTAINER -->
+                    <div class="turntable-hud-wrapper relative w-full aspect-square bg-obsidian border border-ash/30 rounded overflow-hidden cursor-grab active:cursor-grabbing flex items-center justify-center select-none" id="turntableViewer">
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-obsidian/40 pointer-events-none z-10"></div>
+                        <div class="absolute top-2 right-2 text-[10px] font-mono text-crimson bg-obsidian/80 px-1.5 py-0.5 border border-crimson/30 z-20">FRAME <span id="frameCounter">1</span>/8</div>
+                        <img id="turntableImage" src="frame_1.png" alt="Wolf SaByter 360 Turntable" class="w-full h-full object-contain pointer-events-none" draggable="false" />
+                        <div class="turntable-status absolute bottom-3 left-3 font-mono text-[10px] text-signal bg-obsidian/80 px-2 py-0.5 border-l-2 border-signal z-20 tracking-wider">
+                            STATUS: SYNCED
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: SECTION 1 HERO & DIGITAL PERSONA -->
             
             <!-- Hero Text Column -->
             <div class="lg:col-span-6 space-y-6">
