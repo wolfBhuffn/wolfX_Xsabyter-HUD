@@ -1,313 +1,1029 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>wolfX_Xsabyter // NEXUS SYSTEM ARCHITECTURE</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: JetBrains Mono & Space Grotesk -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,500;0,700;0,800;1,400&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        obsidian: '#090909',
-                        'obsidian-light': '#141414',
-                        'obsidian-card': '#1a1a1a',
-                        bone: '#E8DFC9',
-                        crimson: '#C51F30',
-                        'crimson-glow': '#ff2a3f',
-                        ash: '#77736D',
-                        signal: '#D69A42',
-                    },
-                    fontFamily: {
-                        mono: ['JetBrains Mono', 'monospace'],
-                        sans: ['Space Grotesk', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'crimson-glow': '0 0 25px rgba(197, 31, 48, 0.35)',
-                        'signal-glow': '0 0 20px rgba(214, 154, 66, 0.25)',
-                        'hud': 'inset 0 0 15px rgba(197, 31, 48, 0.15)',
-                    }
-                }
-            }
-        }
-    </script>
+  <title>wolfX_Xsabyter // NEXUS SYSTEM ARCHITECTURE</title>
 
-    <style>
-        body {
-            background-color: #090909;
-            color: #E8DFC9;
-            font-family: 'Space Grotesk', sans-serif;
-            overflow-x: hidden;
-        }
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        /* Scanline Overlay Effect */
-        .scanlines {
-            position: relative;
-        }
-        .scanlines::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 40;
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none;
-            opacity: 0.6;
-        }
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  >
 
-        /* Glitch Animation Class */
-        .glitch-fx {
-            animation: glitchAnim 0.3s cubic-bezier(.25, .46, .45, .94) both;
-        }
-        @keyframes glitchAnim {
-            0% { transform: translate(0); filter: hue-rotate(0deg); }
-            20% { transform: translate(-3px, 3px); filter: hue-rotate(90deg); }
-            40% { transform: translate(-3px, -3px); filter: hue-rotate(180deg); }
-            60% { transform: translate(3px, 3px); filter: hue-rotate(270deg); }
-            80% { transform: translate(3px, -3px); filter: hue-rotate(45deg); }
-            100% { transform: translate(0); filter: hue-rotate(0deg); }
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #090909; }
-        ::-webkit-scrollbar-thumb { background: #77736D; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #C51F30; }
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;700;800&family=Space+Grotesk:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  >
 
-        /* Tactical HUD Corner Elements */
-        .hud-border {
-            position: relative;
-            border: 1px solid rgba(119, 115, 109, 0.3);
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            obsidian: "#090909",
+            "obsidian-light": "#141414",
+            "obsidian-card": "#1a1a1a",
+            bone: "#E8DFC9",
+            crimson: "#C51F30",
+            "crimson-glow": "#ff2a3f",
+            ash: "#77736D",
+            signal: "#D69A42"
+          },
+          fontFamily: {
+            mono: ["JetBrains Mono", "monospace"],
+            sans: ["Space Grotesk", "sans-serif"]
+          },
+          boxShadow: {
+            "crimson-glow": "0 0 25px rgba(197,31,48,.35)",
+            "signal-glow": "0 0 20px rgba(214,154,66,.25)",
+            hud: "inset 0 0 15px rgba(197,31,48,.15)"
+          }
         }
-        .hud-border::before {
-            content: ''; position: absolute; top: -1px; left: -1px; width: 8px; height: 8px; border-top: 2px solid #C51F30; border-left: 2px solid #C51F30;
-        }
-        .hud-border::after {
-            content: ''; position: absolute; bottom: -1px; right: -1px; width: 8px; height: 8px; border-bottom: 2px solid #C51F30; border-right: 2px solid #C51F30;
-        }
-        .clip-corner {
-            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
-        }
-    </style>
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      background: #090909;
+      color: #E8DFC9;
+      font-family: "Space Grotesk", sans-serif;
+      overflow-x: hidden;
+    }
+
+    .scanlines {
+      position: relative;
+    }
+
+    .scanlines::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      pointer-events: none;
+      opacity: .6;
+      background:
+        linear-gradient(
+          rgba(18,16,16,0) 50%,
+          rgba(0,0,0,.25) 50%
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255,0,0,.03),
+          rgba(0,255,0,.01),
+          rgba(0,0,255,.03)
+        );
+      background-size: 100% 4px, 6px 100%;
+    }
+
+    .glitch-fx {
+      animation: glitchAnim .3s both;
+    }
+
+    @keyframes glitchAnim {
+      0%, 100% {
+        transform: translate(0);
+        filter: hue-rotate(0deg);
+      }
+      20% {
+        transform: translate(-3px, 3px);
+        filter: hue-rotate(90deg);
+      }
+      40% {
+        transform: translate(-3px, -3px);
+        filter: hue-rotate(180deg);
+      }
+      60% {
+        transform: translate(3px, 3px);
+        filter: hue-rotate(270deg);
+      }
+      80% {
+        transform: translate(3px, -3px);
+        filter: hue-rotate(45deg);
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #090909;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #77736D;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #C51F30;
+    }
+
+    .hud-border {
+      position: relative;
+      border: 1px solid rgba(119,115,109,.3);
+    }
+
+    .hud-border::before,
+    .hud-border::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .hud-border::before {
+      top: -1px;
+      left: -1px;
+      border-top: 2px solid #C51F30;
+      border-left: 2px solid #C51F30;
+    }
+
+    .hud-border::after {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 2px solid #C51F30;
+      border-right: 2px solid #C51F30;
+    }
+
+    .clip-corner {
+      clip-path: polygon(
+        0 0,
+        calc(100% - 12px) 0,
+        100% 12px,
+        100% 100%,
+        0 100%
+      );
+    }
+
+    #turntableViewer {
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+      background:
+        radial-gradient(
+          circle at 50% 45%,
+          rgba(197,31,48,.12),
+          transparent 68%
+        ),
+        #090909;
+    }
+
+    #turntableViewer:focus-visible {
+      outline: 2px solid #D69A42;
+      outline-offset: 3px;
+    }
+
+    #turntableViewer[data-dragging="true"] {
+      cursor: grabbing;
+    }
+
+    .wolf-frame {
+      position: absolute;
+      inset: 0;
+      width: 92%;
+      height: 92%;
+      margin: auto;
+      object-fit: contain;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+
+    .wolf-frame.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #viewerLoading[hidden] {
+      display: none;
+    }
+
+    #viewerProgress {
+      width: 100%;
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
-<body class="scanlines min-h-screen flex flex-col selection:bg-crimson selection:text-bone" id="mainBody">
 
-    <!-- TOP TELEMETRY BAR -->
-    <header class="sticky top-0 z-50 bg-obsidian/90 backdrop-blur-md border-b border-ash/30 text-xs font-mono">
-        <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <span class="inline-block w-2.5 h-2.5 bg-crimson rounded-full animate-pulse"></span>
-                <span class="font-extrabold tracking-wider text-base text-bone font-mono">wolf<span class="text-crimson">X</span>_Xsabyter</span>
-                <span class="text-ash hidden sm:inline">|</span>
-                <span class="text-ash hidden sm:inline tracking-tight">NEXUS_OS v4.0.9</span>
-            </div>
+<body
+  class="scanlines min-h-screen flex flex-col selection:bg-crimson selection:text-bone"
+  id="mainBody"
+>
+  <!-- TOP TELEMETRY BAR -->
+  <header
+    class="sticky top-0 z-50 bg-obsidian/90 backdrop-blur-md border-b border-ash/30 text-xs font-mono"
+  >
+    <div
+      class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap justify-between items-center gap-4"
+    >
+      <div class="flex items-center gap-3">
+        <span
+          class="inline-block w-2.5 h-2.5 bg-crimson rounded-full animate-pulse"
+          aria-hidden="true"
+        ></span>
 
-            <nav class="hidden md:flex space-x-6 text-ash font-medium">
-                <a href="#persona" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-user-ninja text-[10px]"></i> PERSONA</a>
-                <a href="#telemetry" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-[10px]"></i> TELEMETRY</a>
-                <a href="#herd" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-users-slash text-[10px]"></i> THE HERD</a>
-                <a href="#terminal" class="hover:text-crimson transition-colors flex items-center gap-1.5"><i class="fa-solid fa-terminal text-[10px]"></i> TERMINAL</a>
-            </nav>
+        <span class="font-extrabold tracking-wider text-base text-bone">
+          wolf<span class="text-crimson">X</span>_Xsabyter
+        </span>
 
-            <div class="flex items-center space-x-4">
-                <div class="hidden lg:flex items-center space-x-2 bg-obsidian-light px-2.5 py-1 rounded border border-ash/20">
-                    <span class="text-ash">CLOCK:</span>
-                    <span id="liveClock" class="text-signal font-mono">12:00:00 UTC</span>
-                </div>
-                <div id="statusBadge" class="flex items-center space-x-2 bg-crimson/10 text-crimson px-2.5 py-1 rounded border border-crimson/40">
-                    <i class="fa-solid fa-triangle-exclamation text-xs animate-pulse"></i>
-                    <span class="font-bold tracking-wider">SYSTEM: COMPROMISED</span>
-                </div>
-            </div>
-        </div>
-    </header>
+        <span class="text-ash hidden sm:inline">|</span>
 
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full flex flex-col space-y-8">
-        
-        <!-- TOP GRID: 360 TURNTABLE (LEFT) & HERO PERSONA (RIGHT) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <!-- LEFT COLUMN: 360 TURNTABLE AVATAR VIEWER (5 Cols) -->
-            <section class="lg:col-span-5 flex flex-col space-y-4">
-                <div class="hud-border bg-obsidian-card p-4 clip-corner shadow-hud">
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="font-mono text-sm tracking-widest text-bone flex items-center gap-2">
-                            <i class="fa-solid fa-cube text-crimson"></i> AVATAR // 360_TURNTABLE
-                        </h2>
-                        <span class="text-[10px] font-mono bg-obsidian px-2 py-0.5 text-ash border border-ash/30">DRAG TO ROTATE</span>
-                    </div>
+        <span class="text-ash hidden sm:inline tracking-tight">
+          NEXUS_OS v4.0.9
+        </span>
+      </div>
 
-                    <!-- TURNTABLE VIEWER CONTAINER -->
-                    <div class="turntable-hud-wrapper relative w-full aspect-square bg-obsidian border border-ash/30 rounded overflow-hidden cursor-grab active:cursor-grabbing flex items-center justify-center select-none" id="turntableViewer">
-                        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-obsidian/40 pointer-events-none z-10"></div>
-                        <div class="absolute top-2 right-2 text-[10px] font-mono text-crimson bg-obsidian/80 px-1.5 py-0.5 border border-crimson/30 z-20">FRAME <span id="frameCounter">1</span>/8</div>
-                        <img id="turntableImage" src="./assets/images/icons/frame_1.png" alt="Wolf SaByter 360 Turntable" class="w-full h-full object-contain pointer-events-none select-none" draggable="false" />
-                        <div class="turntable-status absolute bottom-3 left-3 font-mono text-[10px] text-signal bg-obsidian/80 px-2 py-0.5 border-l-2 border-signal z-20 tracking-wider">
-                            STATUS: SYNCED
-                        </div>
-                    </div>
-                </div>
-            </section>
+      <nav
+        class="hidden md:flex gap-6 text-ash font-medium"
+        aria-label="Main navigation"
+      >
+        <a href="#persona" class="hover:text-crimson transition-colors">
+          <i class="fa-solid fa-user-ninja" aria-hidden="true"></i>
+          PERSONA
+        </a>
 
-            <!-- RIGHT COLUMN: HERO & DIGITAL PERSONA (7 Cols) -->
-            <section id="persona" class="lg:col-span-7 flex flex-col space-y-6">
-                <div class="space-y-4">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-signal/10 border border-signal/30 text-signal font-mono text-xs">
-                        <i class="fa-solid fa-shield-halved"></i> BRAND ARCHITECTURE & INFRASTRUCTURE
-                    </div>
-                    
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-bone leading-tight">
-                        OUT OF THE HEAD.<br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-crimson via-signal to-bone">INTO THE SYSTEM.</span>
-                    </h1>
-                    
-                    <p class="text-ash text-sm sm:text-base leading-relaxed max-w-xl">
-                        A hyper-disciplined visual protocol built for non-conformists. Operating in quiet obscurity through adaptive disguise until strategic execution demands full system initialization.
-                    </p>
-                </div>
+        <a href="#telemetry" class="hover:text-crimson transition-colors">
+          <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+          TELEMETRY
+        </a>
 
-                <!-- Interactive State Bar -->
-                <div class="p-4 rounded-lg bg-obsidian-card border border-ash/30 space-y-3 hud-border">
-                    <div class="flex justify-between items-center text-xs font-mono">
-                        <span class="text-ash">CURRENT ACTIVE STATE:</span>
-                        <span id="stateTextIndicator" class="text-signal font-bold tracking-widest">[MODE 01: DISGUISED]</span>
-                    </div>
-                    <div class="w-full bg-obsidian h-2 rounded-full overflow-hidden border border-ash/20">
-                        <div id="stateProgressBar" class="bg-signal h-full w-1/3 transition-all duration-500"></div>
-                    </div>
-                </div>
+        <a href="#herd" class="hover:text-crimson transition-colors">
+          <i class="fa-solid fa-users-slash" aria-hidden="true"></i>
+          THE HERD
+        </a>
 
-                <!-- Action CTA Buttons + GLITCH FEATURE -->
-                <div class="flex flex-wrap gap-3 pt-2">
-                    <button id="toggleModeBtn" onclick="togglePersonaMode()" class="px-5 py-2.5 bg-crimson hover:bg-crimson-glow text-bone font-mono font-bold text-xs tracking-wider rounded transition-all transform hover:-translate-y-0.5 shadow-crimson-glow flex items-center gap-2">
-                        <i class="fa-solid fa-eye" id="toggleIcon"></i>
-                        <span id="toggleBtnText">TOGGLE REVEAL MODE</span>
-                    </button>
-                    
-                    <button onclick="triggerGlitchPulse()" class="px-4 py-2.5 bg-obsidian-light hover:bg-signal/20 text-signal border border-signal/40 font-mono font-bold text-xs tracking-wider rounded transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-bolt"></i> PULSE GLITCH
-                    </button>
+        <a href="#terminal" class="hover:text-crimson transition-colors">
+          <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+          TERMINAL
+        </a>
+      </nav>
 
-                    <a href="#terminal" class="px-5 py-2.5 bg-obsidian-light hover:bg-ash/20 text-bone border border-ash/40 font-mono font-medium text-xs tracking-wider rounded transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-terminal text-crimson"></i> INITIATE CLI
-                    </a>
-                </div>
-            </section>
+      <div class="flex items-center gap-4">
+        <div
+          class="hidden lg:flex items-center gap-2 bg-obsidian-light px-2.5 py-1 rounded border border-ash/20"
+        >
+          <span class="text-ash">CLOCK:</span>
+          <span id="liveClock" class="text-signal">--:--:-- UTC</span>
         </div>
 
-    </main>
+        <div
+          id="statusBadge"
+          class="flex items-center gap-2 bg-crimson/10 text-crimson px-2.5 py-1 rounded border border-crimson/40"
+        >
+          <i
+            class="fa-solid fa-triangle-exclamation animate-pulse"
+            aria-hidden="true"
+          ></i>
+          <span class="font-bold tracking-wider">
+            SYSTEM: COMPROMISED
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <!-- JAVASCRIPT ENGINE -->
-    <script>
-        // Live Clock Ticker
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('liveClock').innerText = now.toISOString().slice(11, 19) + ' UTC';
-        }, 1000);
+  <main
+    class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full flex flex-col gap-8"
+  >
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
-        // 360 Turntable Engine with Correct Asset Paths
-        const frames = [
-            "./assets/images/icons/frame_1.png",
-            "./assets/images/icons/frame_2.png",
-            "./assets/images/icons/frame_3.png",
-            "./assets/images/icons/frame_4.png",
-            "./assets/images/icons/frame_5.png",
-            "./assets/images/icons/frame_6.png",
-            "./assets/images/icons/frame_7.png",
-            "./assets/images/icons/frame_8.png"
-        ];
+      <!-- AVATAR MODULE -->
+      <section
+        class="lg:col-span-5"
+        aria-labelledby="avatarHeading"
+      >
+        <div class="hud-border bg-obsidian-card p-4 clip-corner shadow-hud">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+            <h2
+              id="avatarHeading"
+              class="font-mono text-sm tracking-widest text-bone flex items-center gap-2"
+            >
+              <i class="fa-solid fa-cube text-crimson" aria-hidden="true"></i>
+              AVATAR // 360_TURNTABLE
+            </h2>
 
-        // Preload frames
-        frames.forEach(src => {
-            const img = new Image();
-            img.src = src;
-        });
+            <span
+              class="text-[10px] font-mono bg-obsidian px-2 py-0.5 text-ash border border-ash/30"
+            >
+              DRAG TO SCRUB
+            </span>
+          </div>
 
-        const viewer = document.getElementById('turntableViewer');
-        const imgElement = document.getElementById('turntableImage');
-        const frameCounter = document.getElementById('frameCounter');
+          <div
+            id="turntableViewer"
+            class="relative w-full aspect-square border border-ash/30 rounded overflow-hidden cursor-grab"
+            tabindex="0"
+            role="slider"
+            aria-label="Wolf SaByter frame sequence"
+            aria-orientation="horizontal"
+            aria-valuemin="1"
+            aria-valuemax="130"
+            aria-valuenow="1"
+            aria-valuetext="Loading frames"
+            aria-disabled="true"
+            aria-busy="true"
+            aria-describedby="viewerInstructions"
+            data-dragging="false"
+          >
+            <!-- Loaded image elements are inserted here. -->
 
-        let currentFrame = 0;
-        let isDragging = false;
-        let startX = 0;
-        const sensitivity = 12;
+            <div
+              class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-obsidian/70 pointer-events-none z-10"
+            ></div>
 
-        function updateFrame(index) {
-            currentFrame = (index + frames.length) % frames.length;
-            imgElement.src = frames[currentFrame];
-            frameCounter.innerText = currentFrame + 1;
+            <div
+              class="absolute top-2 right-2 text-[10px] font-mono text-crimson bg-obsidian/90 px-1.5 py-0.5 border border-crimson/30 z-20 pointer-events-none"
+            >
+              FRAME <span id="frameCounter">---</span>/<span
+                id="frameTotal"
+              >---</span>
+            </div>
+
+            <div
+              id="viewerLoading"
+              class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 p-6 text-center pointer-events-none"
+            >
+              <i
+                class="fa-solid fa-circle-notch fa-spin text-signal"
+                aria-hidden="true"
+              ></i>
+
+              <span
+                id="viewerLoadingText"
+                class="font-mono text-[11px] tracking-widest text-signal"
+              >CONNECTING TO FRAME ARCHIVE...</span>
+            </div>
+
+            <div
+              class="absolute bottom-4 left-3 right-3 z-20 flex flex-col gap-2 pointer-events-none"
+            >
+              <div
+                id="viewLabel"
+                class="font-mono text-[10px] tracking-wider text-bone"
+              >VIEW: INITIALIZING</div>
+
+              <div
+                id="sourceLabel"
+                class="font-mono text-[9px] tracking-wider text-ash"
+              >SOURCE: ---</div>
+
+              <div
+                id="viewerStatus"
+                role="status"
+                class="self-start font-mono text-[10px] text-signal bg-obsidian/90 px-2 py-0.5 border-l-2 border-signal tracking-wider"
+              >STATUS: CONNECTING</div>
+            </div>
+
+            <div
+              class="absolute bottom-0 left-0 right-0 h-0.5 bg-ash/20 z-20 pointer-events-none"
+            >
+              <div
+                id="viewerProgress"
+                class="h-full bg-signal"
+              ></div>
+            </div>
+          </div>
+
+          <div
+            class="mt-3 flex flex-wrap justify-between gap-2 font-mono text-[9px] text-ash tracking-wide"
+          >
+            <span id="viewerInstructions">
+              DRAG ↔ · ARROW KEYS · HOME / END
+            </span>
+
+            <span id="loadSummary">ARCHIVE: CONNECTING</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- HERO / PERSONA -->
+      <section
+        id="persona"
+        class="lg:col-span-7 flex flex-col gap-6"
+      >
+        <div class="space-y-4">
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1 rounded bg-signal/10 border border-signal/30 text-signal font-mono text-xs"
+          >
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            BRAND ARCHITECTURE & INFRASTRUCTURE
+          </div>
+
+          <h1
+            class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-bone leading-tight"
+          >
+            OUT OF THE HEAD.<br>
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-crimson via-signal to-bone"
+            >INTO THE SYSTEM.</span>
+          </h1>
+
+          <p class="text-ash text-sm sm:text-base leading-relaxed max-w-xl">
+            A hyper-disciplined visual protocol built for non-conformists.
+            Operating in quiet obscurity through adaptive disguise until
+            strategic execution demands full system initialization.
+          </p>
+        </div>
+
+        <div
+          class="p-4 rounded-lg bg-obsidian-card border border-ash/30 space-y-3 hud-border"
+        >
+          <div
+            class="flex flex-wrap justify-between items-center gap-2 text-xs font-mono"
+          >
+            <span class="text-ash">CURRENT ACTIVE STATE:</span>
+
+            <span
+              id="stateTextIndicator"
+              class="text-signal font-bold tracking-widest"
+              role="status"
+            >[MODE 01: DISGUISED]</span>
+          </div>
+
+          <div
+            class="w-full bg-obsidian h-2 rounded-full overflow-hidden border border-ash/20"
+          >
+            <div
+              id="stateProgressBar"
+              class="bg-signal h-full transition-all duration-500"
+              style="width: 33%"
+            ></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 pt-2">
+          <button
+            id="toggleModeBtn"
+            type="button"
+            aria-pressed="false"
+            class="px-5 py-2.5 bg-crimson hover:bg-crimson-glow text-bone font-mono font-bold text-xs tracking-wider rounded transition-all hover:-translate-y-0.5 shadow-crimson-glow flex items-center gap-2"
+          >
+            <i
+              class="fa-solid fa-eye"
+              id="toggleIcon"
+              aria-hidden="true"
+            ></i>
+            <span id="toggleBtnText">TOGGLE REVEAL MODE</span>
+          </button>
+
+          <button
+            id="glitchButton"
+            type="button"
+            class="px-4 py-2.5 bg-obsidian-light hover:bg-signal/20 text-signal border border-signal/40 font-mono font-bold text-xs tracking-wider rounded transition-all flex items-center gap-2"
+          >
+            <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+            PULSE GLITCH
+          </button>
+
+          <a
+            href="#terminal"
+            class="px-5 py-2.5 bg-obsidian-light hover:bg-ash/20 text-bone border border-ash/40 font-mono font-medium text-xs tracking-wider rounded transition-all flex items-center gap-2"
+          >
+            <i
+              class="fa-solid fa-terminal text-crimson"
+              aria-hidden="true"
+            ></i>
+            INITIATE CLI
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    "use strict";
+
+    // The HUD and the frame archive live in different repositories.
+    const ASSET_ROOT = "https://wolfbhuffn.github.io/3D/";
+    const MANIFEST_URL = new URL("manifest.json", ASSET_ROOT).href;
+    const FRAME_ROOT = new URL("clean_wolf_frames/", ASSET_ROOT).href;
+
+    const CONCURRENT_LOADS = 6;
+    const IMAGE_TIMEOUT_MS = 20000;
+    const MANIFEST_TIMEOUT_MS = 15000;
+
+    const viewer = document.getElementById("turntableViewer");
+    const frameCounter = document.getElementById("frameCounter");
+    const frameTotal = document.getElementById("frameTotal");
+    const viewLabel = document.getElementById("viewLabel");
+    const sourceLabel = document.getElementById("sourceLabel");
+    const viewerStatus = document.getElementById("viewerStatus");
+    const loadingOverlay = document.getElementById("viewerLoading");
+    const loadingText = document.getElementById("viewerLoadingText");
+    const loadSummary = document.getElementById("loadSummary");
+    const progress = document.getElementById("viewerProgress");
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    );
+
+    const VIEW_NAMES = {
+      lt_prof: "LEFT PROFILE",
+      "3q_lt": "LEFT THREE-QUARTER",
+      front: "FRONT",
+      "3q_rt": "RIGHT THREE-QUARTER",
+      rt_base: "RIGHT BASE",
+      rear_3q_rt: "REAR RIGHT THREE-QUARTER",
+      back: "BACK",
+      front_high_base: "FRONT HIGH BASE"
+    };
+
+    let frames = [];
+    let currentFrame = -1;
+    let requestedFrame = 0;
+    let loadedCount = 0;
+    let failedCount = 0;
+    let loadingFinished = false;
+
+    let activePointer = null;
+    let previousX = 0;
+    let dragRemainder = 0;
+
+    function updateClock() {
+      document.getElementById("liveClock").textContent =
+        new Date().toISOString().slice(11, 19) + " UTC";
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    function parseFrame(filename, index) {
+      const match = filename.match(
+        /^f(\d+)_(.+)_t(\d+(?:\.\d+)?)s\.png$/i
+      );
+
+      if (!match) {
+        return {
+          number: String(index + 1).padStart(3, "0"),
+          label: filename
+            .replace(/\.[^.]+$/, "")
+            .replace(/_/g, " ")
+            .toUpperCase(),
+          time: null
+        };
+      }
+
+      const [, number, rawCode, time] = match;
+      const code = rawCode.toLowerCase();
+
+      return {
+        number,
+        label: VIEW_NAMES[code] || code.replace(/_/g, " ").toUpperCase(),
+        time
+      };
+    }
+
+    function setViewerStatus(text) {
+      if (viewerStatus.textContent !== text) {
+        viewerStatus.textContent = text;
+      }
+    }
+
+    function updateLoadingUI() {
+      const total = frames.length;
+      const settled = loadedCount + failedCount;
+
+      progress.style.transform =
+        `scaleX(${total ? settled / total : 0})`;
+
+      loadSummary.textContent =
+        `LOADED: ${loadedCount}/${total}` +
+        (failedCount ? ` · FAILED: ${failedCount}` : "");
+
+      if (currentFrame < 0) {
+        loadingText.textContent =
+          `LOADING FRAMES... ${settled}/${total}`;
+      }
+
+      if (loadedCount > 0) {
+        setViewerStatus(
+          loadingFinished
+            ? failedCount
+              ? "STATUS: PARTIAL SYNC"
+              : "STATUS: SYNCED"
+            : "STATUS: STREAMING FRAMES"
+        );
+      }
+    }
+
+    function showFrame(index) {
+      const frame = frames[index];
+
+      if (!frame || frame.state !== "loaded") return;
+
+      if (index !== currentFrame) {
+        if (currentFrame >= 0) {
+          frames[currentFrame].image.classList.remove("active");
         }
 
-        viewer.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX; });
-        window.addEventListener('mouseup', () => { isDragging = false; });
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const deltaX = e.clientX - startX;
-            if (Math.abs(deltaX) >= sensitivity) {
-                const shift = Math.floor(Math.abs(deltaX) / sensitivity);
-                if (deltaX > 0) { updateFrame(currentFrame - shift); } 
-                else { updateFrame(currentFrame + shift); }
-                startX = e.clientX;
+        frame.image.classList.add("active");
+        currentFrame = index;
+      }
+
+      frameCounter.textContent = frame.metadata.number;
+      viewLabel.textContent = `VIEW: ${frame.metadata.label}`;
+      sourceLabel.textContent = frame.metadata.time !== null
+        ? `SOURCE: ${frame.metadata.time}s`
+        : "SOURCE: ---";
+
+      viewer.setAttribute("aria-valuenow", String(index + 1));
+      viewer.setAttribute(
+        "aria-valuetext",
+        `Frame ${index + 1} of ${frames.length}: ${frame.metadata.label}`
+      );
+      viewer.setAttribute("aria-disabled", "false");
+
+      loadingOverlay.hidden = true;
+    }
+
+    function nearestLoaded(target) {
+      let result = -1;
+      let distance = Infinity;
+
+      frames.forEach((frame, index) => {
+        if (frame.state !== "loaded") return;
+
+        const difference = Math.abs(index - target);
+
+        if (difference < distance) {
+          result = index;
+          distance = difference;
+        }
+      });
+
+      return result;
+    }
+
+    function requestFrame(index) {
+      if (!frames.length) return;
+
+      // Clamp instead of wrapping: this archive is a captured sequence,
+      // not a verified seamless 360-degree loop.
+      requestedFrame = Math.max(
+        0,
+        Math.min(frames.length - 1, index)
+      );
+
+      const target = frames[requestedFrame];
+
+      if (target.state === "loaded") {
+        showFrame(requestedFrame);
+      } else if (target.state === "failed" || currentFrame < 0) {
+        const fallback = nearestLoaded(requestedFrame);
+
+        if (fallback >= 0) showFrame(fallback);
+      }
+      // For a pending target, retain the current visible image.
+    }
+
+    function loadFrame(frame, index) {
+      return new Promise((resolve) => {
+        const image = frame.image;
+        let settled = false;
+
+        const finish = (success) => {
+          if (settled) return;
+          settled = true;
+
+          clearTimeout(timeout);
+          image.onload = null;
+          image.onerror = null;
+
+          frame.state = success ? "loaded" : "failed";
+
+          if (success) {
+            loadedCount++;
+
+            if (currentFrame < 0 || requestedFrame === index) {
+              showFrame(index);
             }
+          } else {
+            failedCount++;
+            console.warn("Failed frame:", frame.url);
+          }
+
+          requestFrame(requestedFrame);
+          updateLoadingUI();
+          resolve();
+        };
+
+        const timeout = setTimeout(
+          () => finish(false),
+          IMAGE_TIMEOUT_MS
+        );
+
+        image.onload = () => finish(true);
+        image.onerror = () => finish(false);
+        image.src = frame.url;
+      });
+    }
+
+    async function initializeViewer() {
+      const controller = new AbortController();
+
+      const timeout = setTimeout(
+        () => controller.abort(),
+        MANIFEST_TIMEOUT_MS
+      );
+
+      try {
+        const response = await fetch(MANIFEST_URL, {
+          signal: controller.signal
         });
 
-        // Mobile touch support
-        viewer.addEventListener('touchstart', (e) => { isDragging = true; startX = e.touches[0].clientX; });
-        window.addEventListener('touchend', () => { isDragging = false; });
-        window.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            const deltaX = e.touches[0].clientX - startX;
-            if (Math.abs(deltaX) >= sensitivity) {
-                const shift = Math.floor(Math.abs(deltaX) / sensitivity);
-                if (deltaX > 0) { updateFrame(currentFrame - shift); } 
-                else { updateFrame(currentFrame + shift); }
-                startX = e.touches[0].clientX;
-            }
+        if (!response.ok) {
+          throw new Error(`Manifest HTTP ${response.status}`);
+        }
+
+        const filenames = await response.json();
+        clearTimeout(timeout);
+
+        if (
+          !Array.isArray(filenames) ||
+          filenames.length === 0 ||
+          !filenames.every(
+            filename =>
+              typeof filename === "string" &&
+              filename.trim().length > 0
+          )
+        ) {
+          throw new Error("Invalid or empty frame manifest.");
+        }
+
+        // Preserve the supplied manifest order.
+        frames = filenames.map((filename, index) => {
+          const image = document.createElement("img");
+
+          image.className = "wolf-frame";
+          image.alt = "";
+          image.draggable = false;
+          image.setAttribute("aria-hidden", "true");
+
+          viewer.appendChild(image);
+
+          const encodedFilename = filename
+            .split("/")
+            .map(encodeURIComponent)
+            .join("/");
+
+          return {
+            image,
+            filename,
+            url: FRAME_ROOT + encodedFilename,
+            metadata: parseFrame(filename, index),
+            state: "pending"
+          };
         });
 
-        // Persona State Toggle Logic
-        let revealed = false;
-        function togglePersonaMode() {
-            revealed = !revealed;
-            const indicator = document.getElementById('stateTextIndicator');
-            const progressBar = document.getElementById('stateProgressBar');
-            const btnText = document.getElementById('toggleBtnText');
-            
-            if (revealed) {
-                indicator.innerText = "[MODE 02: WOLF SABYTER INITIALIZED]";
-                indicator.className = "text-crimson font-bold tracking-widest";
-                progressBar.style.width = "100%";
-                progressBar.className = "bg-crimson h-full transition-all duration-500 shadow-crimson-glow";
-                btnText.innerText = "LOCKDOWN DISGUISE";
-            } else {
-                indicator.innerText = "[MODE 01: DISGUISED]";
-                indicator.className = "text-signal font-bold tracking-widest";
-                progressBar.style.width = "33%";
-                progressBar.className = "bg-signal h-full transition-all duration-500";
-                btnText.innerText = "TOGGLE REVEAL MODE";
-            }
+        frameTotal.textContent = frames.length;
+        viewer.setAttribute("aria-valuemax", String(frames.length));
+
+        updateLoadingUI();
+
+        // Prefer the initial frame before filling the rest of the archive.
+        await loadFrame(frames[0], 0);
+
+        let nextIndex = 1;
+
+        async function worker() {
+          while (nextIndex < frames.length) {
+            const index = nextIndex++;
+            await loadFrame(frames[index], index);
+          }
         }
 
-        // Tactical Glitch Pulse trigger
-        function triggerGlitchPulse() {
-            const body = document.getElementById('mainBody');
-            body.classList.add('glitch-fx');
-            setTimeout(() => {
-                body.classList.remove('glitch-fx');
-            }, 300);
+        await Promise.all(
+          Array.from(
+            {
+              length: Math.min(
+                CONCURRENT_LOADS,
+                frames.length - 1
+              )
+            },
+            () => worker()
+          )
+        );
+
+        loadingFinished = true;
+        viewer.setAttribute("aria-busy", "false");
+
+        if (loadedCount === 0) {
+          throw new Error("No images loaded from the frame archive.");
         }
-    </script>
+
+        requestFrame(requestedFrame);
+        updateLoadingUI();
+      } catch (error) {
+        console.error("Avatar initialization failed:", error);
+
+        loadingOverlay.hidden = false;
+        loadingText.textContent =
+          "ARCHIVE OFFLINE — CHECK ASSET URLS";
+
+        setViewerStatus("STATUS: CONNECTION FAILED");
+        loadSummary.textContent = "ARCHIVE: UNAVAILABLE";
+
+        viewer.setAttribute("aria-busy", "false");
+        viewer.setAttribute("aria-disabled", "true");
+        viewer.setAttribute("aria-valuetext", "Frame archive unavailable");
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    // Pointer controls: horizontal drag; vertical touch scrolling remains
+    // available through touch-action: pan-y.
+    viewer.addEventListener("pointerdown", (event) => {
+      if (!event.isPrimary || currentFrame < 0) return;
+
+      if (event.pointerType === "mouse" && event.button !== 0) {
+        return;
+      }
+
+      activePointer = event.pointerId;
+      previousX = event.clientX;
+      dragRemainder = 0;
+      requestedFrame = currentFrame;
+
+      viewer.dataset.dragging = "true";
+      viewer.setPointerCapture(event.pointerId);
+      viewer.focus({ preventScroll: true });
+    });
+
+    viewer.addEventListener("pointermove", (event) => {
+      if (event.pointerId !== activePointer) return;
+
+      const delta = event.clientX - previousX;
+      previousX = event.clientX;
+      dragRemainder += delta;
+
+      // Approximately one full archive per viewer-width of dragging.
+      const pixelsPerFrame = Math.max(
+        2,
+        viewer.clientWidth / Math.max(1, frames.length - 1)
+      );
+
+      const steps = Math.trunc(dragRemainder / pixelsPerFrame);
+
+      if (steps !== 0) {
+        dragRemainder -= steps * pixelsPerFrame;
+        requestFrame(requestedFrame - steps);
+      }
+    });
+
+    function stopDragging(event) {
+      if (
+        event &&
+        activePointer !== null &&
+        event.pointerId !== activePointer
+      ) {
+        return;
+      }
+
+      const pointerId = activePointer;
+      activePointer = null;
+      dragRemainder = 0;
+      viewer.dataset.dragging = "false";
+
+      if (
+        pointerId !== null &&
+        viewer.hasPointerCapture(pointerId)
+      ) {
+        viewer.releasePointerCapture(pointerId);
+      }
+    }
+
+    viewer.addEventListener("pointerup", stopDragging);
+    viewer.addEventListener("pointercancel", stopDragging);
+    viewer.addEventListener("lostpointercapture", stopDragging);
+    window.addEventListener("blur", () => stopDragging());
+
+    viewer.addEventListener("keydown", (event) => {
+      if (currentFrame < 0) return;
+
+      let target;
+
+      if (event.key === "Home") {
+        target = frames.findIndex(frame => frame.state === "loaded");
+      } else if (event.key === "End") {
+        target = frames.length - 1;
+
+        while (target >= 0 && frames[target].state !== "loaded") {
+          target--;
+        }
+      } else if (
+        event.key === "ArrowLeft" ||
+        event.key === "ArrowRight"
+      ) {
+        const direction = event.key === "ArrowRight" ? 1 : -1;
+        target = currentFrame + direction;
+
+        while (
+          target >= 0 &&
+          target < frames.length &&
+          frames[target].state !== "loaded"
+        ) {
+          target += direction;
+        }
+      } else {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (target >= 0 && target < frames.length) {
+        requestFrame(target);
+      }
+    });
+
+    // Persona state: preserve the original presentation behavior.
+    let revealed = false;
+
+    document.getElementById("toggleModeBtn").addEventListener(
+      "click",
+      () => {
+        revealed = !revealed;
+
+        const indicator = document.getElementById("stateTextIndicator");
+        const bar = document.getElementById("stateProgressBar");
+        const text = document.getElementById("toggleBtnText");
+        const icon = document.getElementById("toggleIcon");
+        const button = document.getElementById("toggleModeBtn");
+
+        button.setAttribute("aria-pressed", String(revealed));
+
+        indicator.textContent = revealed
+          ? "[MODE 02: WOLF SABYTER INITIALIZED]"
+          : "[MODE 01: DISGUISED]";
+
+        indicator.className = revealed
+          ? "text-crimson font-bold tracking-widest"
+          : "text-signal font-bold tracking-widest";
+
+        bar.style.width = revealed ? "100%" : "33%";
+
+        bar.className = revealed
+          ? "bg-crimson h-full transition-all duration-500 shadow-crimson-glow"
+          : "bg-signal h-full transition-all duration-500";
+
+        text.textContent = revealed
+          ? "LOCKDOWN DISGUISE"
+          : "TOGGLE REVEAL MODE";
+
+        icon.className = revealed
+          ? "fa-solid fa-eye-slash"
+          : "fa-solid fa-eye";
+      }
+    );
+
+    let glitchTimeout;
+
+    document.getElementById("glitchButton").addEventListener(
+      "click",
+      () => {
+        if (reducedMotion.matches) return;
+
+        const body = document.getElementById("mainBody");
+
+        clearTimeout(glitchTimeout);
+        body.classList.remove("glitch-fx");
+
+        // Restart the animation even when the button is clicked rapidly.
+        void body.offsetWidth;
+        body.classList.add("glitch-fx");
+
+        glitchTimeout = setTimeout(
+          () => body.classList.remove("glitch-fx"),
+          300
+        );
+      }
+    );
+
+    initializeViewer();
+  </script>
 </body>
 </html>
