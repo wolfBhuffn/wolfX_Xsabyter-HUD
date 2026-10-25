@@ -1,0 +1,18 @@
+
+/* Domain-agent layer; existing layout and viewer retained. */
+.agent-mast{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0}
+.agent-node{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--red);color:var(--amber);font:18px monospace;background:#c51f3010}
+.agent-clearance{border-top:1px solid var(--line);padding-top:15px;margin-top:18px}
+.agent-entry{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;margin-top:15px;text-align:left}
+.agent-entry span:last-child{color:var(--amber)}
+.agent-card{min-height:270px;display:flex;flex-direction:column}.agent-card p{flex:1}
+.agent-locked{border-left:3px solid var(--amber)}
+.agent-result{min-height:110px;padding:20px;border:1px solid var(--line);margin-top:22px}
+.agent-record{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--bone)}
+.agent-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+.agent-audit{margin-top:24px}.agent-audit td{vertical-align:top}
+.agent-status{font:11px/1.8 monospace;color:var(--amber)}
+.agent-transition{animation:agentEntry .42s steps(3)}
+@keyframes agentEntry{0%{opacity:.15;transform:translateX(-8px);filter:contrast(3)}35%{opacity:1;transform:translateX(6px)}65%{transform:translateX(-3px);filter:hue-rotate(50deg)}100%{transform:none;filter:none}}
+@media(max-width:900px){.agent-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.agent-transition{animation:none!important}}
