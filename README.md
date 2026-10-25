@@ -1,111 +1,106 @@
-# wolfX_Xsabyter-HUD
-## Single file hybrid web application
-wolfX_Xsabyter-HUD
-> Version: 2.026.1
-> Repository: wolfBhuffn/wolfX_Xsabyter-HUD
-> Architecture: Single-File Hybrid Web Application (HTML5 / CSS3 Grid & Flexbox / Vanilla ES6 JavaScript / Web Audio API / HTML5 Canvas Engine)
-> 
-Executive Overview
-wolfX_Xsabyter-HUD is a high-performance, single-pane-of-glass Heads-Up Display designed to aggregate personal automation, quantitative trading analytics, content generation pipelines, and life-operating workflows into a single mobile-responsive interface.
-Built specifically around the wolfX_Xsabyter identity, the application operates as the primary visual client for the NEXUS Multi-Agent Automation Framework. It simulates real-time data streaming across futures markets (NQ, ES, MNQ, MES, MGC), tracks funded account drawdown rules, compiles daily quote carousels for social platforms, and interfaces with multi-agent intelligence routines—all without third-party framework overhead or external bundle dependencies.
-System Architecture & Features
-+-----------------------------------------------------------------------+
-|                       wolfX_Xsabyter-HUD Core                         |
-+-----------------------------------------------------------------------+
-       |                  |                    |                  |
-       v                  v                    v                  v
-[ System Telemetry ] [ Trading Matrix ] [ Content Engine ] [ NEXUS Terminal ]
- - CPU / Memory      - Canvas Charts     - Visual Generator - Multi-Agent Engine
- - Local Time (EST)  - Topstep $50K Risk - Carousel Builder - Interactive Shell
- - Workspace Sync    - MTF MACD Signals  - TikTok Metrics   - Quick Command Bus
+NEXUS BUILD 06.1 — COMPLETE REPLACEMENT FILES
+================================================
 
-1. Telemetry & Live Diagnostics Panel
- * Real-time NYC Clock: Quartz sync formatted specifically for Eastern Time (EST/EDT).
- * Sparkline Renderers: Canvas-drawn CPU load and memory pressure waveforms with dynamic jitter algorithms.
- * Workspace Sync Status: Visual heartbeat indicating state sync for Google Workspace APIs (Gmail, Sheets, Calendar).
-2. Quantitative Trading & Risk Matrix
- * Multi-Asset Canvas Engine: Custom dual-channel HTML5 Canvas renderer streaming high-frequency mock price action for NQ, ES, MNQ, MES, and MGC.
- * Topstep $50K Risk Monitor: Visual representation of Account Equity, Max Trailing Drawdown, Daily Loss limit, and Profit Target progress bars.
- * MTF MACD Radar: Multi-timeframe trend alignment indicator tracking 1m, 5m, 15m, and 1h directional bias.
-3. Wolf SaByter Content Generation Engine
- * Visual Canvas Engine: Dynamic 1080x1080 canvas renderer that generates branded image post previews on demand, featuring custom background gradients, quote layout, and logo watermarking.
- * Carousel Workflow: Topic selector (Stoic, Discipline, Legacy, Market Mindset) paired with a quote compiler.
- * Commerce Telemetry: Live performance metrics tracking orders, revenue, and inventory for TikTok Shop operations.
-4. NEXUS Multi-Agent Command Shell
- * Multi-Role AI Terminal: Direct interactive terminal connecting to four simulated specialized agent personas:
-   * [Execution] — Task automation and pipeline runner.
-   * [Skeptic] — Risk analysis, financial safety, and sanity check.
-   * [Visionary] — Scaling, long-term leverage, and content strategy.
-   * [Content] — Copywriting, captions, and hook generation.
- * Synth Audio Synthesizer: Native Web Audio API engine providing tactile futuristic audio feedback (clicks, blips, terminal confirmation tones) generated programmatically without external media assets.
-5. Mobile-First HUD Ergonomics
- * Adaptive Navigation Bar: Bottom-anchored touch bar optimized for single-thumb mobile navigation with persistent pane switching (Terminal, Trading, Content, Ledger).
- * Cyberpunk Aesthetics: Deep space background contrast (#090d16), laser cyan (#00f0ff) and amber (#ffb700) callouts, scanline overlays, and frosted glassmorphism containers.
-Readme (README.md)
-# wolfX_Xsabyter-HUD
+CONTENTS
+- index.html: complete replacement UI with inline CSS and JavaScript. No patcher.
+- 01-agent-migration.sql: additive domain-agent database migration.
+- 02-admin-operations.sql: read-first administrative queries; writes are commented out.
+- README.txt: these installation instructions and boundaries.
+- VALIDATION.txt: actual local checks performed for this package.
 
-> Cyberpunk-inspired, mobile-first command center and telemetry interface for the NEXUS system architecture.
+KEEP YOUR EXISTING config.js
+It is intentionally NOT supplied: replacing it with a placeholder would break your working login.
+Keep it next to index.html. Expected properties: mode='supabase', supabaseUrl, supabasePublishableKey.
+Never use sb_secret_, service_role, database credentials or passwords in public client code.
+No new browser libraries beyond the existing Supabase UMD dependency are introduced.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Status: Operational](https://img.shields.io/badge/Status-Operational-00f0ff.svg)](#)
-[![Stack: Vanilla JS / HTML5 Canvas](https://img.shields.io/badge/Stack-VanillaJS--Canvas-ffb700.svg)](#)
+1 — BACK UP
+Save a Git checkpoint/private local copy of your current working index.html and config.js.
+Record/export the current database schema, policies and grants before migration.
+Do not publish a database export containing private data.
 
----
+2 — REPLACE THE HTML
+Replace the entire existing index.html with the included complete index.html.
+Do not append it. Do not use the earlier patcher. Keep your working config.js unchanged.
+Publish through your existing GitHub workflow. This package does not deploy automatically.
+The original hash-route structure, full HUD, cursor-follow avatar, CLI, reveal, login,
+vault, telemetry, access map, and Herd views remain represented in this complete file.
+Domain personas replace the old fictional cover/strategy/execution dossiers.
+Demo-role selection is removed: missing auth never grants access.
 
-## 🛠️ Quick Start
+3 — DATABASE SETUP
+First inspect existing schema. Review 01-agent-migration.sql, then run it in your trusted
+Supabase SQL Editor, not on GitHub. It adds agent tables/functions and a named log policy.
+It does not replace existing nexus_profiles/nexus_vault tables or their policies.
+If you already ran the PREVIOUS domain-upgrade migration, this migration accommodates
+that exact schema and preserves existing dossier rows. It does not overwrite them.
+If these table names exist with any other schema/policies, STOP and review differences.
+Keep nexus_private OUT of Supabase's exposed API schemas.
+No real database was inspected or migrated by the assistant.
 
-Because `wolfX_Xsabyter-HUD` is built as a zero-dependency, single-file application, no installation or package managers are required.
+4 — SPECIAL AGENT CREDENTIALS
+Credential here means explicit account permission for an agent, not MFA or a shared PIN.
+GHOST / family: member.
+ARCHITECT / work: member.
+SCHOLAR / education: member.
+WOLF / financial strategy: operator + explicit grant.
+LEDGER / bills: operator + explicit grant.
+VITAL / personal care: operator + explicit grant.
+Admin inherits role clearance but does NOT bypass the explicit grant requirement.
+Use 02-admin-operations.sql one statement at a time. First resolve the current account
+by email. Verify the returned ID/role. Only then intentionally uncomment/run the selected
+grant query. No account passwords are provided or needed for trusted database grants.
+The disposable test email is for MOCK records only. Use a private controlled admin email
+before personal data. Agent-domain assignments are proposals, not final approved ontology.
+The public cards mirror the bundled proposal; if you change server role requirements,
+update card labels too. Server authorization remains authoritative even if labels differ.
 
-### Local Execution
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/wolfBhuffn/wolfX_Xsabyter-HUD.git](https://github.com/wolfBhuffn/wolfX_Xsabyter-HUD.git)
-   cd wolfX_Xsabyter-HUD
+5 — TEST
+Public navigation should work with missing config/CDN; protected entry fails closed.
+Request a dossier; look for a server request ID. Success glitches contents into view.
+Denied requests reveal no private body. Reduced-motion suppresses animations.
+Open ACCESS as admin and refresh the server log.
+Test guest/member/operator/admin, with/without grants and with expired grants.
+Test direct REST/RPC requests, not only navigation. Direct dossier/grant SELECT must fail;
+non-admin log SELECT must not expose logs. Browser writes to roles/grants/logs must fail.
+Changing user metadata or toggling UI cannot promote a role.
+Test logout during requests, cross-tab sessions, timeouts, missing migration, mobile,
+keyboard controls, frame retry, original vault, CLI and route navigation.
+Avatar remains the supplied 130-frame chronological sequence, not a verified seamless 360.
 
- * Open index.html in any modern web browser (Chrome, Safari, Firefox, Edge):
-   # macOS
-open index.html
+WHAT THE LOG DOES / DOES NOT DO
+Each RPC entry attempt logs its outcome on the server and returns a request ID.
+Actor ID comes from auth.uid(), not a client-supplied username.
+The same transaction inserts the log and returns authorized dossier contents.
+Normal denials return without exceptions so their log entries commit.
+Clients have no direct log write/update/delete permission.
+This is not a comprehensive or tamper-proof infrastructure/security audit.
+Requests that never reach the database, failed transactions and network outages cannot
+be guaranteed logged. The UI does not claim success in those cases. A timeout can occur
+after a commit, so logging may have happened even when the UI cannot confirm it.
+Public profile views are not private-entry events. Automatic session refresh/re-entry may
+produce additional genuine authorization requests. Direct denied table probes, dashboard
+operations and page impressions require separate platform/gateway auditing.
+Guest RPC requests can generate log rows: application-specific rate limiting and retention
+are NOT implemented. Add a protected gateway/rate limiting and retention before broad
+public deployment. Do not expose personal data while this is only a prototype.
 
-# Linux
-xdg-open index.html
+SECURITY / COMPLETENESS BOUNDARIES
+Mock dossier boards are provided, not editable life-management CRUD or autonomous agents.
+No banks, bill payment, contact messaging, calendar backend, AI runtime, school account,
+medical monitoring, reminder delivery or Amazon integration.
+Reveal/redaction is visual narrative, not secrecy or encryption.
+Only server-returned dossiers and your existing RLS vault are meant to be protected.
+No MFA onboarding, reset flow, invitation UI, durable session revocation monitoring,
+production backup automation, security audit, or rate limiter is delivered.
+Server checks current role/grants on each entry. Already displayed content cannot be
+un-seen; revocation affects new requests, not copies already obtained. Session badges may
+lag external changes until refreshed. Cross-tab/concurrent auth needs live negative tests.
+Third-party CDN delivery remains subject to dependency/security review.
+No deployment, SQL execution, real credentials test, browser matrix or live security audit
+was performed. Check VALIDATION.txt for the narrower checks actually completed.
 
-Web / Mobile Deployment
-Deploy directly to GitHub Pages, Vercel, or Netlify with zero build step:
- * GitHub Pages: Go to Settings > Pages > Branch: main > Save.
- * Vercel / Netlify: Import repository and set output directory to root.
-🎮 Navigation & Keyboard Shortcuts
-| Shortcut / Action | Function |
-|---|---|
-| Tab / Touch Bar | Switch between active workspace views (Terminal, Trading, Content, Ledger) |
-| Enter in Terminal | Submit command or prompt to NEXUS AI agents |
-| Action Buttons | Trigger sound synthesis and dynamic canvas rendering |
-| Generate Post | Refresh visual canvas preview with selected quote parameters |
-⚡ Interactive Terminal Commands
-When using the built-in NEXUS terminal shell, try typing the following commands:
- * status — Returns full system diagnostic logs and resource allocation.
- * trade NQ — Switches active canvas chart focus to Nasdaq-100 Futures.
- * trade ES — Switches active canvas chart focus to E-mini S&P 500 Futures.
- * post — Automatically compiles and renders a fresh social media carousel graphic.
- * clear — Clears the terminal log history.
-📂 File Structure
-wolfX_Xsabyter-HUD/
-├── index.html        # Complete application bundle (HTML markup, CSS variables, JS engine)
-└── README.md         # Documentation & repository overview
-
-🔐 Configuration & Webhook Integration
-To connect the HUD to your live Python backend or PineScript TradingView webhooks:
- * Open index.html.
- * Locate the configuration block at the top of the <script> tag:
-   const CONFIG = {
-  API_BASE_URL: 'http://localhost:8000/api/v1',
-  TRADINGVIEW_WEBHOOK_URL: '[https://your-nexus-backend.com/webhook](https://your-nexus-backend.com/webhook)',
-  REFRESH_RATE_MS: 1500
-};
-
- * Update endpoints to match your server environment.
-📄 License
-Distributed under the MIT License. See LICENSE for details.
-Developed for wolfX_Xsabyter / NEXUS Operations.
-
----
-
+RECOVERY
+Restore your saved working index.html and keep config.js. New database objects remain;
+do not drop logs/dossiers blindly. Export needed records and have a trusted administrator
+review any database rollback. Existing profile/vault setup is not deliberately modified.
