@@ -844,7 +844,13 @@ case 'echo':out(arg);break;
 case 'history':out(commandHistory.map((h,i)=>(i+1)+' '+h).join('\n'));break;
 case 'clear':$('terminalOutput').replaceChildren();break;
 case 'logout':if(mode==='cloud')$('logout').click();else out('Local mode has no real account session. Return to cloud in SETUP.');break;
-default:out('Unknown command. Type help.','error');}}
+default:
+  out('QUERYING GEMINI AI…', 'amber');
+  const aiReply = await askGemini(text);
+  out(aiReply);
+  break;
+}
+}}
 $('commandForm').onsubmit=e=>{e.preventDefault();const t=$('commandInput').value;$('commandInput').value='';run(t);};$('commandInput').onkeydown=e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();if(historyPos===commandHistory.length)commandDraft=e.target.value;historyPos=Math.max(0,Math.min(commandHistory.length,historyPos+(e.key==='ArrowUp'?-1:1)));e.target.value=historyPos===commandHistory.length?commandDraft:commandHistory[historyPos];}if(e.key==='Tab'){e.preventDefault();if(e.target.value.includes(' '))return;const m=commands.filter(c=>c.startsWith(e.target.value));if(m.length===1)e.target.value=m[0]+' ';else if(m.length)out(m.join('  '));}};
 
 $('setupSQL').value=SQL;$('showSQL').onclick=()=>$('sqlWrap').hidden=!$('sqlWrap').hidden;
