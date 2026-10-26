@@ -93,34 +93,7 @@ function openEditor(kind,agent='nexus',r=null){
     calcBox.id='autoCalcBox';
     form.append(calcBox);
     form.append(field('notes','NOTES / DETAILS','textarea',p.notes||''));
-
-    form.oninput=()=>{
-      const f=$('recordForm').elements;
-      const rate=+f.rate.value||0;
-      const regH=+f.regular_hours.value||0;
-      const otH=+f.overtime_hours.value||0;
-      const ptoH=+f.pto_hours.value||0;
-      
-      const calcGross = (regH * rate) + (otH * rate * 1.5) + (ptoH * rate);
-      const userTaxes = f.taxes.value!=='' ? +f.taxes.value : (calcGross * 0.13153);
-      const userDeductions = f.deductions.value!=='' ? +f.deductions.value : 297.12;
-      const calcNet = Math.max(0, calcGross - userTaxes - userDeductions);
-      
-      calcBox.innerHTML=`
-        <strong>GROSS PAY:</strong> ${money(calcGross)}<br>
-        <strong>EST. TAXES:</strong> -${money(userTaxes)}<br>
-        <strong>EST. DEDUCTIONS:</strong> -${money(userDeductions)}<br>
-        <hr style="border-color:var(--line);margin:6px 0">
-        <span style="color:var(--green);font-weight:bold;font-size:14px;">NET TAKE-HOME DEPOSIT: ${money(calcNet)}</span>
-      `;
-      form.dataset.gross=calcGross;
-      form.dataset.taxes=userTaxes;
-      form.dataset.deductions=userDeductions;
-      form.dataset.net=calcNet;
-    };
-    form.oninput();
-  }else form.oninput=null;
-
+  }
   $('editor').showModal();
 }
 
@@ -153,10 +126,21 @@ $('recordForm').onsubmit=async e=>{
       payload.overtime_hours=numeric(f.get('overtime_hours'),'Overtime hours');
       payload.pto_hours=numeric(f.get('pto_hours'),'PTO hours',true);
       payload.multiplier=1.5;
-      payload.gross=numeric(e.target.dataset.gross,'Gross pay');
-      payload.taxes=numeric(e.target.dataset.taxes,'Total taxes');
-      payload.deductions=numeric(e.target.dataset.deductions,'Total deductions');
-      payload.net=numeric(e.target.dataset.net,'Take-home pay');
+      
+      const rate=payload.rate;
+      const regH=payload.regular_hours;
+      const otH=payload.overtime_hours;
+      const ptoH=payload.pto_hours;
+      
+      const calcGross = (regH * rate) + (otH * rate * 1.5) + (ptoH * rate);
+      const userTaxes = f.get('taxes')!=='' ? +f.get('taxes') : (calcGross * 0.13153);
+      const userDeductions = f.get('deductions')!=='' ? +f.get('deductions') : 297.12;
+      const calcNet = Math.max(0, calcGross - userTaxes - userDeductions);
+      
+      payload.gross=calcGross;
+      payload.taxes=userTaxes;
+      payload.deductions=userDeductions;
+      payload.net=calcNet;
       due=f.get('pay_date');
     }
     const value={...editing,kind,agent_id:agent,title:f.get('title'),status:f.get('status'),due_date:due,payload};
@@ -187,7 +171,6 @@ function renderData(){
   const today=dateStr(),bills=records.filter(r=>r.kind==='bill'),income=records.filter(r=>r.kind==='income'),tasks=records.filter(r=>r.kind==='task'||r.kind==='note'),unpaid=bills.filter(r=>r.status!=='done'),active=tasks.filter(r=>r.status!=='done');
   $('syncInfo').textContent=(mode==='local'?'LOCAL BROWSER RECORDS — not encrypted or cloud-synced. ':'CLOUD RECORDS ACCESSIBLE TO THIS ACCOUNT. ')+(syncError?'ERROR: '+syncError:records.length+' records · refreshed '+(lastSync||'now')+'. Cloud summaries exclude inaccessible agents.');
   
-  // Total metrics use all logged paychecks instead of strict date-range filters
   const receivedNetTotal=sum(income.filter(r=>r.status==='done'),r=>r.payload.net);
   const paidBillsTotal=sum(bills.filter(r=>r.status==='done'),r=>r.payload.amount);
   const unpaidBillsTotal=sum(unpaid,r=>r.payload.amount);
@@ -235,7 +218,7 @@ function paintWorkspace(a,transition=true){const host=$('workspaceContent');host
 let workspaceFilter='active';
 async function openWorkspace(a,ticket){const host=$('workspaceContent');host.replaceChildren(n('div','Checking '+a.name+' entry…','panel'));try{const ok=await entry(a.id,true);if(ticket!==routeId)return;if(!ok){const p=n('div',undefined,'panel');p.append(n('h1',a.name+' // ENTRY CLOSED'),n('p','Sign in with the required role and agent grant. In cloud mode even admins need an explicit grant for restricted domains.'),n('p','A returned server request ID confirms the attempt was recorded. Connection failures do not.','notice'));const retry=n('button','REQUEST ENTRY AGAIN');retry.onclick=route;p.append(retry);host.replaceChildren(p);return;}await refreshRecords();if(ticket!==routeId)return;if(syncError)throw new Error(syncError);paintWorkspace(a);pulse();}catch(e){if(ticket===routeId)host.replaceChildren(n('div','ENTRY CLOSED: '+e.message,'panel error'));}}
 function renderTelemetry(){const h=$('telemetryStats');if(!h)return;h.replaceChildren();stat(h,'LOADED FRAMES',loaded+' / 130');stat(h,'UPTIME',Math.floor((Date.now()-started)/1000)+'s');stat(h,'RECORDS LOADED',records.length);stat(h,'STORAGE',mode.toUpperCase());}
-async function showVault(ticket){$('vaultContent').replaceChildren();if(mode==='local'){$('vaultStatus').textContent='Existing protected Vault is cloud-only. Local mode never simulates access to your real vault.';return;}if(!user||rank[user.role]<2){$('vaultStatus').textContent='Operator/admin cloud session required.';return;}$('vaultStatus').textContent='Loading permitted records…';const who=epoch;try{const r=await deadline(client.from('nexus_vault').select('id,title,body,min_role').order('id'),12000,'Vault');if(who!==epoch||ticket!==routeId)return;if(r.error)throw r.error;for(const row of r.data||[]){const c=n('article',undefined,'panel');c.append(n('small',row.min_role,'amber'),n('h2',row.title),n('div',row.body,'record'));$('vaultContent').append(c);}$('vaultStatus').textContent=r.data.length?'Existing database RLS controls these records.':'No permitted rows.';}catch(e){if(who==epoch&&ticket!==routeId)$('vaultStatus').textContent=e.message;}}
+async function showVault(ticket){$('vaultContent').replaceChildren();if(mode==='local'){$('vaultStatus').textContent='Existing protected Vault is cloud-only. Local mode never simulates access to your real vault.';return;}if(!user||rank[user.role]<2){$('vaultStatus').textContent='Operator/admin cloud session required.';return;}$('vaultStatus').textContent='Loading permitted records…';const who=epoch;try{const r=await deadline(client.from('nexus_vault').select('id,title,body,min_role').order('id'),12000,'Vault');if(who!==epoch||ticket!==routeId)return;if(r.error)throw r.error;for(const row of r.data||[]){const c=n('article',undefined,'panel');c.append(n('small',row.min_role,'amber'),n('h2',row.title),n('div',row.body,'record'));$('vaultContent').append(c);}$('vaultStatus').textContent=r.data.length?'Existing database RLS controls these records.':'No permitted rows.';}catch(e){if(who===epoch&&ticket!==routeId)$('vaultStatus').textContent=e.message;}}
 let auditTicket=0;
 async function showAudit(){const ticket=++auditTicket,who=epoch;$('auditContent').replaceChildren();$('grantControls').replaceChildren();if(mode==='local'){$('auditStatus').textContent='LOCAL UI EVENTS ONLY — editable browser storage, not a security audit.';const pre=n('pre',JSON.stringify(localEvents.slice(0,100),null,2),'eventlog');$('auditContent').append(pre);return;}if(!isAdmin()){$('auditStatus').textContent='Actual cloud admin session required.';return;}
 for(const a of agents.filter(a=>a.grant)){for(const allow of [true,false]){const b=n('button',(allow?'GRANT ME ':'REVOKE MY ')+a.name,'small');b.onclick=()=>act(b,async()=>{if(!confirm((allow?'Grant':'Revoke')+' your own access to '+a.name+'? This change is server logged.'))return;const r=await deadline(client.rpc('nexus7_self_grant',{p_agent:a.id,p_allow:allow}),12000,'Agent grant');if(r.error)throw r.error;unlocked.delete(a.id);await refreshRecords();await showAudit();});$('grantControls').append(b);}}
@@ -256,7 +239,7 @@ function loadUI(){loaded=frames.filter(f=>f.state==='ready').length;failed=frame
 function loadOne(f){return new Promise(resolve=>{f.state='loading';let done=false;const finish=ok=>{if(done)return;done=true;clearTimeout(timer);f.img.onload=null;f.img.onerror=null;f.state=ok?'ready':'failed';if(ok)requestFrame(target);loadUI();resolve();};const timer=setTimeout(()=>finish(false),15000);f.img.onload=()=>finish(true);f.img.onerror=()=>finish(false);f.img.src='https://wolfbhuffn.github.io/3D/clean_wolf_frames/'+encodeURIComponent(f.name)+(f.retry?'?retry='+Date.now():'');});}
 async function loadArchive(retry=false){if(loading)return;loading=true;const q=frames.filter(f=>retry?f.state==='failed':f.state==='pending');if(retry)q.forEach(f=>{f.retry=true;f.state='pending';});loadUI();let idx=0;await Promise.all(Array.from({length:Math.min(6,q.length)},async()=>{while(idx<q.length)await loadOne(q[idx++]);}));loading=false;loadUI();log('Archive: '+loaded+' loaded / '+failed+' failed.');}
 $('retryFrames').onclick=()=>loadArchive(true);
-function follow(e){point={x:e.clientX,y:e.clientY,type:e.pointerType};if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const r=viewer.getBoundingClientRect(),x=Math.max(0,Math.min(1,(point.x-r.left)/r.width)),y=Math.max(-1,Math.min(1,(point.y-r.top)/r.height*2-1));requestFrame(Math.min(129,Math.floor(x*130)));if(!reduced.matches&&point.type==='mouse')viewer.style.transform='rotateX('+(-y*3)+'deg) rotateY('+((x-.5)*6)+'deg)';});}
+function follow(e){point={x:e.clientX,y:e.clientY,type:e.pointerType};if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const r=viewer.getBoundingClientRect(),x=Math.max(0,Math.min(1,(point.x-r.left)/r.width)),y=Math.max(-1,Math.min(1,(point.y-r.top)/r.height*2-1));requestFrame(Math.min(129,Math.floor(x*130)));if(!reduced.matches&&point.type==='mouse')viewer.style.transform='rotateX('+(-y*3)+'deg) rotateY('+((x-.5)*6)+'degisComposite)';});}
 viewer.addEventListener('pointermove',follow);viewer.addEventListener('pointerdown',e=>{viewer.focus({preventScroll:true});follow(e);});viewer.addEventListener('pointerleave',()=>{if(raf){cancelAnimationFrame(raf);raf=0;}viewer.style.transform='';});viewer.addEventListener('keydown',e=>{let value;if(e.key==='ArrowRight')value=target+1;else if(e.key==='ArrowLeft')value=target-1;else if(e.key==='Home')value=0;else if(e.key==='End')value=129;else return;e.preventDefault();requestFrame(value);});
 
 const commands=['help','status','whoami','agents','agent','persona','add','open','frame','scan','reveal','disguise','glitch','audit','date','echo','history','clear','logout'];
