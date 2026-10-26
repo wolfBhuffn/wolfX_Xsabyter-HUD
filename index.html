@@ -22,6 +22,134 @@
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
     html { color-scheme: dark; }
+    
+  <!-- core SPA controller script -->
+  <script>
+    (function () {
+      'use strict';
+
+      // --- STATE & ROUTER ---
+      const routes = ['home', 'dashboard', 'tasks', 'bills', 'income', 'accounts', 'personas', 'workspace', 'nexus', 'login', 'gate', 'terminal', 'telemetry', 'vault', 'access', 'settings'];
+      
+      function handleRoute() {
+        const hash = window.location.hash.replace(/^#\/?/, '') || 'home';
+        const pageName = routes.includes(hash) ? hash : 'home';
+
+        // Toggle active page section
+        document.querySelectorAll('main .page').forEach(page => {
+          page.hidden = page.dataset.page !== pageName;
+        });
+
+        // Update active navbar item
+        document.querySelectorAll('nav a').forEach(a => {
+          if (a.getAttribute('data-nav') === pageName) {
+            a.setAttribute('aria-current', 'page');
+          } else {
+            a.removeAttribute('aria-current');
+          }
+        });
+
+        // Update bar text
+        const bar = document.getElementById('bar');
+        if (bar) bar.textContent = `NEXUS 07 // ${pageName.toUpperCase()} MODULE READY`;
+      }
+
+      window.addEventListener('hashchange', handleRoute);
+      window.addEventListener('DOMContentLoaded', handleRoute);
+
+      // --- REAL-TIME CLOCK ---
+      function updateClock() {
+        const clock = document.getElementById('clock');
+        if (clock) {
+          const now = new Date();
+          clock.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      // --- DISGUISE / REVEAL COVER BUTTONS ---
+      const revealButton = document.getElementById('revealButton');
+      if (revealButton) {
+        revealButton.addEventListener('click', function () {
+          const mainPanel = this.closest('.panel') || document.body;
+          mainPanel.classList.toggle('revealed');
+          const isRevealed = mainPanel.classList.contains('revealed');
+          this.setAttribute('aria-pressed', isRevealed);
+          this.textContent = isRevealed ? 'RECOVER DISGUISE' : 'BREACH COVER';
+        });
+      }
+
+      // --- MODAL / EDITOR CONTROLLER ---
+      const dialog = document.getElementById('editor');
+      const closeEditor = document.getElementById('closeEditor');
+      const cancelEditor = document.getElementById('cancelEditor');
+
+      function openModal(title) {
+        if (!dialog) return;
+        const editTitle = document.getElementById('editTitle');
+        if (editTitle) editTitle.textContent = title;
+        dialog.showModal();
+      }
+
+      function closeModal() {
+        if (dialog) dialog.close();
+      }
+
+      if (closeEditor) closeEditor.addEventListener('click', closeModal);
+      if (cancelEditor) cancelEditor.addEventListener('click', closeModal);
+
+      // Bind trigger buttons (+ HOURS, + BILL, + TASK)
+      document.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-new]');
+        if (btn) {
+          e.preventDefault();
+          const type = btn.getAttribute('data-new');
+          openModal(`NEW ${type.toUpperCase()} ENTRY`);
+        }
+      });
+
+      // --- CLI TERMINAL CONTROLLER ---
+      const commandForm = document.getElementById('commandForm');
+      const commandInput = document.getElementById('commandInput');
+      const terminalOutput = document.getElementById('terminalOutput');
+
+      if (commandForm) {
+        commandForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const cmd = commandInput.value.trim();
+          if (!cmd) return;
+
+          // Append input
+          const userLine = document.createElement('div');
+          userLine.className = 'command';
+          userLine.textContent = `wolf@nexus:~$ ${cmd}`;
+          terminalOutput.appendChild(userLine);
+
+          // Standard Command Responses
+          const resLine = document.createElement('div');
+          if (cmd.toLowerCase() === 'help') {
+            resLine.textContent = 'AVAILABLE COMMANDS: help, status, clear, sync, agents';
+          } else if (cmd.toLowerCase() === 'status') {
+            resLine.textContent = 'SYSTEM: All domain channels operational. Local workspace active.';
+          } else if (cmd.toLowerCase() === 'clear') {
+            terminalOutput.innerHTML = '';
+            commandInput.value = '';
+            return;
+          } else {
+            resLine.textContent = `NEXUS CLI: Executing command '${cmd}'... (Signal ok)`;
+          }
+
+          terminalOutput.appendChild(resLine);
+          commandInput.value = '';
+          terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        });
+      }
+
+    })();
+  </script>
+</body>
+</html>
 
     body {
       margin: 0;
