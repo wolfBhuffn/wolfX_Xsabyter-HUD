@@ -42,7 +42,7 @@ async function refreshRecords(){if(mode==='local'){const stored=storageRead('nex
 function numeric(v,label,optional=false){if(v===''||v===null||v===undefined){if(optional)return null;return 0;}const x=Number(v);if(!Number.isFinite(x)||x<0||x>1e12)throw new Error(label+' must be a nonnegative number below one trillion.');return x;}
 function validDate(s,required=false){if(!s){if(required)throw new Error('Required date missing.');return null;}if(!/^\d{4}-\d{2}-\d{2}$/.test(s)||dateStr(dateObj(s))!==s)throw new Error('Invalid calendar date.');return s;}
 function cleanRecord(r){if(!r||!['task','note','bill','income'].includes(r.kind))throw new Error('Unknown record type.');if(!agents.some(a=>a.id===r.agent_id))throw new Error('Unknown agent.');const title=String(r.title||'').trim();if(!title||title.length>200)throw new Error('Title must be 1–200 characters.');if(!['todo','progress','done'].includes(r.status))throw new Error('Invalid status.');let p=r.payload;if(!p||typeof p!=='object'||Array.isArray(p))throw new Error('Invalid record details.');p=JSON.parse(JSON.stringify(p));if(JSON.stringify(p).length>16000)throw new Error('Record details too long.');let due=validDate(r.due_date);
-if(r.kind==='income'){r.agent_id='wolf';p.regular_hours=numeric(p.regular_hours,'Regular hours');p.overtime_hours=numeric(p.overtime_hours,'Overtime hours');p.pto_hours=numeric(p.pto_hours,'PTO hours',true);p.rate=numeric(p.rate,'Hourly rate');p.multiplier=numeric(p.multiplier,'Overtime multiplier');p.pto_rate=numeric(p.pto_rate,'PTO rate',true);p.gross=numeric(p.gross,'Gross pay');p.taxes=numeric(p.taxes,'Total taxes',true);p.deductions=numeric(p.deductions,'Total deductions',true);p.net=numeric(p.net,'Take-home pay',true);p.period_start=validDate(p.period_start,true);p.period_end=validDate(p.period_end,true);if(p.period_start>p.period_end)throw new Error('Pay period ends before it begins.');p.pay_date=validDate(p.pay_date);due=p.pay_date;}
+if(r.kind==='income'){r.agent_id='wolf';p.regular_hours=numeric(p.regular_hours,'Regular hours');p.overtime_hours=numeric(p.overtime_hours,'Overtime hours');p.pto_hours=numeric(p.pto_hours,'PTO hours',true);p.rate=numeric(p.rate,'Hourly rate');p.multiplier=numeric(p.multiplier,'Overtime multiplier');p.gross=numeric(p.gross,'Gross pay');p.taxes=numeric(p.taxes,'Total taxes',true);p.deductions=numeric(p.deductions,'Total deductions',true);p.net=numeric(p.net,'Take-home pay',true);p.period_start=validDate(p.period_start,true);p.period_end=validDate(p.period_end,true);if(p.period_start>p.period_end)throw new Error('Pay period ends before it begins.');p.pay_date=validDate(p.pay_date);due=p.pay_date;}
 if(r.kind==='bill'){r.agent_id='ledger';p.amount=numeric(p.amount,'Bill amount');due=validDate(r.due_date,true);p.frequency=p.frequency==='monthly'?'monthly':'once';}
 if(p.notes!==undefined)p.notes=String(p.notes).slice(0,12000);return {agent_id:r.agent_id,kind:r.kind,title,status:r.status,due_date:due,payload:p};}
 async function save(r){const clean=cleanRecord({...r});if(!isReady())throw new Error('Sign in or enable local mode.');const who=epoch;if(mode==='local'){const next=records.slice();const idx=r.id?next.findIndex(x=>x.id===r.id):-1;if(r.id&&idx<0)throw new Error('Record no longer exists.');const now=new Date().toISOString();const value={...clean,id:r.id||uuid(),version:(idx>=0?next[idx].version:0)+1,created_at:idx>=0?next[idx].created_at:now,updated_at:now};if(idx>=0)next[idx]=value;else next.push(value);storageWrite('nexus7-local-records',next);records=next;log('Local record saved: '+clean.kind);return value;}
@@ -52,17 +52,134 @@ async function act(button,fn){if(writeBusy)return;writeBusy=true;if(button)butto
 function localEntry(agent){const ev={created_at:new Date().toISOString(),agent_id:agent,outcome:'local_only',reason:'not_server_authorized',request_id:uuid()};const next=[ev,...localEvents].slice(0,300);storageWrite('nexus7-local-events',next);localEvents=next;return ev;}
 async function entry(agent,announce=true){if(mode==='local'){localEntry(agent);unlocked.add(agent);return true;}if(!client||authState==='connecting'){if(announce)toast('Cloud connection is not ready. Entry not logged on server.');return false;}const who=epoch;const r=await deadline(client.rpc('nexus7_entry',{p_agent:agent}),12000,'Agent authorization');if(who!==epoch)return false;if(r.error)throw new Error(r.error.message+' — entry logging not confirmed.');if(!r.data||typeof r.data.allowed!=='boolean')throw new Error('Invalid entry response.');if(r.data.allowed)unlocked.add(agent);else unlocked.delete(agent);if(announce)toast((r.data.allowed?'GRANTED':'DENIED: '+r.data.reason)+' // request '+r.data.request_id);return r.data.allowed;}
 function field(name,label,type='text',value='',options=null,required=false){const wrap=n('div',undefined,'field'),id='f_'+name;const lab=n('label',label);lab.htmlFor=id;let input;if(type==='select'){input=n('select');for(const [v,t] of options){const o=n('option',t);o.value=v;input.append(o);}}else if(type==='textarea')input=n('textarea');else{input=n('input');input.type=type;if(type==='number'){input.min='0';input.max='1000000000000';input.step='0.01';}}input.id=id;input.name=name;input.value=value??'';input.required=required;if(type==='text')input.maxLength=200;if(type==='textarea')input.maxLength=12000;wrap.append(lab,input);return wrap;}
-function openEditor(kind,agent='nexus',r=null){if(!isReady()){location.hash='/login';toast('Sign in or explicitly enable local mode under SETUP.');return;}editing=r;editorAgent=kind==='income'?'wolf':kind==='bill'?'ledger':agent;const p=r?.payload||{},form=$('editFields');form.replaceChildren();$('editTitle').textContent=(r?'Edit ':'Add ')+({income:'hours / paycheck',bill:'bill',task:'task',note:'agent note'}[kind]);$('editError').textContent='';$('recordForm').dataset.kind=kind;form.append(field('title',kind==='income'?'EMPLOYER / PAYCHECK TITLE':kind==='bill'?'BILL / PAYEE':'TITLE','text',r?.title||'Special Citizens Future Unlimited',null,true));
-if(kind==='task'||kind==='note'){form.append(field('agent','ASSIGNED AGENT','select',r?.agent_id||agent,agents.map(a=>[a.id,a.name+' / '+a.domain])),field('status','STATUS','select',r?.status||'todo',[['todo','To Do'],['progress','In Progress'],['done','Completed']]),field('due','DUE DATE (OPTIONAL)','date',r?.due_date||''),field('priority','PRIORITY','select',p.priority||'normal',[['low','Low'],['normal','Normal'],['high','High']]));}
-if(kind==='bill'){form.append(field('amount','AMOUNT (USD)','number',p.amount??'',null,true),field('due','DUE DATE','date',r?.due_date||dateStr(),null,true),field('frequency','REPEAT TEMPLATE','select',p.frequency||'once',[['once','One time'],['monthly','Monthly — manually create next occurrence']]),field('status','PAYMENT STATUS','select',r?.status||'todo',[['todo','Unpaid'],['progress','In progress'],['done','Paid / Completed']]));}
-if(kind==='income'){const wr=weekRange(dateStr());form.append(field('period_start','PAY PERIOD START','date',p.period_start||wr[0],null,true),field('period_end','PAY PERIOD END','date',p.period_end||wr[1],null,true),field('regular_hours','REGULAR HOURS ($18.31/hr)','number',p.regular_hours??78.77,null,true),field('overtime_hours','OVERTIME HOURS (1.5x / $27.47/hr)','number',p.overtime_hours??23.20),field('pto_hours','PTO HOURS ($18.31/hr)','number',p.pto_hours??8.00));const calcBox=n('div',undefined,'calc-box');calcBox.id='autoCalcBox';form.append(calcBox,field('pay_date','PAY DATE (OPTIONAL)','date',p.pay_date||''),field('status','PAYCHECK STATUS','select',r?.status||'done',[['todo','Expected'],['progress','Processing'],['done','Received']]));form.oninput=()=>{const f=$('recordForm').elements;const regH=+f.regular_hours.value||0;const otH=+f.overtime_hours.value||0;const ptoH=+f.pto_hours.value||0;const gross=(regH*18.31)+(otH*27.47)+(ptoH*18.31);const taxes=gross*0.13153;const deductions=297.12;const net=Math.max(0,gross-taxes-deductions);calcBox.innerHTML=`<strong>AUTO GROSS:</strong> ${money(gross)}<br><strong>EST. NYC TAXES (~13.15%):</strong> -${money(taxes)}<br><strong>BENEFITS DEDUCTIONS:</strong> -${money(deductions)}<br><hr style="border-color:var(--line);margin:6px 0"><span style="color:var(--green);font-weight:bold;font-size:13px;">EST. TAKE-HOME DEPOSIT: ${money(net)}</span>`;form.dataset.gross=gross;form.dataset.taxes=taxes;form.dataset.deductions=deductions;form.dataset.net=net;};form.oninput();}else form.oninput=null;
-form.append(field('notes','DETAILS / NOTES','textarea',p.notes||''));$('editor').showModal();}
-$('closeEditor').onclick=$('cancelEditor').onclick=()=>{if(!writeBusy)$('editor').close();};$('editor').addEventListener('cancel',e=>{if(writeBusy)e.preventDefault();});
-$('recordForm').onsubmit=async e=>{e.preventDefault();if(writeBusy)return;const f=new FormData(e.target),kind=e.target.dataset.kind;let payload={notes:f.get('notes')||''};let agent=editorAgent,due=null;try{if(kind==='task'||kind==='note'){agent=f.get('agent');payload.priority=f.get('priority');due=f.get('due');}if(kind==='bill'){payload.amount=f.get('amount');payload.frequency=f.get('frequency');due=f.get('due');payload.paid_date=f.get('status')==='done'?(editing?.payload?.paid_date||dateStr()):null;}if(kind==='income'){payload.period_start=f.get('period_start');payload.period_end=f.get('period_end');payload.regular_hours=numeric(f.get('regular_hours'),'Regular hours');payload.overtime_hours=numeric(f.get('overtime_hours'),'Overtime hours');payload.pto_hours=numeric(f.get('pto_hours'),'PTO hours',true);payload.rate=18.31;payload.multiplier=1.5;payload.gross=numeric(e.target.dataset.gross,'Gross pay');payload.taxes=numeric(e.target.dataset.taxes,'Total taxes');payload.deductions=numeric(e.target.dataset.deductions,'Total deductions');payload.net=numeric(e.target.dataset.net,'Take-home pay');due=f.get('pay_date');}const value={...editing,kind,agent_id:agent,title:f.get('title'),status:f.get('status'),due_date:due,payload};cleanRecord({...value});writeBusy=true;$('saveRecord').disabled=true;await save(value);$('editor').close();renderData();toast('Record saved to '+(mode==='local'?'this browser.':'your cloud workspace.'));}catch(err){$('editError').textContent=err.message;}finally{writeBusy=false;$('saveRecord').disabled=false;}};
+
+function openEditor(kind,agent='nexus',r=null){
+  if(!isReady()){location.hash='/login';toast('Sign in or explicitly enable local mode under SETUP.');return;}
+  editing=r;
+  editorAgent=kind==='income'?'wolf':kind==='bill'?'ledger':agent;
+  const p=r?.payload||{},form=$('editFields');
+  form.replaceChildren();
+  $('editTitle').textContent=(r?'Edit ':'Add ')+({income:'hours / paycheck',bill:'bill',task:'task',note:'agent note'}[kind]);
+  $('editError').textContent='';
+  $('recordForm').dataset.kind=kind;
+  
+  if(kind==='task'||kind==='note'){
+    form.append(field('title','TITLE','text',r?.title||'',null,true));
+    form.append(field('agent','ASSIGNED AGENT','select',r?.agent_id||agent,agents.map(a=>[a.id,a.name+' / '+a.domain])),field('status','STATUS','select',r?.status||'todo',[['todo','To Do'],['progress','In Progress'],['done','Completed']]),field('due','DUE DATE (OPTIONAL)','date',r?.due_date||''),field('priority','PRIORITY','select',p.priority||'normal',[['low','Low'],['normal','Normal'],['high','High']]));
+    form.append(field('notes','DETAILS / NOTES','textarea',p.notes||''));
+  }
+  if(kind==='bill'){
+    form.append(field('title','BILL / PAYEE','text',r?.title||'',null,true));
+    form.append(field('amount','AMOUNT (USD)','number',p.amount??'',null,true),field('due','DUE DATE','date',r?.due_date||dateStr(),null,true),field('frequency','REPEAT TEMPLATE','select',p.frequency||'once',[['once','One time'],['monthly','Monthly — manually create next occurrence']]),field('status','PAYMENT STATUS','select',r?.status||'todo',[['todo','Unpaid'],['progress','In progress'],['done','Paid / Completed']]));
+    form.append(field('notes','DETAILS / NOTES','textarea',p.notes||''));
+  }
+  if(kind==='income'){
+    const wr=weekRange(dateStr());
+    form.append(
+      field('title','EMPLOYER / PAYCHECK TITLE','text',r?.title||'Special Citizens Future Unlimited',null,true),
+      field('period_start','PAY PERIOD START','date',p.period_start||wr[0],null,true),
+      field('period_end','PAY PERIOD END','date',p.period_end||wr[1],null,true),
+      field('rate','PAY RATE / HOURLY ($)','number',p.rate??18.31,null,true),
+      field('regular_hours','REGULAR HOURS','number',p.regular_hours??78.77,null,true),
+      field('overtime_hours','OVERTIME HOURS (1.5X RATE)','number',p.overtime_hours??23.20),
+      field('pto_hours','PTO HOURS (1.0X RATE)','number',p.pto_hours??8.00),
+      field('taxes','TOTAL TAXES (NYC/NYS/FICA ~13.15%)','number',p.taxes??''),
+      field('deductions','TOTAL DEDUCTIONS (BENEFITS)','number',p.deductions??''),
+      field('pay_date','PAY DATE','date',p.pay_date||dateStr()),
+      field('status','PAYCHECK STATUS','select',r?.status||'done',[['todo','Expected'],['progress','Processing'],['done','Received']])
+    );
+    
+    const calcBox=n('div',undefined,'calc-box');
+    calcBox.id='autoCalcBox';
+    form.append(calcBox);
+    form.append(field('notes','NOTES / DETAILS','textarea',p.notes||''));
+
+    form.oninput=()=>{
+      const f=$('recordForm').elements;
+      const rate=+f.rate.value||0;
+      const regH=+f.regular_hours.value||0;
+      const otH=+f.overtime_hours.value||0;
+      const ptoH=+f.pto_hours.value||0;
+      
+      const calcGross = (regH * rate) + (otH * rate * 1.5) + (ptoH * rate);
+      const userTaxes = f.taxes.value!=='' ? +f.taxes.value : (calcGross * 0.13153);
+      const userDeductions = f.deductions.value!=='' ? +f.deductions.value : 297.12;
+      const calcNet = Math.max(0, calcGross - userTaxes - userDeductions);
+      
+      calcBox.innerHTML=`
+        <strong>GROSS PAY:</strong> ${money(calcGross)}<br>
+        <strong>EST. TAXES:</strong> -${money(userTaxes)}<br>
+        <strong>EST. DEDUCTIONS:</strong> -${money(userDeductions)}<br>
+        <hr style="border-color:var(--line);margin:6px 0">
+        <span style="color:var(--green);font-weight:bold;font-size:14px;">NET TAKE-HOME DEPOSIT: ${money(calcNet)}</span>
+      `;
+      form.dataset.gross=calcGross;
+      form.dataset.taxes=userTaxes;
+      form.dataset.deductions=userDeductions;
+      form.dataset.net=calcNet;
+    };
+    form.oninput();
+  }else form.oninput=null;
+
+  $('editor').showModal();
+}
+
+$('closeEditor').onclick=$('cancelEditor').onclick=()=>{if(!writeBusy)$('editor').close();};
+$('editor').addEventListener('cancel',e=>{if(writeBusy)e.preventDefault();});
+
+$('recordForm').onsubmit=async e=>{
+  e.preventDefault();
+  if(writeBusy)return;
+  const f=new FormData(e.target),kind=e.target.dataset.kind;
+  let payload={notes:f.get('notes')||''};
+  let agent=editorAgent,due=null;
+  try{
+    if(kind==='task'||kind==='note'){
+      agent=f.get('agent');
+      payload.priority=f.get('priority');
+      due=f.get('due');
+    }
+    if(kind==='bill'){
+      payload.amount=f.get('amount');
+      payload.frequency=f.get('frequency');
+      due=f.get('due');
+      payload.paid_date=f.get('status')==='done'?(editing?.payload?.paid_date||dateStr()):null;
+    }
+    if(kind==='income'){
+      payload.period_start=f.get('period_start');
+      payload.period_end=f.get('period_end');
+      payload.rate=numeric(f.get('rate'),'Pay rate');
+      payload.regular_hours=numeric(f.get('regular_hours'),'Regular hours');
+      payload.overtime_hours=numeric(f.get('overtime_hours'),'Overtime hours');
+      payload.pto_hours=numeric(f.get('pto_hours'),'PTO hours',true);
+      payload.multiplier=1.5;
+      payload.gross=numeric(e.target.dataset.gross,'Gross pay');
+      payload.taxes=numeric(e.target.dataset.taxes,'Total taxes');
+      payload.deductions=numeric(e.target.dataset.deductions,'Total deductions');
+      payload.net=numeric(e.target.dataset.net,'Take-home pay');
+      due=f.get('pay_date');
+    }
+    const value={...editing,kind,agent_id:agent,title:f.get('title'),status:f.get('status'),due_date:due,payload};
+    cleanRecord({...value});
+    writeBusy=true;
+    $('saveRecord').disabled=true;
+    await save(value);
+    $('editor').close();
+    renderData();
+    toast('Record saved to '+(mode==='local'?'this browser.':'your cloud workspace.'));
+  }catch(err){
+    $('editError').textContent=err.message;
+  }finally{
+    writeBusy=false;
+    $('saveRecord').disabled=false;
+  }
+};
+
 document.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>openEditor(b.dataset.new));
+
 function stat(host,label,value,sub=''){const c=n('div',undefined,'panel');c.append(n('small',label),n('div',value,'number'));if(sub)c.append(n('small',sub));host.append(c);}
 function empty(host,message){host.append(n('div',message,'empty'));}
-function list(host,rows,short=false){host.replaceChildren();if(!rows.length){empty(host,'No records here yet. Use the Add button to create your first one.');return;}for(const r of rows){const item=n('article',undefined,'item'+(r.status==='done'?' done':'')),top=n('div',undefined,'row');const label=n('div');label.append(n('small',r.agent_id.toUpperCase()+' / '+r.kind.toUpperCase()+' / '+({todo:'TO DO',progress:'IN PROGRESS',done:'COMPLETED'}[r.status]),'amber'),n('h3',r.title));top.append(label);item.append(top);const p=r.payload||{};let meta='';if(r.kind==='bill'){meta=money(p.amount)+' · due '+r.due_date;if(r.status!=='done'&&r.due_date<dateStr())meta+=' · OVERDUE';if(p.paid_date&&r.status==='done')meta+=' · paid '+p.paid_date;}else if(r.kind==='income'){const totalHours=(+p.regular_hours||0)+(+p.overtime_hours||0)+(+p.pto_hours||0);meta=p.period_start+' → '+p.period_end+' · '+totalHours+' hrs · Gross: '+money(p.gross)+' · Net: '+(p.net!==null&&p.net!==''?money(p.net):'N/A');}else meta=(r.due_date?'Due '+r.due_date+' · ':'')+'Priority: '+(p.priority||'normal');item.append(n('p',meta));if(p.notes&&!short)item.append(n('div',p.notes,'record'));const actions=n('div',undefined,'buttons');const edit=n('button','EDIT','small');edit.onclick=()=>openEditor(r.kind,r.agent_id,r);const done=n('button',r.status==='done'?'REOPEN':r.kind==='bill'?'MARK PAID':r.kind==='income'?'MARK RECEIVED':'COMPLETE','small');done.onclick=()=>act(done,async()=>{const p2={...r.payload};if(r.kind==='bill')p2.paid_date=r.status==='done'?null:dateStr();await save({...r,status:r.status==='done'?'todo':'done',payload:p2});});actions.append(edit,done);if(!short){if(r.status==='todo'&&(r.kind==='task'||r.kind==='note')){const progress=n('button','START','small');progress.onclick=()=>act(progress,()=>save({...r,status:'progress'}));actions.append(progress);}if(r.kind==='bill'&&r.status==='done'&&p.frequency==='monthly'){const next=n('button','CREATE NEXT MONTH','small');next.onclick=()=>act(next,async()=>{const due=nextMonth(r.due_date);if(records.some(x=>x.kind==='bill'&&x.title===r.title&&x.due_date===due))throw new Error('A bill with this title and next due date already exists.');await save({...r,id:undefined,version:undefined,status:'todo',due_date:due,payload:{...p,paid_date:null}});});actions.append(next);}const del=n('button','DELETE','small danger');del.onclick=()=>act(del,()=>removeRecord(r));actions.append(del);}item.append(actions);host.append(item);}}
+function list(host,rows,short=false){host.replaceChildren();if(!rows.length){empty(host,'No records here yet. Use the Add button to create your first one.');return;}for(const r of rows){const item=n('article',undefined,'item'+(r.status==='done'?' done':'')),top=n('div',undefined,'row');const label=n('div');label.append(n('small',r.agent_id.toUpperCase()+' / '+r.kind.toUpperCase()+' / '+({todo:'TO DO',progress:'IN PROGRESS',done:'COMPLETED'}[r.status]),'amber'),n('h3',r.title));top.append(label);item.append(top);const p=r.payload||{};let meta='';if(r.kind==='bill'){meta=money(p.amount)+' · due '+r.due_date;if(r.status!=='done'&&r.due_date<dateStr())meta+=' · OVERDUE';if(p.paid_date&&r.status==='done')meta+=' · paid '+p.paid_date;}else if(r.kind==='income'){const totalHours=(+p.regular_hours||0)+(+p.overtime_hours||0)+(+p.pto_hours||0);meta=p.period_start+' → '+p.period_end+' · '+totalHours+' hrs · Gross: '+money(p.gross)+' · Net Deposit: '+(p.net!==null&&p.net!==''?money(p.net):'N/A');}else meta=(r.due_date?'Due '+r.due_date+' · ':'')+'Priority: '+(p.priority||'normal');item.append(n('p',meta));if(p.notes&&!short)item.append(n('div',p.notes,'record'));const actions=n('div',undefined,'buttons');const edit=n('button','EDIT','small');edit.onclick=()=>openEditor(r.kind,r.agent_id,r);const done=n('button',r.status==='done'?'REOPEN':r.kind==='bill'?'MARK PAID':r.kind==='income'?'MARK RECEIVED':'COMPLETE','small');done.onclick=()=>act(done,async()=>{const p2={...r.payload};if(r.kind==='bill')p2.paid_date=r.status==='done'?null:dateStr();await save({...r,status:r.status==='done'?'todo':'done',payload:p2});});actions.append(edit,done);if(!short){if(r.status==='todo'&&(r.kind==='task'||r.kind==='note')){const progress=n('button','START','small');progress.onclick=()=>act(progress,()=>save({...r,status:'progress'}));actions.append(progress);}if(r.kind==='bill'&&r.status==='done'&&p.frequency==='monthly'){const next=n('button','CREATE NEXT MONTH','small');next.onclick=()=>act(next,async()=>{const due=nextMonth(r.due_date);if(records.some(x=>x.kind==='bill'&&x.title===r.title&&x.due_date===due))throw new Error('A bill with this title and next due date already exists.');await save({...r,id:undefined,version:undefined,status:'todo',due_date:due,payload:{...p,paid_date:null}});});actions.append(next);}const del=n('button','DELETE','small danger');del.onclick=()=>act(del,()=>removeRecord(r));actions.append(del);}item.append(actions);host.append(item);}}
 function compareDue(a,b){return (a.due_date||'9999').localeCompare(b.due_date||'9999');}
 function renderChart(totalTakeHome, paidBills, unpaidBills){const chartWrap=$('cashFlowChart');if(!chartWrap)return;chartWrap.replaceChildren();const netSurplus=totalTakeHome-paidBills;const maxVal=Math.max(totalTakeHome, paidBills, unpaidBills, Math.abs(netSurplus), 100);const bar=(label, val, fillCls)=>{const row=n('div',undefined,'chart-bar-row');row.append(n('div',label,'chart-label'));const track=n('div',undefined,'chart-track');const fill=n('div',undefined,'chart-fill '+fillCls);fill.style.width=Math.min(100, Math.max(0, (Math.abs(val)/maxVal)*100))+'%';track.append(fill);row.append(track);row.append(n('div',money(val),'chart-val'));return row;};chartWrap.append(bar('NET TAKE-HOME', totalTakeHome, 'fill-green'));chartWrap.append(bar('PAID BILLS', paidBills, 'fill-red'));chartWrap.append(bar('SURPLUS CASH', netSurplus, netSurplus>=0?'fill-green':'fill-red'));chartWrap.append(bar('UPCOMING UNPAID', unpaidBills, 'fill-amber'));}
 function renderData(){if(!isReady())return;const today=dateStr(),bills=records.filter(r=>r.kind==='bill'),income=records.filter(r=>r.kind==='income'),tasks=records.filter(r=>r.kind==='task'||r.kind==='note'),unpaid=bills.filter(r=>r.status!=='done'),active=tasks.filter(r=>r.status!=='done');$('syncInfo').textContent=(mode==='local'?'LOCAL BROWSER RECORDS — not encrypted or cloud-synced. ':'CLOUD RECORDS ACCESSIBLE TO THIS ACCOUNT. ')+(syncError?'ERROR: '+syncError:records.length+' records · refreshed '+(lastSync||'now')+'. Cloud summaries exclude inaccessible agents.');const wr=weekRange($('weekDate').value||today),week=income.filter(r=>r.payload.period_end>=wr[0]&&r.payload.period_end<=wr[1]);const receivedNetTotal=sum(income.filter(r=>r.status==='done'),r=>r.payload.net);const paidBillsTotal=sum(bills.filter(r=>r.status==='done'),r=>r.payload.amount);const unpaidBillsTotal=sum(unpaid,r=>r.payload.amount);renderChart(receivedNetTotal, paidBillsTotal, unpaidBillsTotal);$('dashboardStats').replaceChildren();stat($('dashboardStats'),'HOURS / PERIODS ENDING THIS WEEK',sum(week,r=>(+r.payload.regular_hours||0) + (+r.payload.overtime_hours||0) + (+r.payload.pto_hours||0)).toFixed(2),wr.join(' → '));stat($('dashboardStats'),'RECORDED GROSS / THIS WEEK',money(sum(week,r=>r.payload.gross)),'Includes expected / estimated pay');stat($('dashboardStats'),'UNPAID / NEXT 7 DAYS',money(sum(unpaid.filter(r=>r.due_date<=shiftDate(today,7)),r=>r.payload.amount)),'Includes overdue bills');stat($('dashboardStats'),'ACTIVE TASKS / NOTES',active.length,tasks.filter(r=>r.status==='done').length+' completed');list($('nextBills'),unpaid.slice().sort(compareDue).slice(0,5),true);list($('priorityTasks'),active.slice().sort((a,b)=>({high:0,normal:1,low:2}[a.payload.priority||'normal']-({high:0,normal:1,low:2}[b.payload.priority||'normal']))||compareDue(a,b)).slice(0,5),true);const overdue=unpaid.filter(r=>r.due_date<today);$('briefTitle').textContent=overdue.length?'Review overdue obligations':active.length?'Keep the next action clear':'Your workspace is ready';$('briefText').textContent=overdue.length?overdue.length+' overdue bill(s), totaling '+money(sum(overdue,r=>r.payload.amount))+'. Open LEDGER to review or mark paid.':active.length?active.length+' active task/note record(s). '+tasks.filter(r=>r.status==='done').length+' completed. Open a domain or use Tasks to choose the next move.':'Add your hours, paycheck, first bill, or a task. Your summaries will update from those records.';
@@ -77,7 +194,7 @@ function paintWorkspace(a,transition=true){const host=$('workspaceContent');host
 let workspaceFilter='active';
 async function openWorkspace(a,ticket){const host=$('workspaceContent');host.replaceChildren(n('div','Checking '+a.name+' entry…','panel'));try{const ok=await entry(a.id,true);if(ticket!==routeId)return;if(!ok){const p=n('div',undefined,'panel');p.append(n('h1',a.name+' // ENTRY CLOSED'),n('p','Sign in with the required role and agent grant. In cloud mode even admins need an explicit grant for restricted domains.'),n('p','A returned server request ID confirms the attempt was recorded. Connection failures do not.','notice'));const retry=n('button','REQUEST ENTRY AGAIN');retry.onclick=route;p.append(retry);host.replaceChildren(p);return;}await refreshRecords();if(ticket!==routeId)return;if(syncError)throw new Error(syncError);paintWorkspace(a);pulse();}catch(e){if(ticket===routeId)host.replaceChildren(n('div','ENTRY CLOSED: '+e.message,'panel error'));}}
 function renderTelemetry(){const h=$('telemetryStats');if(!h)return;h.replaceChildren();stat(h,'LOADED FRAMES',loaded+' / 130');stat(h,'UPTIME',Math.floor((Date.now()-started)/1000)+'s');stat(h,'RECORDS LOADED',records.length);stat(h,'STORAGE',mode.toUpperCase());}
-async function showVault(ticket){$('vaultContent').replaceChildren();if(mode==='local'){$('vaultStatus').textContent='Existing protected Vault is cloud-only. Local mode never simulates access to your real vault.';return;}if(!user||rank[user.role]<2){$('vaultStatus').textContent='Operator/admin cloud session required.';return;}$('vaultStatus').textContent='Loading permitted records…';const who=epoch;try{const r=await deadline(client.from('nexus_vault').select('id,title,body,min_role').order('id'),12000,'Vault');if(who!==epoch||ticket!==routeId)return;if(r.error)throw r.error;for(const row of r.data||[]){const c=n('article',undefined,'panel');c.append(n('small',row.min_role,'amber'),n('h2',row.title),n('div',row.body,'record'));$('vaultContent').append(c);}$('vaultStatus').textContent=r.data.length?'Existing database RLS controls these records.':'No permitted rows.';}catch(e){if(who===epoch&&ticket!==routeId)$('vaultStatus').textContent=e.message;}}
+async function showVault(ticket){$('vaultContent').replaceChildren();if(mode==='local'){$('vaultStatus').textContent='Existing protected Vault is cloud-only. Local mode never simulates access to your real vault.';return;}if(!user||rank[user.role]<2){$('vaultStatus').textContent='Operator/admin cloud session required.';return;}$('vaultStatus').textContent='Loading permitted records…';const who=epoch;try{const r=await deadline(client.from('nexus_vault').select('id,title,body,min_role').order('id'),12000,'Vault');if(who!==epoch||ticket!==routeId)return;if(r.error)throw r.error;for(const row of r.data||[]){const c=n('article',undefined,'panel');c.append(n('small',row.min_role,'amber'),n('h2',row.title),n('div',row.body,'record'));$('vaultContent').append(c);}$('vaultStatus').textContent=r.data.length?'Existing database RLS controls these records.':'No permitted rows.';}catch(e){if(who===epoch&&ticket===routeId)$('vaultStatus').textContent=e.message;}}
 let auditTicket=0;
 async function showAudit(){const ticket=++auditTicket,who=epoch;$('auditContent').replaceChildren();$('grantControls').replaceChildren();if(mode==='local'){$('auditStatus').textContent='LOCAL UI EVENTS ONLY — editable browser storage, not a security audit.';const pre=n('pre',JSON.stringify(localEvents.slice(0,100),null,2),'eventlog');$('auditContent').append(pre);return;}if(!isAdmin()){$('auditStatus').textContent='Actual cloud admin session required.';return;}
 for(const a of agents.filter(a=>a.grant)){for(const allow of [true,false]){const b=n('button',(allow?'GRANT ME ':'REVOKE MY ')+a.name,'small');b.onclick=()=>act(b,async()=>{if(!confirm((allow?'Grant':'Revoke')+' your own access to '+a.name+'? This change is server logged.'))return;const r=await deadline(client.rpc('nexus7_self_grant',{p_agent:a.id,p_allow:allow}),12000,'Agent grant');if(r.error)throw r.error;unlocked.delete(a.id);await refreshRecords();await showAudit();});$('grantControls').append(b);}}
@@ -89,7 +206,6 @@ async function guardDomainPage(page,agent,ticket){try{const ok=await entry(agent
 window.addEventListener('hashchange',route);
 $('revealButton').onclick=()=>{if(!isReady()){toast('Sign in or explicitly enable local mode for narrative reveal.');return;}revealed=!revealed;document.body.classList.toggle('revealed',revealed);renderBar();pulse();log('Narrative '+(revealed?'revealed':'disguised')+'. Permissions unchanged.');};$('glitchButton').onclick=pulse;
 
-// Avatar archive: exact supplied chronological filenames; no click required.
 let archiveStarted=false,loading=false,current=-1,target=0,loaded=0,failed=0,raf=0,point;
 const viewer=$('viewer'),frames=FILES.map(name=>{const img=new Image();img.className='frame';img.alt='';img.draggable=false;img.setAttribute('aria-hidden','true');viewer.append(img);return{name,img,state:'pending'};});
 const viewLabels={lt_prof:'LEFT PROFILE','3q_lt':'LEFT THREE-QUARTER',front:'FRONT','3q_rt':'RIGHT THREE-QUARTER',rt_base:'RIGHT BASE',rear_3q_rt:'REAR RIGHT THREE-QUARTER',back:'BACK',front_high_base:'FRONT HIGH BASE'};
@@ -101,7 +217,7 @@ async function loadArchive(retry=false){if(loading)return;loading=true;const q=f
 $('retryFrames').onclick=()=>loadArchive(true);
 function follow(e){point={x:e.clientX,y:e.clientY,type:e.pointerType};if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const r=viewer.getBoundingClientRect(),x=Math.max(0,Math.min(1,(point.x-r.left)/r.width)),y=Math.max(-1,Math.min(1,(point.y-r.top)/r.height*2-1));requestFrame(Math.min(129,Math.floor(x*130)));if(!reduced.matches&&point.type==='mouse')viewer.style.transform='rotateX('+(-y*3)+'deg) rotateY('+((x-.5)*6)+'deg)';});}
 viewer.addEventListener('pointermove',follow);viewer.addEventListener('pointerdown',e=>{viewer.focus({preventScroll:true});follow(e);});viewer.addEventListener('pointerleave',()=>{if(raf){cancelAnimationFrame(raf);raf=0;}viewer.style.transform='';});viewer.addEventListener('keydown',e=>{let value;if(e.key==='ArrowRight')value=target+1;else if(e.key==='ArrowLeft')value=target-1;else if(e.key==='Home')value=0;else if(e.key==='End')value=129;else return;e.preventDefault();requestFrame(value);});
-// CLI: text-only output; no eval or shell.
+
 const commands=['help','status','whoami','agents','agent','persona','add','open','frame','scan','reveal','disguise','glitch','audit','date','echo','history','clear','logout'];
 function out(text,cls=''){const e=n('div',text,cls);$('terminalOutput').append(e);while($('terminalOutput').children.length>200)$('terminalOutput').firstChild.remove();$('terminalOutput').scrollTop=$('terminalOutput').scrollHeight;}
 function run(raw){if(!isReady()){toast('Workspace session required.');return;}const text=raw.trim();if(!text)return;commandHistory.push(text);historyPos=commandHistory.length;commandDraft='';out('wolf@nexus:~$ '+text,'command');const [command,...args]=text.split(/\s+/),arg=args.join(' ');switch(command.toLowerCase()){
@@ -126,7 +242,7 @@ case 'clear':$('terminalOutput').replaceChildren();break;
 case 'logout':if(mode==='cloud')$('logout').click();else out('Local mode has no real account session. Return to cloud in SETUP.');break;
 default:out('Unknown command. Type help.','error');}}
 $('commandForm').onsubmit=e=>{e.preventDefault();const t=$('commandInput').value;$('commandInput').value='';run(t);};$('commandInput').onkeydown=e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();if(historyPos===commandHistory.length)commandDraft=e.target.value;historyPos=Math.max(0,Math.min(commandHistory.length,historyPos+(e.key==='ArrowUp'?-1:1)));e.target.value=historyPos===commandHistory.length?commandDraft:commandHistory[historyPos];}if(e.key==='Tab'){e.preventDefault();if(e.target.value.includes(' '))return;const m=commands.filter(c=>c.startsWith(e.target.value));if(m.length===1)e.target.value=m[0]+' ';else if(m.length)out(m.join('  '));}};
-// Setup lives inside this one file. SQL is displayed, never silently executed.
+
 $('setupSQL').value=SQL;$('showSQL').onclick=()=>$('sqlWrap').hidden=!$('sqlWrap').hidden;
 $('copySQL').onclick=async()=>{try{await navigator.clipboard.writeText(SQL);toast('Setup SQL copied. Review and run once in Supabase SQL Editor.');}catch(e){$('sqlWrap').hidden=false;$('setupSQL').focus();$('setupSQL').select();toast('Select and copy the displayed SQL manually.');}};
 $('configForm').onsubmit=e=>{e.preventDefault();try{const c=checkConfig({mode:'supabase',supabaseUrl:$('projectUrl').value.trim(),supabasePublishableKey:$('publicKey').value.trim()});storageWrite('nexus7-config',c);storageWrite('nexus7-mode','cloud');location.reload();}catch(e){$('configError').textContent=e.message;}};
