@@ -817,6 +817,25 @@ function showFrame(i){const f=frames[i];if(!f||f.state!=='ready')return;if(curre
 function requestFrame(i){target=Math.max(0,Math.min(129,i));if(frames[target].state==='ready'){showFrame(target);return;}let best=-1,d=Infinity;frames.forEach((f,j)=>{if(f.state==='ready'&&Math.abs(j-target)<d){best=j;d=Math.abs(j-target);}});if(best>=0)showFrame(best);}
 function loadUI(){loaded=frames.filter(f=>f.state==='ready').length;failed=frames.filter(f=>f.state==='failed').length;$('loadCount').textContent=loaded+'/130'+(failed?' · '+failed+' FAILED':'');$('loadbar').style.width=(loaded+failed)/130*100+'%';$('frameStatus').textContent=loaded===130?'ARCHIVE SYNCED':loading?'STREAMING FRAMES':'PARTIAL ARCHIVE';$('retryFrames').hidden=!failed||loading;if(!loaded)$('loader').textContent=loading?'LOADING WOLF ARCHIVE… '+(loaded+failed)+'/130':'ARCHIVE UNAVAILABLE. Retry below.';}
 function loadOne(f){return new Promise(resolve=>{f.state='loading';let done=false;const finish=ok=>{if(done)return;done=true;clearTimeout(timer);f.img.onload=null;f.img.onerror=null;f.state=ok?'ready':'failed';if(ok)requestFrame(target);loadUI();resolve();};const timer=setTimeout(()=>finish(false),15000);f.img.onload=()=>finish(true);f.img.onerror=()=>finish(false);f.img.src='https://wolfbhuffn.github.io/3D/clean_wolf_frames/'+encodeURIComponent(f.name)+(f.retry?'?retry='+Date.now():'');});}
+async function run(raw){
+  if(!isReady()){toast('Workspace session required.');return;}
+  const text=raw.trim();if(!text)return;
+  commandHistory.push(text);
+  historyPos=commandHistory.length;
+  commandDraft='';
+  out('wolf@nexus:~$ '+text,'command');
+  const [command,...args]=text.split(/\s+/),arg=args.join(' ');
+  
+  switch(command.toLowerCase()){
+    // ... all your case statements ...
+    default:
+      out('QUERYING GEMINI AI...', 'amber');
+      const aiReply = await askGemini(text);
+      out(aiReply);
+      break;
+  }
+}
+
 async function loadArchive(retry=false){if(loading)return;loading=true;const q=frames.filter(f=>retry?f.state==='failed':f.state==='pending');if(retry)q.forEach(f=>{f.retry=true;f.state='pending';});loadUI();let idx=0;await Promise.all(Array.from({length:Math.min(6,q.length)},async()=>{while(idx<q.length)await loadOne(q[idx++]);}));loading=false;loadUI();log('Archive: '+loaded+' loaded / '+failed+' failed.');}
 $('retryFrames').onclick=()=>loadArchive(true);
 function follow(e){point={x:e.clientX,y:e.clientY,type:e.pointerType};if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const r=viewer.getBoundingClientRect(),x=Math.max(0,Math.min(1,(point.x-r.left)/r.width)),y=Math.max(-1,Math.min(1,(point.y-r.top)/r.height*2-1));requestFrame(Math.min(129,Math.floor(x*130)));if(!reduced.matches&&point.type==='mouse')viewer.style.transform='rotateX('+(-y*3)+'deg) rotateY('+((x-.5)*6)+'deg)';});}
